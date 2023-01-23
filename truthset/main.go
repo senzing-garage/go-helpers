@@ -20,7 +20,7 @@ var TruthsetDataSources = map[string]struct {
 }
 
 // Must match value in sys_cfg.config_data_id.
-var TestConfigDataId = 2644872116
+var TestConfigDataId = 3436584709
 
 // A list of test records.
 var TruthsetCustomerRecords = map[string]struct {
