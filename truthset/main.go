@@ -1,6 +1,18 @@
 package truthset
 
 // ----------------------------------------------------------------------------
+// Types
+// ----------------------------------------------------------------------------
+
+// Record...
+type Record struct {
+	DataSource string
+	Id         string
+	Data       string
+	LoadId     string
+}
+
+// ----------------------------------------------------------------------------
 // Variables
 // ----------------------------------------------------------------------------
 
@@ -22,11 +34,7 @@ var TruthsetDataSources = map[string]struct {
 // Must match value in sys_cfg.config_data_id.
 var TestConfigDataId = 3436584709
 
-var TestRecordsWithoutRecordId = []struct {
-	DataSource string
-	Data       string
-	LoadId     string
-}{
+var TestRecordsWithoutRecordId = []Record{
 	{
 		DataSource: "CUSTOMERS",
 		Data:       `{"DATA_SOURCE": "CUSTOMERS", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Kellar", "PRIMARY_NAME_FIRST": "Candace", "ADDR_LINE1": "1824 AspenOak Way", "ADDR_CITY": "Elmwood Park", "ADDR_STATE": "CA", "ADDR_POSTAL_CODE": "95865", "EMAIL_ADDRESS": "info@ca-state.gov"}`,
@@ -39,12 +47,7 @@ var TestRecordsWithoutRecordId = []struct {
 	},
 }
 
-var TestRecordsForReplacement = []struct {
-	DataSource string
-	Id         string
-	Data       string
-	LoadId     string
-}{
+var TestRecordsForReplacement = []Record{
 	{
 		DataSource: "CUSTOMERS",
 		Id:         "1004",

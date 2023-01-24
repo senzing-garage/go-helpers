@@ -5,12 +5,7 @@ package truthset
 // ----------------------------------------------------------------------------
 
 // A list of test records.
-var ReferenceRecords = map[string]struct {
-	DataSource string
-	Id         string
-	Data       string
-	LoadId     string
-}{
+var ReferenceRecords = map[string]Record{
 	"2012": {
 		DataSource: "REFERENCE",
 		Id:         "2012",
