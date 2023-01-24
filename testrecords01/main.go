@@ -14,7 +14,7 @@ var TestDataSources = []struct {
 }
 
 // Must match value in sys_cfg.config_data_id.
-var TestConfigDataId = 3239924254
+var TestConfigDataId = 2644872116
 
 // A list of test records.
 var TestRecords = []struct {
@@ -45,6 +45,30 @@ var TestRecords = []struct {
 		DataSource: "CUSTOMERS",
 		Id:         "1004",
 		Data:       `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1004", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "B", "DATE_OF_BIRTH": "11/12/1979", "ADDR_TYPE": "HOME", "ADDR_LINE1": "1515 Adela Ln", "ADDR_CITY": "Las Vegas", "ADDR_STATE": "NV", "ADDR_POSTAL_CODE": "89132", "EMAIL_ADDRESS": "bsmith@work.com", "DATE": "1/5/15", "STATUS": "Inactive", "AMOUNT": "400"}`,
+		LoadId:     "TESTRECORDS01_LOAD",
+	},
+	{
+		DataSource: "CUSTOMERS",
+		Id:         "1005",
+		Data:       `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1005", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "Robbie", "DRIVERS_LICENSE_NUMBER": "112233", "DRIVERS_LICENSE_STATE": "NV", "ADDR_TYPE": "MAILING", "ADDR_LINE1": "123 E Main St", "ADDR_CITY": "Henderson", "ADDR_STATE": "NV", "ADDR_POSTAL_CODE": "89132", "DATE": "7/16/19", "STATUS": "Active", "AMOUNT": "500"}`,
+		LoadId:     "TESTRECORDS01_LOAD",
+	},
+	{
+		DataSource: "CUSTOMERS",
+		Id:         "1039",
+		Data:       `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1039", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "John", "GENDER": "M", "DATE_OF_BIRTH": "10/10/70", "ADDR_TYPE": "HOME", "ADDR_LINE1": "3212 W. 32nd St Palm Harbor, FL 60527", "DATE": "1/28/18", "STATUS": "Active", "AMOUNT": "900"}`,
+		LoadId:     "TESTRECORDS01_LOAD",
+	},
+	{
+		DataSource: "CUSTOMERS",
+		Id:         "1040",
+		Data:       `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1040", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "John", "DATE_OF_BIRTH": "3/15/90", "ADDR_TYPE": "HOME", "ADDR_LINE1": "3212 W. 32nd St Palm Harbor, FL 60527", "DATE": "1/29/18", "STATUS": "Active", "AMOUNT": "100"}`,
+		LoadId:     "TESTRECORDS01_LOAD",
+	},
+	{
+		DataSource: "CUSTOMERS",
+		Id:         "1044",
+		Data:       `{"DATA_SOURCE": "CUSTOMERS", "RECORD_ID": "1044", "RECORD_TYPE": "PERSON", "PRIMARY_NAME_LAST": "Smith", "PRIMARY_NAME_FIRST": "Patricia", "DATE_OF_BIRTH": "3/15/90", "PASSPORT_NUMBER": "10252222", "PASSPORT_COUNTRY": "US", "ADDR_TYPE": "HOME", "ADDR_LINE1": "3212 W. 32nd St Palm Harbor, FL 60527", "DATE": "1/31/18", "STATUS": "Active", "AMOUNT": "300"}`,
 		LoadId:     "TESTRECORDS01_LOAD",
 	},
 }
