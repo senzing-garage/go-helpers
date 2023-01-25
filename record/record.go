@@ -2,7 +2,6 @@ package record
 
 import (
 	"encoding/json"
-	"errors"
 )
 
 // ----------------------------------------------------------------------------
@@ -28,7 +27,7 @@ func NewRecord(line string) (*Record, error) {
 			return &record, validationErr
 		}
 	}
-	return &record, errors.New("JSON-line not well formed")
+	return &record, szerrors.Error(3000)
 }
 
 // ----------------------------------------------------------------------------
@@ -43,7 +42,7 @@ func Validate(line string) (bool, error) {
 		return ValidateRecord(record)
 	}
 	//TODO: should we return the actual parse error???
-	return valid, errors.New("JSON-line not well formed")
+	return valid, szerrors.Error(3000)
 }
 
 // ----------------------------------------------------------------------------
@@ -53,10 +52,10 @@ func Validate(line string) (bool, error) {
 func ValidateRecord(record Record) (bool, error) {
 
 	if record.DataSource == "" {
-		return false, errors.New("a DATA_SOURCE field is required")
+		return false, szerrors.Error(3001)
 	}
 	if record.Id == "" {
-		return false, errors.New("a RECORD_ID field is required")
+		return false, szerrors.Error(3002)
 	}
 	return true, nil
 }
