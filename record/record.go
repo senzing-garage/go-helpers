@@ -5,13 +5,20 @@ import (
 )
 
 // ----------------------------------------------------------------------------
+// Types
+// ----------------------------------------------------------------------------
 
+// The Record data structure conforms to the [Generic Entity Specification].
+//
+// [Generic Entity Specification]: https://senzing.zendesk.com/hc/en-us/articles/231925448-Generic-Entity-Specification-JSON-CSV-Mapping
 type Record struct {
 	DataSource string `json:"DATA_SOURCE"`
 	Id         string `json:"RECORD_ID"`
 	Json       string
 }
 
+// ----------------------------------------------------------------------------
+// Functions
 // ----------------------------------------------------------------------------
 
 // Returns a valid Record or an error if validation fails
