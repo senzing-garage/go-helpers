@@ -10,9 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [0.1.1] - 2023-02-10
+
+### Added to 0.1.1
+
+- `engineconfigurationjson` - Simple construction of SENZING_ENGINE_CONFIGURATION_JSON
+
+### Deleted in 0.1.1
+
+- `testrecords01`
+
+### Added to 0.1.0
+
 ## [0.1.0] - 2023-01-25
 
 ### Added to 0.1.0
 
-- Truth set data
-- add Record type
+- `truthset` - Truth set data
+- `record` - Add Record type
