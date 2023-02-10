@@ -6,8 +6,8 @@ The Senzing go-common repository has packages containing
 common interface definitions, data structures, helper functions, and test data
 used by other Senzing Go language packages.
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/senzing/go-common)](https://goreportcard.com/report/github.com/senzing/go-common)
 [![Go Reference](https://pkg.go.dev/badge/github.com/senzing/go-common.svg)](https://pkg.go.dev/github.com/senzing/go-common)
+[![Go Report Card](https://goreportcard.com/badge/github.com/senzing/go-common)](https://goreportcard.com/report/github.com/senzing/go-common)
 
 ## Overview
 
