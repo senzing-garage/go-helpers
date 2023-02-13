@@ -18,7 +18,7 @@ func TestNewRecord_good(t *testing.T) {
 	} else if record.Json != jsonLine {
 		t.Errorf("FAILED, jsonLine incorrect")
 	} else {
-		t.Log("SUCCEDED. record created.")
+		t.Log("SUCCEEDED. record created.")
 	}
 }
 
@@ -27,7 +27,7 @@ func TestNewRecord_invalidJson(t *testing.T) {
 	_, err := NewRecord(jsonLine)
 
 	if err != nil {
-		t.Logf("SUCCEDED, received err: %s", err.Error())
+		t.Logf("SUCCEEDED, received err: %s", err.Error())
 	} else {
 		t.Error("FAILED, expected err.")
 	}
@@ -38,7 +38,7 @@ func TestNewRecord_noRecordId(t *testing.T) {
 	_, err := NewRecord(jsonLine)
 
 	if err != nil {
-		t.Logf("SUCCEDED, received err: %s", err.Error())
+		t.Logf("SUCCEEDED, received err: %s", err.Error())
 	} else {
 		t.Error("FAILED, expected err.")
 	}
@@ -49,7 +49,7 @@ func TestNewRecord_noDataSource(t *testing.T) {
 	_, err := NewRecord(jsonLine)
 
 	if err != nil {
-		t.Logf("SUCCEDED, received err: %s", err.Error())
+		t.Logf("SUCCEEDED, received err: %s", err.Error())
 	} else {
 		t.Error("FAILED, expected err.")
 	}
@@ -66,7 +66,7 @@ func TestValidate_good(t *testing.T) {
 	if !val {
 		t.Error("FAILED, expected JSON to validate.")
 	} else {
-		t.Log("SUCCEDED. valid record.")
+		t.Log("SUCCEEDED. valid record.")
 	}
 }
 
@@ -75,14 +75,14 @@ func TestValidate_noRecordId(t *testing.T) {
 	val, err := Validate(jsonLine)
 
 	if err != nil {
-		t.Logf("SUCCEDED, received err: %s", err.Error())
+		t.Logf("SUCCEEDED, received err: %s", err.Error())
 	} else {
 		t.Error("FAILED, expected err.")
 	}
 	if val {
 		t.Error("FAILED, did NOT expected JSON to validate.")
 	} else {
-		t.Log("SUCCEDED, invalid record")
+		t.Log("SUCCEEDED, invalid record")
 	}
 }
 
@@ -91,14 +91,14 @@ func TestValidate_noDatasource(t *testing.T) {
 	val, err := Validate(jsonLine)
 
 	if err != nil {
-		t.Logf("SUCCEDED, received err: %s", err.Error())
+		t.Logf("SUCCEEDED, received err: %s", err.Error())
 	} else {
 		t.Error("FAILED, expected err.")
 	}
 	if val {
 		t.Error("FAILED, did NOT expected JSON to validate.")
 	} else {
-		t.Log("SUCCEDED, invalid record")
+		t.Log("SUCCEEDED, invalid record")
 	}
 }
 
@@ -107,13 +107,13 @@ func TestValidate_invalidJson(t *testing.T) {
 	val, err := Validate(jsonLine)
 
 	if err != nil {
-		t.Logf("SUCCEDED, received err: %s", err.Error())
+		t.Logf("SUCCEEDED, received err: %s", err.Error())
 	} else {
 		t.Error("FAILED, expected err.")
 	}
 	if val {
 		t.Error("FAILED, did NOT expected JSON to validate.")
 	} else {
-		t.Log("SUCCEDED, invalid record")
+		t.Log("SUCCEEDED, invalid record")
 	}
 }
