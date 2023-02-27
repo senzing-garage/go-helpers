@@ -1,15 +1,33 @@
 package engineconfigurationjsonparser
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	engineConfigurationJsonParserSingleton *EngineConfigurationJsonParserImpl
+)
+
 // ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------
+
+func getTestObject(ctx context.Context, test *testing.T) *EngineConfigurationJsonParserImpl {
+	return getParser(ctx)
+}
+
+func getParser(ctx context.Context) *EngineConfigurationJsonParserImpl {
+	if engineConfigurationJsonParserSingleton == nil {
+		engineConfigurationJsonParserSingleton = &EngineConfigurationJsonParserImpl{
+			EnableConfigurationJson: `{"customer":"Senzing Public Test License","contract":"EVALUATION - support@senzing.com","issueDate":"2022-11-29","licenseType":"EVAL (Solely for non-productive use)","licenseLevel":"STANDARD","billing":"MONTHLY","expireDate":"2023-11-29","recordLimit":50000}`,
+		}
+	}
+	return engineConfigurationJsonParserSingleton
+}
 
 func testError(test *testing.T, err error) {
 	if err != nil {
@@ -21,98 +39,25 @@ func testError(test *testing.T, err error) {
 // Test interface functions
 // ----------------------------------------------------------------------------
 
-func TestBuildSimpleSystemConfigurationJson(test *testing.T) {
-	_, err := BuildSimpleSystemConfigurationJson("postgresql://postgres:postgres@$10.0.0.1:5432/G2")
+func TestEngineConfigurationJsonParserImpl_GetConfigPath(test *testing.T) {
+	ctx := context.TODO()
+	parser := getTestObject(ctx, test)
+	actual, err := parser.GetConfigPath(ctx)
 	testError(test, err)
-}
-
-func TestBuildSimpleSystemConfigurationJsonFailure(test *testing.T) {
-	_, err := BuildSimpleSystemConfigurationJson("")
-	if err == nil {
-		assert.FailNow(test, "There should be an error.")
-	}
+	assert.Equal(test, "", actual)
 }
 
 // ----------------------------------------------------------------------------
 // Examples for godoc documentation
 // ----------------------------------------------------------------------------
 
-func ExampleBuildSimpleSystemConfigurationJson() {
-	result, err := BuildSimpleSystemConfigurationJson("postgresql://username:password@hostname:5432/G2")
+func ExampleEngineConfigurationJsonParserImpl_GetConfigPath() {
+	ctx := context.TODO()
+	parser := getParser(ctx)
+	configPath, err := parser.GetConfigPath(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(result)
+	fmt.Println(configPath)
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}
-}
-
-func ExampleBuildSimpleSystemConfigurationJson_db2() {
-	result, err := BuildSimpleSystemConfigurationJson("db2://username:password@hostname:50000/G2")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"db2://username:password@G2"}}
-}
-
-func ExampleBuildSimpleSystemConfigurationJson_db2WithSchema() {
-	result, err := BuildSimpleSystemConfigurationJson("db2://username:password@hostname:50000/G2/?schema=schemaname")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"db2://username:password@G2/?schema=schemaname"}}
-}
-
-func ExampleBuildSimpleSystemConfigurationJson_oci() {
-	result, err := BuildSimpleSystemConfigurationJson("oci://username:password@hostname:1521/G2")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"oci://username:password@G2"}}
-}
-
-func ExampleBuildSimpleSystemConfigurationJson_mssql() {
-	result, err := BuildSimpleSystemConfigurationJson("mssql://username:password@hostname:1433/G2")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"mssql://username:password@G2"}}
-}
-
-func ExampleBuildSimpleSystemConfigurationJson_mysql() {
-	result, err := BuildSimpleSystemConfigurationJson("mysql://username:password@hostname:3306/G2")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"mysql://username:password@hostname:3306/?schema=G2"}}
-}
-
-func ExampleBuildSimpleSystemConfigurationJson_postgresql() {
-	result, err := BuildSimpleSystemConfigurationJson("postgresql://username:password@hostname:5432/G2")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}
-}
-
-func ExampleBuildSimpleSystemConfigurationJson_postgresqlWithSchema() {
-	result, err := BuildSimpleSystemConfigurationJson("postgresql://username:password@hostname:5432/G2/?schema=schemaname")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/?schema=schemaname"}}
-}
-func ExampleBuildSimpleSystemConfigurationJson_sqlite() {
-	result, err := BuildSimpleSystemConfigurationJson("sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db"}}
 }

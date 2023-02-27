@@ -18,17 +18,17 @@ type EngineConfigurationJsonParser interface {
 // Types - struct
 // ----------------------------------------------------------------------------
 
-type G2ConfigurationPipeline struct {
+type EngineConfigurationPipeline struct {
 	ConfigPath   string `json:"CONFIGPATH"`
 	ResourcePath string `json:"RESOURCEPATH"`
 	SupportPath  string `json:"SUPPORTPATH"`
 }
 
-type G2ConfigurationSql struct {
+type EngineConfigurationSql struct {
 	Connection string `json:"CONNECTION"`
 }
 
-type G2Configuration struct {
-	Pipeline G2ConfigurationPipeline `json:"PIPELINE"`
-	Sql      G2ConfigurationSql      `json:"SQL"`
+type EngineConfiguration struct {
+	Pipeline EngineConfigurationPipeline `json:"PIPELINE"`
+	Sql      EngineConfigurationSql      `json:"SQL"`
 }
