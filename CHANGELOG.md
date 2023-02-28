@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [0.1.2] - 2023-02-28
+
+### Added to 0.1.2
+
+- `engineconfigurationjsonparser` - Parses SENZING_ENGINE_CONFIGURATION_JSON
+
 ## [0.1.1] - 2023-02-10
 
 ### Added to 0.1.1
