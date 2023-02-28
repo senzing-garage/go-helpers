@@ -6,6 +6,8 @@ package engineconfigurationjsonparser
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"strconv"
 )
 
 // ----------------------------------------------------------------------------
@@ -14,20 +16,44 @@ import (
 
 // EngineConfigurationJsonParserImpl is the default implementation of the EngineConfigurationJsonParser interface.
 type EngineConfigurationJsonParserImpl struct {
-	EnableConfigurationJson string
+	EngineConfigurationJson string
 }
 
 // ----------------------------------------------------------------------------
 // Internal methods
 // ----------------------------------------------------------------------------
 
-func contains(needle string, haystack []string) bool {
+func contains(haystack []string, needle string) bool {
 	for _, value := range haystack {
 		if value == needle {
 			return true
 		}
 	}
 	return false
+}
+
+func isJson(unknownString string) bool {
+	unknownStringUnescaped, err := strconv.Unquote(unknownString)
+	if err != nil {
+		unknownStringUnescaped = unknownString
+	}
+	var jsonString json.RawMessage
+	return json.Unmarshal([]byte(unknownStringUnescaped), &jsonString) == nil
+}
+
+// ----------------------------------------------------------------------------
+// Constructor  methods
+// ----------------------------------------------------------------------------
+
+func New(engineConfigurationJson string) (EngineConfigurationJsonParser, error) {
+	var err error = nil
+	if !isJson(engineConfigurationJson) {
+		return nil, fmt.Errorf("incorrect JSON syntax in %s", engineConfigurationJson)
+	}
+	result := &EngineConfigurationJsonParserImpl{
+		EngineConfigurationJson: engineConfigurationJson,
+	}
+	return result, err
 }
 
 // ----------------------------------------------------------------------------
@@ -45,7 +71,8 @@ Output
 */
 func (parser *EngineConfigurationJsonParserImpl) GetConfigPath(ctx context.Context) (string, error) {
 	engineConfiguration := &EngineConfiguration{}
-	err := json.Unmarshal([]byte(parser.EnableConfigurationJson), &engineConfiguration)
+
+	err := json.Unmarshal([]byte(parser.EngineConfigurationJson), &engineConfiguration)
 	if err != nil {
 		return "", err
 	}
@@ -65,7 +92,7 @@ func (parser *EngineConfigurationJsonParserImpl) GetDatabaseUrls(ctx context.Con
 	var result []string
 
 	engineConfiguration := &EngineConfiguration{}
-	err := json.Unmarshal([]byte(parser.EnableConfigurationJson), &engineConfiguration)
+	err := json.Unmarshal([]byte(parser.EngineConfigurationJson), &engineConfiguration)
 	if err != nil {
 		return result, err
 	}
@@ -77,7 +104,7 @@ func (parser *EngineConfigurationJsonParserImpl) GetDatabaseUrls(ctx context.Con
 	if len(backend) > 0 && backend != "SQL" {
 		var dictionary map[string]interface{}
 		var databaseJsonKeys []string
-		err = json.Unmarshal([]byte(parser.EnableConfigurationJson), &dictionary)
+		err = json.Unmarshal([]byte(parser.EngineConfigurationJson), &dictionary)
 		if err != nil {
 			return result, err
 		}
@@ -87,7 +114,7 @@ func (parser *EngineConfigurationJsonParserImpl) GetDatabaseUrls(ctx context.Con
 		backendMap := dictionary[backend]
 		for _, value := range backendMap.(map[string]interface{}) {
 			valueString := value.(string)
-			if !contains(valueString, databaseJsonKeys) {
+			if !contains(databaseJsonKeys, valueString) {
 				databaseJsonKeys = append(databaseJsonKeys, valueString)
 			}
 		}
@@ -97,7 +124,7 @@ func (parser *EngineConfigurationJsonParserImpl) GetDatabaseUrls(ctx context.Con
 		for _, databaseJsonKey := range databaseJsonKeys {
 			databaseJson := dictionary[databaseJsonKey].(map[string]interface{})
 			databaseName := databaseJson["DB_1"].(string)
-			if !contains(databaseName, result) {
+			if !contains(result, databaseName) {
 				result = append(result, databaseName)
 			}
 		}
@@ -119,7 +146,7 @@ Output
 */
 func (parser *EngineConfigurationJsonParserImpl) GetResourcePath(ctx context.Context) (string, error) {
 	engineConfiguration := &EngineConfiguration{}
-	err := json.Unmarshal([]byte(parser.EnableConfigurationJson), &engineConfiguration)
+	err := json.Unmarshal([]byte(parser.EngineConfigurationJson), &engineConfiguration)
 	if err != nil {
 		return "", err
 	}
@@ -137,7 +164,7 @@ Output
 */
 func (parser *EngineConfigurationJsonParserImpl) GetSupportPath(ctx context.Context) (string, error) {
 	engineConfiguration := &EngineConfiguration{}
-	err := json.Unmarshal([]byte(parser.EnableConfigurationJson), &engineConfiguration)
+	err := json.Unmarshal([]byte(parser.EngineConfigurationJson), &engineConfiguration)
 	if err != nil {
 		return "", err
 	}

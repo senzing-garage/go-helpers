@@ -23,7 +23,7 @@ func getTestObject(ctx context.Context, test *testing.T) *EngineConfigurationJso
 func getParser(ctx context.Context) *EngineConfigurationJsonParserImpl {
 	if engineConfigurationJsonParserSingleton == nil {
 		engineConfigurationJsonParserSingleton = &EngineConfigurationJsonParserImpl{
-			EnableConfigurationJson: `
+			EngineConfigurationJson: `
 			{
 				"PIPELINE": {
 					"CONFIGPATH": "/etc/opt/senzing",
@@ -62,7 +62,7 @@ func TestEngineConfigurationJsonParserImpl_GetConfigPath(test *testing.T) {
 func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls(test *testing.T) {
 	ctx := context.TODO()
 	parser := &EngineConfigurationJsonParserImpl{
-		EnableConfigurationJson: `
+		EngineConfigurationJson: `
 		{
 			"PIPELINE": {
 				"CONFIGPATH": "/etc/opt/senzing",
@@ -85,7 +85,7 @@ func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls(test *testing.T) {
 func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls_Multi(test *testing.T) {
 	ctx := context.TODO()
 	parser := &EngineConfigurationJsonParserImpl{
-		EnableConfigurationJson: `
+		EngineConfigurationJson: `
 		{
 			"PIPELINE": {
 				"CONFIGPATH": "/etc/opt/senzing",
@@ -119,9 +119,53 @@ func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls_Multi(test *testing.T
 	actual, err := parser.GetDatabaseUrls(ctx)
 	testError(test, err)
 	assert.Equal(test, 3, len(actual))
-	assert.True(test, contains("postgresql://username:password@db-1.example.com:5432:G2", actual))
-	assert.True(test, contains("postgresql://username:password@db-2.example.com:5432:G2", actual))
-	assert.True(test, contains("postgresql://username:password@db-3.example.com:5432:G2", actual))
+	assert.True(test, contains(actual, "postgresql://username:password@db-1.example.com:5432:G2"))
+	assert.True(test, contains(actual, "postgresql://username:password@db-2.example.com:5432:G2"))
+	assert.True(test, contains(actual, "postgresql://username:password@db-3.example.com:5432:G2"))
+}
+
+func TestEngineConfigurationJsonParserImpl_New(test *testing.T) {
+	ctx := context.TODO()
+
+	enginConfigurationJson := `
+		{
+			"PIPELINE": {
+				"CONFIGPATH": "/etc/opt/senzing",
+				"LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+				"RESOURCEPATH": "/opt/senzing/g2/resources",
+				"SUPPORTPATH": "/opt/senzing/data"
+			},
+			"SQL": {
+				"BACKEND": "HYBRID",
+				"CONNECTION": "postgresql://username:password@db-1.example.com:5432:G2"
+			},
+			"C1": {
+				"CLUSTER_SIZE": "1",
+				"DB_1": "postgresql://username:password@db-2.example.com:5432:G2"
+			},
+			"C2": {
+				"CLUSTER_SIZE": "1",
+				"DB_1": "postgresql://username:password@db-3.example.com:5432:G2"
+			},
+			"HYBRID": {
+				"RES_FEAT": "C1",
+				"RES_FEAT_EKEY": "C1",
+				"RES_FEAT_LKEY": "C1",
+				"RES_FEAT_STAT": "C1",
+				"LIB_FEAT": "C2",
+				"LIB_FEAT_HKEY": "C2"
+			}
+		}
+		`
+
+	parser, err := New(enginConfigurationJson)
+	testError(test, err)
+	actual, err := parser.GetDatabaseUrls(ctx)
+	testError(test, err)
+	assert.Equal(test, 3, len(actual))
+	assert.True(test, contains(actual, "postgresql://username:password@db-1.example.com:5432:G2"))
+	assert.True(test, contains(actual, "postgresql://username:password@db-2.example.com:5432:G2"))
+	assert.True(test, contains(actual, "postgresql://username:password@db-3.example.com:5432:G2"))
 }
 
 // ----------------------------------------------------------------------------
