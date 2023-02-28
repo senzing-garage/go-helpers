@@ -18,6 +18,19 @@ type EngineConfigurationJsonParserImpl struct {
 }
 
 // ----------------------------------------------------------------------------
+// Internal methods
+// ----------------------------------------------------------------------------
+
+func contains(needle string, haystack []string) bool {
+	for _, value := range haystack {
+		if value == needle {
+			return true
+		}
+	}
+	return false
+}
+
+// ----------------------------------------------------------------------------
 // Interface methods
 // ----------------------------------------------------------------------------
 
@@ -50,14 +63,44 @@ Output
 */
 func (parser *EngineConfigurationJsonParserImpl) GetDatabaseUrls(ctx context.Context) ([]string, error) {
 	var result []string
+
 	engineConfiguration := &EngineConfiguration{}
 	err := json.Unmarshal([]byte(parser.EnableConfigurationJson), &engineConfiguration)
 	if err != nil {
 		return result, err
 	}
+	result = append(result, engineConfiguration.Sql.Connection)
+
+	// Handle multi-database case.
+
 	backend := engineConfiguration.Sql.Backend
-	if len(backend) == 0 || backend == "SQL" {
-		result = append(result, engineConfiguration.Sql.Connection)
+	if len(backend) > 0 && backend != "SQL" {
+		var dictionary map[string]interface{}
+		var databaseJsonKeys []string
+		err = json.Unmarshal([]byte(parser.EnableConfigurationJson), &dictionary)
+		if err != nil {
+			return result, err
+		}
+
+		// Determine JSON keys for database definitions.
+
+		backendMap := dictionary[backend]
+		for _, value := range backendMap.(map[string]interface{}) {
+			valueString := value.(string)
+			if !contains(valueString, databaseJsonKeys) {
+				databaseJsonKeys = append(databaseJsonKeys, valueString)
+			}
+		}
+
+		// Add each database.
+
+		for _, databaseJsonKey := range databaseJsonKeys {
+			databaseJson := dictionary[databaseJsonKey].(map[string]interface{})
+			databaseName := databaseJson["DB_1"].(string)
+			if !contains(databaseName, result) {
+				result = append(result, databaseName)
+			}
+		}
 	}
 
 	// TODO:  Implement multi-database list.
