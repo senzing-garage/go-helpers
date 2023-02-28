@@ -8,8 +8,8 @@ import "context"
 // ----------------------------------------------------------------------------
 
 type EngineConfigurationJsonParser interface {
-	GetDatabaseUrls(ctx context.Context) ([]string, error)
 	GetConfigPath(ctx context.Context) (string, error)
+	GetDatabaseUrls(ctx context.Context) ([]string, error)
 	GetResourcePath(ctx context.Context) (string, error)
 	GetSupportPath(ctx context.Context) (string, error)
 }
@@ -25,6 +25,7 @@ type EngineConfigurationPipeline struct {
 }
 
 type EngineConfigurationSql struct {
+	Backend    string `json:"BACKEND"`
 	Connection string `json:"CONNECTION"`
 }
 
