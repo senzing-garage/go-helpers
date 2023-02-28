@@ -68,9 +68,9 @@ build-linux:
 
 .PHONY: test
 test:
-#	@go test -v -p 1 ./...
+	@go test -v -p 1 ./...
 #	@go test -v ./.
-	@go test -v ./engineconfigurationjsonparser
+#	@go test -v ./engineconfigurationjsonparser
 #	@go test -v ./g2engineconfigurationjson
 #	@go test -v ./record
 
