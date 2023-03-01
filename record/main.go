@@ -8,8 +8,8 @@ import (
 // Constants
 // ----------------------------------------------------------------------------
 
-// Identifier of this package for the error string "senzing-6040xxxx".
-const ProductId = 6040
+// Identifier of this package for the error string "senzing-6403xxxx".
+const ProductId = 6403
 
 // ----------------------------------------------------------------------------
 // Variables
