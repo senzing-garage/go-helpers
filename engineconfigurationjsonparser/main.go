@@ -33,3 +33,10 @@ type EngineConfiguration struct {
 	Pipeline EngineConfigurationPipeline `json:"PIPELINE"`
 	Sql      EngineConfigurationSql      `json:"SQL"`
 }
+
+// ----------------------------------------------------------------------------
+// Constants
+// ----------------------------------------------------------------------------
+
+// Identfier of the  package found messages having the format "senzing-6401xxxx".
+const ProductId = 6401
