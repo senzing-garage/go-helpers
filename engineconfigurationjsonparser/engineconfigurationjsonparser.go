@@ -7,7 +7,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strconv"
+	"strings"
 )
 
 // ----------------------------------------------------------------------------
@@ -39,6 +41,21 @@ func isJson(unknownString string) bool {
 	}
 	var jsonString json.RawMessage
 	return json.Unmarshal([]byte(unknownStringUnescaped), &jsonString) == nil
+}
+
+func redactUrl(aUrl string) (string, error) {
+	parsedUrl, err := url.Parse(aUrl)
+	if err != nil {
+		if strings.HasPrefix(aUrl, "postgresql") {
+			index := strings.LastIndex(aUrl, ":")
+			aUrl := aUrl[:index] + "/" + aUrl[index+1:]
+			parsedUrl, err = url.Parse(aUrl)
+		}
+		if err != nil {
+			return "", err
+		}
+	}
+	return parsedUrl.Redacted(), nil
 }
 
 // ----------------------------------------------------------------------------
@@ -169,4 +186,38 @@ func (parser *EngineConfigurationJsonParserImpl) GetSupportPath(ctx context.Cont
 		return "", err
 	}
 	return engineConfiguration.Pipeline.SupportPath, err
+}
+
+/*
+The RedactedJson method returns the JSON string with passwords redacted.
+
+Input
+  - ctx: A context to control lifecycle.
+
+Output
+  - The Senzing engine configuration JSON string with database URLs having redacted passwords.
+*/
+func (parser *EngineConfigurationJsonParserImpl) RedactedJson(ctx context.Context) (string, error) {
+	result := parser.EngineConfigurationJson
+
+	// Get list of database URLs in the Senzing engine configuration json.
+
+	databaseUrls, err := parser.GetDatabaseUrls(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	// For each database URL in the string, replace it with a redacted database URL.
+
+	for _, databaseUrl := range databaseUrls {
+		redactedUrl, err := redactUrl(databaseUrl)
+		if err == nil {
+			result = strings.Replace(result, databaseUrl, redactedUrl, -1)
+		}
+	}
+
+	// Remove whitespace.
+
+	result = strings.Join(strings.Fields(result), "")
+	return result, err
 }

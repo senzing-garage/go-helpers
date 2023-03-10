@@ -45,7 +45,7 @@ dependencies:
 
 
 .PHONY: build
-build: dependencies build-linux
+build: build-linux
 
 
 .PHONY: build-linux

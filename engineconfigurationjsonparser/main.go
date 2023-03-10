@@ -12,6 +12,7 @@ type EngineConfigurationJsonParser interface {
 	GetDatabaseUrls(ctx context.Context) ([]string, error)
 	GetResourcePath(ctx context.Context) (string, error)
 	GetSupportPath(ctx context.Context) (string, error)
+	RedactedJson(ctx context.Context) (string, error)
 }
 
 // ----------------------------------------------------------------------------
