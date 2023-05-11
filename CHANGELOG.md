@@ -8,7 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2023-05-11
+
+### Added to 0.1.3
+
 - In `engineconfigurationjsonparser`, RedactedJson()
+- Update dependencies
+  - github.com/senzing/go-logging v1.2.3
 
 ## [0.1.2] - 2023-03-01
 

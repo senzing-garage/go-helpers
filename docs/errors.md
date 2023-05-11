@@ -1,1 +1,1 @@
-## Errors
+# go-common errors
