@@ -12,8 +12,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rogpeppe/go-internal v1.6.1/go.mod h1:xXDCJY+GAPziupqXw64V24skbSoqbTEfhy4qGm1nDQc=
 github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=
-github.com/senzing/go-logging v1.2.3 h1:NqxCXq7gwToS+k4Y/ANlzmPeaNhW4xhbNFyL/KnNr5I=
-github.com/senzing/go-logging v1.2.3/go.mod h1:xkTs3/qlLwcWhEJAwvTVJYger4y3G3R9ebY9xPbaA1c=
+github.com/senzing/go-logging v1.2.5 h1:BHiX2TGfRWP7esffDWEESTsqyc5lfcktRZHaiJEHHs8=
+github.com/senzing/go-logging v1.2.5/go.mod h1:Rm2hwBYWmxDcTBb0VspV0D9aQfprGV8/XOhiSaRYESY=
 github.com/stretchr/testify v1.8.3 h1:RP3t2pwF7cMEbC1dqtB6poj3niw/9gnV4Cjg5oW5gtY=
 github.com/stretchr/testify v1.8.3/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
