@@ -3,7 +3,7 @@ module github.com/senzing/go-common
 go 1.20
 
 require (
-	github.com/senzing/go-logging v1.2.3
+	github.com/senzing/go-logging v1.2.5
 	github.com/stretchr/testify v1.8.3
 )
 
