@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.4 - 2023-05-16
+## [0.1.4] - 2023-05-16
 
 ### Added to 0.1.4
 
 - Update dependencies
-  - github.com/senzing/go-logging v1.2.5
+  - github.com/senzing/go-logging v1.2.6
   - github.com/stretchr/testify v1.8.4
 
 ## [0.1.3] - 2023-05-11
