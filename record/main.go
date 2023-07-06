@@ -1,7 +1,7 @@
 package record
 
 import (
-	"github.com/senzing/go-logging/messagelogger"
+	"github.com/senzing/go-logging/logging"
 )
 
 // ----------------------------------------------------------------------------
@@ -22,4 +22,4 @@ var IdMessages = map[int]string{
 	3002: "a RECORD_ID field is required",
 }
 
-var szerrors, _ = messagelogger.NewSenzingApiLogger(ProductId, IdMessages, nil, 0)
+var szerrors, _ = logging.NewSenzingSdkLogger(ProductId, IdMessages)

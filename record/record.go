@@ -34,7 +34,7 @@ func NewRecord(line string) (*Record, error) {
 			return &record, validationErr
 		}
 	}
-	return &record, szerrors.Error(3000)
+	return &record, szerrors.NewError(3000)
 }
 
 // ----------------------------------------------------------------------------
@@ -49,7 +49,7 @@ func Validate(line string) (bool, error) {
 		return ValidateRecord(record)
 	}
 	//TODO: should we return the actual parse error???
-	return valid, szerrors.Error(3000)
+	return valid, szerrors.NewError(3000)
 }
 
 // ----------------------------------------------------------------------------
@@ -59,10 +59,10 @@ func Validate(line string) (bool, error) {
 func ValidateRecord(record Record) (bool, error) {
 
 	if record.DataSource == "" {
-		return false, szerrors.Error(3001)
+		return false, szerrors.NewError(3001)
 	}
 	if record.Id == "" {
-		return false, szerrors.Error(3002)
+		return false, szerrors.NewError(3002)
 	}
 	return true, nil
 }
