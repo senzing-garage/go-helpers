@@ -24,6 +24,9 @@ CC = gcc
 # Can be overridden with "export"
 # Example: "export LD_LIBRARY_PATH=/path/to/my/senzing/g2/lib"
 
+SENZING_TOOLS_DATABASE_URL ?= sqlite3://na:na@/tmp/sqlite/G2C.db
+# SENZING_TOOLS_ENGINE_CONFIGURATION_JSON ?=
+
 # Export environment variables.
 
 .EXPORT_ALL_VARIABLES:
