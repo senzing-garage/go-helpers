@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2023-07-12
+
+### Added in 0.2.0
+
+- Support for Mac/Windows
+
 ## [0.1.5] - 2023-07-06
 
 ### Changed in 0.1.5
@@ -46,8 +52,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deleted in 0.1.1
 
 - `testrecords01`
-
-### Added to 0.1.0
 
 ## [0.1.0] - 2023-01-25
 

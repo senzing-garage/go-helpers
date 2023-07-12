@@ -6,9 +6,10 @@ package g2engineconfigurationjson
 // ----------------------------------------------------------------------------
 
 type G2ConfigurationPipeline struct {
-	ConfigPath   string `json:"CONFIGPATH"`
-	ResourcePath string `json:"RESOURCEPATH"`
-	SupportPath  string `json:"SUPPORTPATH"`
+	ConfigPath          string `json:"CONFIGPATH"`
+	LicenseStringBase64 string `json:"LICENSESTRINGBASE64,omitempty"`
+	ResourcePath        string `json:"RESOURCEPATH"`
+	SupportPath         string `json:"SUPPORTPATH"`
 }
 
 type G2ConfigurationSql struct {

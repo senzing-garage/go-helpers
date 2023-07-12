@@ -100,6 +100,9 @@ func buildSpecificDatabaseUrl(databaseUrl string) (string, error) {
 The BuildSimpleSystemConfigurationJson method returns a JSON document for use with Senzing's Init(...) methods.
 The configuration is for a "system install" with a single database.
 
+If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set,
+the value of SENZING_TOOLS_ENGINE_CONFIGURATION_JSON will be returned.
+
 If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_ENGINE_CONFIGURATION_JSON is set,
 the value of SENZING_ENGINE_CONFIGURATION_JSON will be returned.
 
@@ -115,13 +118,46 @@ Output
     See the example output.
 */
 func BuildSimpleSystemConfigurationJson(senzingDatabaseUrl string) (string, error) {
+	return BuildSimpleSystemConfigurationJsonWithLicense(senzingDatabaseUrl, "")
+}
+
+/*
+The BuildSimpleSystemConfigurationJsonWithLicense method returns a JSON document for use with Senzing's Init(...) methods.
+The configuration is for a "system install" with a single database.
+
+If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set,
+the value of SENZING_TOOLS_ENGINE_CONFIGURATION_JSON will be returned.
+
+If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_ENGINE_CONFIGURATION_JSON is set,
+the value of SENZING_ENGINE_CONFIGURATION_JSON will be returned.
+
+If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_TOOLS_DATABASE_URL is set,
+the value of SENZING_TOOLS_DATABASE_URL will  be used as the senzingDatabaseUrl.
+
+Input
+  - senzingDatabaseUrl: A Database URL.
+    If empty, the SENZING_ENGINE_CONFIGURATION_JSON and SENZING_TOOLS_DATABASE_URL environment variables will be used in calculating the result.
+  - licenseStringBase64: A Base64 of a Senzing license.
+
+Output
+  - A string containing a JSON document use when calling Senzing's Init(...) methods.
+    See the example output.
+*/
+func BuildSimpleSystemConfigurationJsonWithLicense(senzingDatabaseUrl string, licenseStringBase64 string) (string, error) {
 	var err error = nil
 
 	if len(senzingDatabaseUrl) == 0 {
 
+		// If SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set, use it.
+
+		senzingEngineConfigurationJson, err := getOsEnv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON")
+		if err == nil {
+			return senzingEngineConfigurationJson, err
+		}
+
 		// If SENZING_ENGINE_CONFIGURATION_JSON is set, use it.
 
-		senzingEngineConfigurationJson, err := getOsEnv("SENZING_ENGINE_CONFIGURATION_JSON")
+		senzingEngineConfigurationJson, err = getOsEnv("SENZING_ENGINE_CONFIGURATION_JSON")
 		if err == nil {
 			return senzingEngineConfigurationJson, err
 		}
@@ -132,21 +168,24 @@ func BuildSimpleSystemConfigurationJson(senzingDatabaseUrl string) (string, erro
 		}
 	}
 
+	// Normalize database URL.
+
 	specificDatabaseUrl, specificDatabaseUrlErr := buildSpecificDatabaseUrl(senzingDatabaseUrl)
 	if specificDatabaseUrlErr != nil {
 		return "", specificDatabaseUrlErr
 	}
 
-	resultStruct := G2Configuration{
-		Pipeline: G2ConfigurationPipeline{
-			ConfigPath:   "/etc/opt/senzing",
-			ResourcePath: "/opt/senzing/g2/resources",
-			SupportPath:  "/opt/senzing/data",
-		},
-		Sql: G2ConfigurationSql{
-			Connection: specificDatabaseUrl,
-		},
+	// Determine if Base64 representation of license exists.
+
+	if len(licenseStringBase64) == 0 {
+		licenseStringBase64, _ = os.LookupEnv("SENZING_TOOLS_LICENSE_STRING_BASE64")
 	}
+
+	// Construct structure.
+
+	resultStruct := buildStruct(specificDatabaseUrl, licenseStringBase64)
+
+	// Transform structure to JSON.
 
 	resultBytes, _ := json.Marshal(resultStruct)
 	return string(resultBytes), err
