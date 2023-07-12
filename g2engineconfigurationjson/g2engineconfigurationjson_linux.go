@@ -10,35 +10,25 @@ package g2engineconfigurationjson
 func buildStruct(attributeMap map[string]string) G2Configuration {
 	var result G2Configuration
 
-	databaseUrl, inMap := attributeMap["databaseUrl"]
-	if !inMap {
+	databaseUrl, ok := attributeMap["databaseUrl"]
+	if !ok {
 		return result
 	}
 
-	licenseStringBase64, inMap := attributeMap["licenseStringBase64"]
-	if inMap {
-		result = G2Configuration{
-			Pipeline: G2ConfigurationPipeline{
-				ConfigPath:          "/etc/opt/senzing",
-				LicenseStringBase64: licenseStringBase64,
-				ResourcePath:        "/opt/senzing/g2/resources",
-				SupportPath:         "/opt/senzing/data",
-			},
-			Sql: G2ConfigurationSql{
-				Connection: databaseUrl,
-			},
-		}
-	} else {
-		result = G2Configuration{
-			Pipeline: G2ConfigurationPipeline{
-				ConfigPath:   "/etc/opt/senzing",
-				ResourcePath: "/opt/senzing/g2/resources",
-				SupportPath:  "/opt/senzing/data",
-			},
-			Sql: G2ConfigurationSql{
-				Connection: databaseUrl,
-			},
-		}
+	result = G2Configuration{
+		Pipeline: G2ConfigurationPipeline{
+			ConfigPath:   "/etc/opt/senzing",
+			ResourcePath: "/opt/senzing/g2/resources",
+			SupportPath:  "/opt/senzing/data",
+		},
+		Sql: G2ConfigurationSql{
+			Connection: databaseUrl,
+		},
+	}
+
+	licenseStringBase64, ok := attributeMap["licenseStringBase64"]
+	if ok {
+		result.Pipeline.LicenseStringBase64 = licenseStringBase64
 	}
 
 	return result

@@ -6,38 +6,46 @@ package g2engineconfigurationjson
 // Internal methods
 // ----------------------------------------------------------------------------
 
+func mapWithDefault(aMap map[string]string, key string, defaultValue string) string {
+	result, ok := aMap[key]
+	if ok {
+		return result
+	}
+	return defaultValue
+}
+
 func buildStruct(attributeMap map[string]string) G2Configuration {
 	var result G2Configuration
 
-	databaseUrl, inMap := attributeMap["databaseUrl"]
-	if !inMap {
+	databaseUrl, ok := attributeMap["databaseUrl"]
+	if !ok {
 		return result
+	}
+
+	// Construct directories based on senzingDirectory.
+	// TODO: Implement a real solution.
+
+	defaultDirectory, ok := aMap["senzingDirectory"]
+	configPath := fmt.Sprintf("%s/etc", defaultDirectory)
+	resourcePath := fmt.Sprintf("%s/g2/resources", defaultDirectory)
+	supportPath := fmt.Sprintf("%s/data", defaultDirectory)
+
+	// Apply attributeMap.
+
+	result = G2Configuration{
+		Pipeline: G2ConfigurationPipeline{
+			ConfigPath:   mapWithDefault(attributeMap, "configPath", configPath),
+			ResourcePath: mapWithDefault(attributeMap, "resourcePath", resourcePath),
+			SupportPath:  mapWithDefault(attributeMap, "supportPath", supportPath),
+		},
+		Sql: G2ConfigurationSql{
+			Connection: databaseUrl,
+		},
 	}
 
 	licenseStringBase64, inMap := attributeMap["licenseStringBase64"]
 	if inMap {
-		result = G2Configuration{
-			Pipeline: G2ConfigurationPipeline{
-				ConfigPath:          "/path/to/config",
-				LicenseStringBase64: licenseStringBase64,
-				ResourcePath:        "/path/to/resources",
-				SupportPath:         "/path/to/data",
-			},
-			Sql: G2ConfigurationSql{
-				Connection: specificDatabaseUrl,
-			},
-		}
-	} else {
-		result = G2Configuration{
-			Pipeline: G2ConfigurationPipeline{
-				ConfigPath:   "/path/to/config",
-				ResourcePath: "/path/to/resources",
-				SupportPath:  "/path/to/data",
-			},
-			Sql: G2ConfigurationSql{
-				Connection: specificDatabaseUrl,
-			},
-		}
+		result.Pipeline.LicenseStringBase64 = licenseStringBase64
 	}
 
 	return result

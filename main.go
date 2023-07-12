@@ -26,7 +26,7 @@ func main() {
 	// ------------------------------------------------------------------------
 
 	attributeMap := map[string]string{
-		"licenseStringBase64": "SENZING_TOOLS_LICENSE_STRING_BASE64",
+		"licenseStringBase64": "8BD296A26F2034AAB436045...",
 		"senzingDirectory":    "/path/to/senzing",
 		"configPath":          "/another/path/for/config",
 		"resourcePath":        "/yet/another/path/to/resources",

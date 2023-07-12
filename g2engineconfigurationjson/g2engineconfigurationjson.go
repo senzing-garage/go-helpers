@@ -186,7 +186,7 @@ func BuildSimpleSystemConfigurationJsonViaMap(attributeMap map[string]string) (s
 	// Add Environment Variables to the map, if not already specified in the map.
 
 	keys := map[string]string{
-		"licenseStringBase64": "8BD296A26F2034AAB436045...",
+		"licenseStringBase64": "SENZING_TOOLS_LICENSE_STRING_BASE64",
 		"senzingDirectory":    "SENZING_TOOLS_SENZING_DIRECTORY",
 		"configPath":          "SENZING_TOOLS_CONFIG_PATH",
 		"resourcePath":        "SENZING_TOOLS_RESOURCE_PATH",
