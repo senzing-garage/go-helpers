@@ -6,7 +6,7 @@ package g2engineconfigurationjson
 // Internal methods
 // ----------------------------------------------------------------------------
 
-func buildStruct(specificDatabaseUrl string, licenseStringBase64 string) G2Configuration {
+func buildStruct(specificDatabaseUrl string, licenseStringBase64 string, senzingDirectory string) G2Configuration {
 	var result G2Configuration
 
 	if len(licenseStringBase64) > 0 {

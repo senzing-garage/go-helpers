@@ -1,4 +1,4 @@
-//go:build linux
+//go:build windows
 
 package g2engineconfigurationjson
 
@@ -7,16 +7,15 @@ package g2engineconfigurationjson
 // ----------------------------------------------------------------------------
 
 func buildStruct(specificDatabaseUrl string, licenseStringBase64 string, senzingDirectory string) G2Configuration {
-
 	var result G2Configuration
 
 	if len(licenseStringBase64) > 0 {
 		result = G2Configuration{
 			Pipeline: G2ConfigurationPipeline{
-				ConfigPath:          "/etc/opt/senzing",
+				ConfigPath:          "/path/to/config",
 				LicenseStringBase64: licenseStringBase64,
-				ResourcePath:        "/opt/senzing/g2/resources",
-				SupportPath:         "/opt/senzing/data",
+				ResourcePath:        "/path/to/resources",
+				SupportPath:         "/path/to/data",
 			},
 			Sql: G2ConfigurationSql{
 				Connection: specificDatabaseUrl,
@@ -25,9 +24,9 @@ func buildStruct(specificDatabaseUrl string, licenseStringBase64 string, senzing
 	} else {
 		result = G2Configuration{
 			Pipeline: G2ConfigurationPipeline{
-				ConfigPath:   "/etc/opt/senzing",
-				ResourcePath: "/opt/senzing/g2/resources",
-				SupportPath:  "/opt/senzing/data",
+				ConfigPath:   "/path/to/config",
+				ResourcePath: "/path/to/resources",
+				SupportPath:  "/path/to/data",
 			},
 			Sql: G2ConfigurationSql{
 				Connection: specificDatabaseUrl,

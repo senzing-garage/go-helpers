@@ -118,7 +118,7 @@ Output
     See the example output.
 */
 func BuildSimpleSystemConfigurationJson(senzingDatabaseUrl string) (string, error) {
-	return BuildSimpleSystemConfigurationJsonWithLicense(senzingDatabaseUrl, "")
+	return BuildSimpleSystemConfigurationJsonWithExtras(senzingDatabaseUrl, "", "")
 }
 
 /*
@@ -137,13 +137,14 @@ the value of SENZING_TOOLS_DATABASE_URL will  be used as the senzingDatabaseUrl.
 Input
   - senzingDatabaseUrl: A Database URL.
     If empty, the SENZING_ENGINE_CONFIGURATION_JSON and SENZING_TOOLS_DATABASE_URL environment variables will be used in calculating the result.
-  - licenseStringBase64: A Base64 of a Senzing license.
+  - licenseStringBase64: A Base64 of a Senzing license. (Optional, may be blank string)
+  - senzingDirectory: Location of the Senzing API binaries. (Optional, may be blank string)
 
 Output
   - A string containing a JSON document use when calling Senzing's Init(...) methods.
     See the example output.
 */
-func BuildSimpleSystemConfigurationJsonWithLicense(senzingDatabaseUrl string, licenseStringBase64 string) (string, error) {
+func BuildSimpleSystemConfigurationJsonWithExtras(senzingDatabaseUrl string, licenseStringBase64 string, senzingDirectory string) (string, error) {
 	var err error = nil
 
 	if len(senzingDatabaseUrl) == 0 {
@@ -183,7 +184,7 @@ func BuildSimpleSystemConfigurationJsonWithLicense(senzingDatabaseUrl string, li
 
 	// Construct structure.
 
-	resultStruct := buildStruct(specificDatabaseUrl, licenseStringBase64)
+	resultStruct := buildStruct(specificDatabaseUrl, licenseStringBase64, senzingDirectory)
 
 	// Transform structure to JSON.
 
