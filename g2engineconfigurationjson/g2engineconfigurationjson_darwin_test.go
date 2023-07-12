@@ -3,7 +3,6 @@
 package g2engineconfigurationjson
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
