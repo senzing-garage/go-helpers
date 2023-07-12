@@ -118,7 +118,14 @@ Output
     See the example output.
 */
 func BuildSimpleSystemConfigurationJson(senzingDatabaseUrl string) (string, error) {
-	return BuildSimpleSystemConfigurationJsonWithExtras(senzingDatabaseUrl, "", "")
+	specificDatabaseUrl, err := buildSpecificDatabaseUrl(senzingDatabaseUrl)
+	if err != nil {
+		return "", err
+	}
+	attributeMap := map[string]string{
+		"databaseUrl": specificDatabaseUrl,
+	}
+	return BuildSimpleSystemConfigurationJsonViaMap(attributeMap)
 }
 
 /*
@@ -144,47 +151,61 @@ Output
   - A string containing a JSON document use when calling Senzing's Init(...) methods.
     See the example output.
 */
-func BuildSimpleSystemConfigurationJsonWithExtras(senzingDatabaseUrl string, licenseStringBase64 string, senzingDirectory string) (string, error) {
+func BuildSimpleSystemConfigurationJsonViaMap(attributeMap map[string]string) (string, error) {
 	var err error = nil
 
-	if len(senzingDatabaseUrl) == 0 {
+	// If SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set, use it.
 
-		// If SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set, use it.
+	senzingEngineConfigurationJson, isSet := os.LookupEnv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON")
+	if isSet {
+		return senzingEngineConfigurationJson, err
+	}
 
-		senzingEngineConfigurationJson, err := getOsEnv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON")
-		if err == nil {
-			return senzingEngineConfigurationJson, err
-		}
+	// If SENZING_ENGINE_CONFIGURATION_JSON is set, use it. This is a legacy environment variable.
 
-		// If SENZING_ENGINE_CONFIGURATION_JSON is set, use it.
+	senzingEngineConfigurationJson, isSet = os.LookupEnv("SENZING_ENGINE_CONFIGURATION_JSON")
+	if isSet {
+		return senzingEngineConfigurationJson, err
+	}
 
-		senzingEngineConfigurationJson, err = getOsEnv("SENZING_ENGINE_CONFIGURATION_JSON")
-		if err == nil {
-			return senzingEngineConfigurationJson, err
-		}
+	// Add database URL.
 
-		senzingDatabaseUrl, err = getOsEnv("SENZING_TOOLS_DATABASE_URL")
+	_, inMap := attributeMap["databaseUrl"]
+	if !inMap {
+		senzingDatabaseUrl, err := getOsEnv("SENZING_TOOLS_DATABASE_URL")
 		if err != nil {
 			return "", err
 		}
+		specificDatabaseUrl, err := buildSpecificDatabaseUrl(senzingDatabaseUrl)
+		if err != nil {
+			return "", err
+		}
+		attributeMap["databaseUrl"] = specificDatabaseUrl
 	}
 
-	// Normalize database URL.
+	// Add Environment Variables to the map, if not already specified in the map.
 
-	specificDatabaseUrl, specificDatabaseUrlErr := buildSpecificDatabaseUrl(senzingDatabaseUrl)
-	if specificDatabaseUrlErr != nil {
-		return "", specificDatabaseUrlErr
+	keys := map[string]string{
+		"licenseStringBase64": "8BD296A26F2034AAB436045...",
+		"senzingDirectory":    "SENZING_TOOLS_SENZING_DIRECTORY",
+		"configPath":          "SENZING_TOOLS_CONFIG_PATH",
+		"resourcePath":        "SENZING_TOOLS_RESOURCE_PATH",
+		"supportPath":         "SENZING_TOOLS_SUPPORT_PATH",
 	}
 
-	// Determine if Base64 representation of license exists.
-
-	if len(licenseStringBase64) == 0 {
-		licenseStringBase64, _ = os.LookupEnv("SENZING_TOOLS_LICENSE_STRING_BASE64")
+	for mapKey, environmentVariable := range keys {
+		_, inMap := attributeMap[mapKey]
+		if !inMap {
+			environmentValue, isSet := os.LookupEnv(environmentVariable)
+			if isSet {
+				attributeMap[mapKey] = environmentValue
+			}
+		}
 	}
 
 	// Construct structure.
 
-	resultStruct := buildStruct(specificDatabaseUrl, licenseStringBase64, senzingDirectory)
+	resultStruct := buildStruct(attributeMap)
 
 	// Transform structure to JSON.
 

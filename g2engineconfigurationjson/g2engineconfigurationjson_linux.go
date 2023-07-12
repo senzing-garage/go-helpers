@@ -6,11 +6,17 @@ package g2engineconfigurationjson
 // Internal methods
 // ----------------------------------------------------------------------------
 
-func buildStruct(specificDatabaseUrl string, licenseStringBase64 string, senzingDirectory string) G2Configuration {
-
+// func buildStruct(specificDatabaseUrl string, licenseStringBase64 string, senzingDirectory string) G2Configuration {
+func buildStruct(attributeMap map[string]string) G2Configuration {
 	var result G2Configuration
 
-	if len(licenseStringBase64) > 0 {
+	databaseUrl, inMap := attributeMap["databaseUrl"]
+	if !inMap {
+		return result
+	}
+
+	licenseStringBase64, inMap := attributeMap["licenseStringBase64"]
+	if inMap {
 		result = G2Configuration{
 			Pipeline: G2ConfigurationPipeline{
 				ConfigPath:          "/etc/opt/senzing",
@@ -19,7 +25,7 @@ func buildStruct(specificDatabaseUrl string, licenseStringBase64 string, senzing
 				SupportPath:         "/opt/senzing/data",
 			},
 			Sql: G2ConfigurationSql{
-				Connection: specificDatabaseUrl,
+				Connection: databaseUrl,
 			},
 		}
 	} else {
@@ -30,7 +36,7 @@ func buildStruct(specificDatabaseUrl string, licenseStringBase64 string, senzing
 				SupportPath:  "/opt/senzing/data",
 			},
 			Sql: G2ConfigurationSql{
-				Connection: specificDatabaseUrl,
+				Connection: databaseUrl,
 			},
 		}
 	}
