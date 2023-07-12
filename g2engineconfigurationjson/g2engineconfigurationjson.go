@@ -119,9 +119,16 @@ func BuildSimpleSystemConfigurationJson(senzingDatabaseUrl string) (string, erro
 
 	if len(senzingDatabaseUrl) == 0 {
 
+		// If SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set, use it.
+
+		senzingEngineConfigurationJson, err := getOsEnv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON")
+		if err == nil {
+			return senzingEngineConfigurationJson, err
+		}
+
 		// If SENZING_ENGINE_CONFIGURATION_JSON is set, use it.
 
-		senzingEngineConfigurationJson, err := getOsEnv("SENZING_ENGINE_CONFIGURATION_JSON")
+		senzingEngineConfigurationJson, err = getOsEnv("SENZING_ENGINE_CONFIGURATION_JSON")
 		if err == nil {
 			return senzingEngineConfigurationJson, err
 		}
@@ -132,21 +139,16 @@ func BuildSimpleSystemConfigurationJson(senzingDatabaseUrl string) (string, erro
 		}
 	}
 
+	// Construct structure.
+
 	specificDatabaseUrl, specificDatabaseUrlErr := buildSpecificDatabaseUrl(senzingDatabaseUrl)
 	if specificDatabaseUrlErr != nil {
 		return "", specificDatabaseUrlErr
 	}
+	licenseStringBase64, _ := os.LookupEnv("SENZING_TOOLS_LICENSE_STRING_BASE64")
+	resultStruct := buildStruct(specificDatabaseUrl, licenseStringBase64)
 
-	resultStruct := G2Configuration{
-		Pipeline: G2ConfigurationPipeline{
-			ConfigPath:   "/etc/opt/senzing",
-			ResourcePath: "/opt/senzing/g2/resources",
-			SupportPath:  "/opt/senzing/data",
-		},
-		Sql: G2ConfigurationSql{
-			Connection: specificDatabaseUrl,
-		},
-	}
+	// Transform structure to JSON.
 
 	resultBytes, _ := json.Marshal(resultStruct)
 	return string(resultBytes), err
