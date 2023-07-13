@@ -146,9 +146,9 @@ the value of SENZING_TOOLS_ENGINE_CONFIGURATION_JSON will be returned unchanged.
 If the SENZING_TOOLS_ENGINE_CONFIGURATION_JSON environment variable is not found,
 the precedence used in calculating the values of the returned JSON are:
 
- 1. key/value in attributeMap
- 2. environment variable
- 3. default or a calculated value
+ 1. Key/value in attributeMap
+ 2. Environment variable
+ 3. Default or a calculated value
 
 The keys and corresponding environment variables are:
 
@@ -162,7 +162,7 @@ The keys and corresponding environment variables are:
 	supportPath         	SENZING_TOOLS_SUPPORT_PATH
 
 Input
-  - attributeMap: A mapping of a key to desired value.
+  - attributeMap: A mapping of a keys to desired values.
     If key doesn't exist, an environment variable will be used when constructing output JSON.
     If environment variable doesn't exist, a default or calculated value will be used when constructing output JSON.
 
@@ -180,7 +180,8 @@ func BuildSimpleSystemConfigurationJsonUsingMap(attributeMap map[string]string) 
 		return senzingEngineConfigurationJson, err
 	}
 
-	// If SENZING_ENGINE_CONFIGURATION_JSON is set, use it. This is a legacy environment variable.
+	// If SENZING_ENGINE_CONFIGURATION_JSON is set, use it.
+	// This is a legacy environment variable and won't be documented.
 
 	senzingEngineConfigurationJson, isSet = os.LookupEnv("SENZING_ENGINE_CONFIGURATION_JSON")
 	if isSet {

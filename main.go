@@ -11,7 +11,7 @@ import (
 func main() {
 
 	// ------------------------------------------------------------------------
-	// --- Using a bare message generator accepting databaseUrl
+	// --- Build JSON from environment variables.
 	// ------------------------------------------------------------------------
 
 	iniParams, err := g2engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
@@ -21,8 +21,7 @@ func main() {
 	fmt.Println(iniParams)
 
 	// ------------------------------------------------------------------------
-	// --- Using a generator accepting databaseUrl, licenseStringBase64,
-	// ---    and senzingDirectory
+	// --- Build JSON from map of key/values.
 	// ------------------------------------------------------------------------
 
 	attributeMap := map[string]string{
