@@ -52,3 +52,8 @@ func buildStruct(attributeMap map[string]string) G2Configuration {
 
 	return result
 }
+
+func verifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConfigurationJson string) error {
+	var err error = nil
+	return err
+}
