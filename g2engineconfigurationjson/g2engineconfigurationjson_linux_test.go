@@ -3,6 +3,7 @@
 package g2engineconfigurationjson
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -25,6 +26,14 @@ func testError(test *testing.T, err error) {
 
 func TestBuildSimpleSystemConfigurationJson(test *testing.T) {
 	_, err := BuildSimpleSystemConfigurationJson("postgresql://postgres:postgres@10.0.0.1:5432/G2")
+	testError(test, err)
+}
+
+func TestVerifySenzingEngineConfigurationJson(test *testing.T) {
+	ctx := context.TODO()
+	testJson, err := BuildSimpleSystemConfigurationJson("postgresql://postgres:postgres@10.0.0.1:5432/G2")
+	testError(test, err)
+	err = verifySenzingEngineConfigurationJson(ctx, testJson)
 	testError(test, err)
 }
 
