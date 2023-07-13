@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2023-07-13
+
+### Changed in 0.2.1
+
+- Added support for a Senzing directory
+- Update dependencies
+  - github.com/senzing/go-logging v1.3.1
+
 ## [0.2.0] - 2023-07-12
 
 ### Added in 0.2.0

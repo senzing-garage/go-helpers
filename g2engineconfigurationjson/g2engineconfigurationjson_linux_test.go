@@ -24,7 +24,7 @@ func testError(test *testing.T, err error) {
 // ----------------------------------------------------------------------------
 
 func TestBuildSimpleSystemConfigurationJson(test *testing.T) {
-	_, err := BuildSimpleSystemConfigurationJson("postgresql://postgres:postgres@$10.0.0.1:5432/G2")
+	_, err := BuildSimpleSystemConfigurationJson("postgresql://postgres:postgres@10.0.0.1:5432/G2")
 	testError(test, err)
 }
 
