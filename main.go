@@ -14,7 +14,7 @@ func main() {
 	// --- Using a bare message generator accepting databaseUrl
 	// ------------------------------------------------------------------------
 
-	iniParams, err := g2engineconfigurationjson.BuildSimpleSystemConfigurationJson("")
+	iniParams, err := g2engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
 	if err != nil {
 		panic(err)
 	}
@@ -33,7 +33,7 @@ func main() {
 		"supportPath":         "/final/path/to/support",
 	}
 
-	iniParams2, err := g2engineconfigurationjson.BuildSimpleSystemConfigurationJsonViaMap(attributeMap)
+	iniParams2, err := g2engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingMap(attributeMap)
 	if err != nil {
 		panic(err)
 	}

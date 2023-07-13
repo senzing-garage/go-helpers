@@ -97,25 +97,18 @@ func buildSpecificDatabaseUrl(databaseUrl string) (string, error) {
 // ----------------------------------------------------------------------------
 
 /*
-The BuildSimpleSystemConfigurationJson method returns a JSON document for use with Senzing's Init(...) methods.
-The configuration is for a "system install" with a single database.
-
-If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set,
-the value of SENZING_TOOLS_ENGINE_CONFIGURATION_JSON will be returned.
-
-If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_ENGINE_CONFIGURATION_JSON is set,
-the value of SENZING_ENGINE_CONFIGURATION_JSON will be returned.
-
-If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_TOOLS_DATABASE_URL is set,
-the value of SENZING_TOOLS_DATABASE_URL will  be used as the senzingDatabaseUrl.
+The BuildSimpleSystemConfigurationJson method is a convenience method
+for invoking BuildSimpleSystemConfigurationJsonUsingMap() passing in only the
+"databaseUrl" mapped value.
 
 Input
   - senzingDatabaseUrl: A Database URL.
-    If empty, the SENZING_ENGINE_CONFIGURATION_JSON and SENZING_TOOLS_DATABASE_URL environment variables will be used in calculating the result.
 
 Output
   - A string containing a JSON document use when calling Senzing's Init(...) methods.
     See the example output.
+
+Deprecated: Use BuildSimpleSystemConfigurationJsonUsingEnvVars() or BuildSimpleSystemConfigurationJsonUsingMap() instead.
 */
 func BuildSimpleSystemConfigurationJson(senzingDatabaseUrl string) (string, error) {
 	specificDatabaseUrl, err := buildSpecificDatabaseUrl(senzingDatabaseUrl)
@@ -125,33 +118,59 @@ func BuildSimpleSystemConfigurationJson(senzingDatabaseUrl string) (string, erro
 	attributeMap := map[string]string{
 		"databaseUrl": specificDatabaseUrl,
 	}
-	return BuildSimpleSystemConfigurationJsonViaMap(attributeMap)
+	return BuildSimpleSystemConfigurationJsonUsingMap(attributeMap)
 }
 
 /*
-The BuildSimpleSystemConfigurationJsonWithLicense method returns a JSON document for use with Senzing's Init(...) methods.
-The configuration is for a "system install" with a single database.
+The BuildSimpleSystemConfigurationJsonUsingEnvVars method is a convenience method
+for invoking BuildSimpleSystemConfigurationJsonUsingMap without any mapped values.
+In other words, only environment variables will be used.
 
-If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set,
-the value of SENZING_TOOLS_ENGINE_CONFIGURATION_JSON will be returned.
-
-If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_ENGINE_CONFIGURATION_JSON is set,
-the value of SENZING_ENGINE_CONFIGURATION_JSON will be returned.
-
-If the senzingDatabaseUrl parameter is an empty string and the environment variable SENZING_TOOLS_DATABASE_URL is set,
-the value of SENZING_TOOLS_DATABASE_URL will  be used as the senzingDatabaseUrl.
-
-Input
-  - senzingDatabaseUrl: A Database URL.
-    If empty, the SENZING_ENGINE_CONFIGURATION_JSON and SENZING_TOOLS_DATABASE_URL environment variables will be used in calculating the result.
-  - licenseStringBase64: A Base64 of a Senzing license. (Optional, may be blank string)
-  - senzingDirectory: Location of the Senzing API binaries. (Optional, may be blank string)
+See BuildSimpleSystemConfigurationJsonUsingMap() for information on the environment variables used.
 
 Output
   - A string containing a JSON document use when calling Senzing's Init(...) methods.
     See the example output.
 */
-func BuildSimpleSystemConfigurationJsonViaMap(attributeMap map[string]string) (string, error) {
+func BuildSimpleSystemConfigurationJsonUsingEnvVars() (string, error) {
+	attributeMap := map[string]string{}
+	return BuildSimpleSystemConfigurationJsonUsingMap(attributeMap)
+}
+
+/*
+The BuildSimpleSystemConfigurationJsonUsingMap method returns a JSON document for use with Senzing's Init(...) methods.
+
+If the environment variable SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set,
+the value of SENZING_TOOLS_ENGINE_CONFIGURATION_JSON will be returned unchanged.
+
+If the SENZING_TOOLS_ENGINE_CONFIGURATION_JSON environment variable is not found,
+the precedence used in calculating the values of the returned JSON are:
+
+ 1. key/value in attributeMap
+ 2. environment variable
+ 3. default or a calculated value
+
+The keys and corresponding environment variables are:
+
+	Key						Environment variable
+	---------------------  	----------------------------------
+	databaseUrl 			SENZING_TOOLS_DATABASE_URL
+	licenseStringBase64 	SENZING_TOOLS_LICENSE_STRING_BASE64
+	senzingDirectory    	SENZING_TOOLS_SENZING_DIRECTORY
+	configPath          	SENZING_TOOLS_CONFIG_PATH
+	resourcePath        	SENZING_TOOLS_RESOURCE_PATH
+	supportPath         	SENZING_TOOLS_SUPPORT_PATH
+
+Input
+  - attributeMap: A mapping of a key to desired value.
+    If key doesn't exist, an environment variable will be used when constructing output JSON.
+    If environment variable doesn't exist, a default or calculated value will be used when constructing output JSON.
+
+Output
+  - A string containing a JSON document use when calling Senzing's Init(...) methods.
+    See the example output.
+*/
+func BuildSimpleSystemConfigurationJsonUsingMap(attributeMap map[string]string) (string, error) {
 	var err error = nil
 
 	// If SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set, use it.
@@ -198,7 +217,9 @@ func BuildSimpleSystemConfigurationJsonViaMap(attributeMap map[string]string) (s
 		if !inMap {
 			environmentValue, isSet := os.LookupEnv(environmentVariable)
 			if isSet {
-				attributeMap[mapKey] = environmentValue
+				if len(environmentValue) > 0 {
+					attributeMap[mapKey] = environmentValue
+				}
 			}
 		}
 	}
