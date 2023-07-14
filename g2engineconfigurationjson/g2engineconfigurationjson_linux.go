@@ -2,11 +2,12 @@
 
 package g2engineconfigurationjson
 
+import "context"
+
 // ----------------------------------------------------------------------------
 // Internal methods
 // ----------------------------------------------------------------------------
 
-// func buildStruct(specificDatabaseUrl string, licenseStringBase64 string, senzingDirectory string) G2Configuration {
 func buildStruct(attributeMap map[string]string) G2Configuration {
 	var result G2Configuration
 
@@ -32,4 +33,9 @@ func buildStruct(attributeMap map[string]string) G2Configuration {
 	}
 
 	return result
+}
+
+func verifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConfigurationJson string) error {
+	var err error = nil
+	return err
 }
