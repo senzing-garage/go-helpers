@@ -3,12 +3,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/senzing/go-common/g2engineconfigurationjson"
 )
 
 func main() {
+	ctx := context.TODO()
 
 	// ------------------------------------------------------------------------
 	// --- Build JSON from environment variables.
@@ -19,6 +21,15 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(iniParams)
+
+	// ------------------------------------------------------------------------
+	// --- Verify parameters
+	// ------------------------------------------------------------------------
+
+	err = g2engineconfigurationjson.VerifySenzingEngineConfigurationJson(ctx, iniParams)
+	if err != nil {
+		panic(err)
+	}
 
 	// ------------------------------------------------------------------------
 	// --- Build JSON from map of key/values.
