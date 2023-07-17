@@ -288,9 +288,7 @@ func VerifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConf
 	if err != nil {
 		return err
 	}
-	resourceFiles := []string{
-		"templates/cfgVariant.json",
-	}
+	resourceFiles := []string{} // Currently, no tests.  senzingapi-runtime has almost nothing in RESOURCEPATH.
 	for _, resourceFile := range resourceFiles {
 		targetFile := fmt.Sprintf("%s/%s", resourcePath, resourceFile)
 		if _, err := os.Stat(targetFile); err != nil {
