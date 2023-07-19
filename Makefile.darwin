@@ -1,0 +1,2 @@
+SENZING_DIR ?= /Applications/Senzing.app/Contents/Resources/app/g2
+SENZING_TOOLS_SENZING_DIRECTORY ?= $(SENZING_DIR)

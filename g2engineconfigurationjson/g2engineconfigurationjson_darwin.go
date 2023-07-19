@@ -2,7 +2,10 @@
 
 package g2engineconfigurationjson
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // ----------------------------------------------------------------------------
 // Internal methods
@@ -27,9 +30,9 @@ func buildStruct(attributeMap map[string]string) G2Configuration {
 	// Construct directories based on senzingDirectory.
 	// TODO: Implement a real solution.
 
-	defaultDirectory, ok := attributeMap["senzingDirectory"]
+	defaultDirectory := attributeMap["senzingDirectory"]
 	configPath := fmt.Sprintf("%s/etc", defaultDirectory)
-	resourcePath := fmt.Sprintf("%s/g2/resources", defaultDirectory)
+	resourcePath := fmt.Sprintf("%s/resources", defaultDirectory)
 	supportPath := fmt.Sprintf("%s/data", defaultDirectory)
 
 	// Apply attributeMap.
