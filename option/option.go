@@ -12,7 +12,7 @@ func (v ContextVariable) SetDefault(newDefault any) ContextVariable {
 	return v
 }
 
-var OptionConfigPath = ContextVariable{
+var ConfigPath = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_CONFIG_PATH", ""),
 	Envar:   "SENZING_TOOLS_CONFIG_PATH",
 	Help:    "Path to SenzingAPI's configuration directory [%s]",
@@ -20,7 +20,7 @@ var OptionConfigPath = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionConfiguration = ContextVariable{
+var Configuration = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_CONFIGURATION", ""),
 	Envar:   "SENZING_TOOLS_CONFIGURATION",
 	Help:    "Path to configuration file [%s]",
@@ -28,7 +28,7 @@ var OptionConfiguration = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionDatabaseUrl = ContextVariable{
+var DatabaseUrl = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_DATABASE_URL", ""),
 	Envar:   "SENZING_TOOLS_DATABASE_URL",
 	Help:    "URL of database to initialize [%s]",
@@ -36,7 +36,7 @@ var OptionDatabaseUrl = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionDatasources = ContextVariable{
+var Datasources = ContextVariable{
 	Default: []string{},
 	Envar:   "SENZING_TOOLS_DATASOURCES",
 	Help:    "Datasources to be added to initial Senzing configuration [%s]",
@@ -44,7 +44,7 @@ var OptionDatasources = ContextVariable{
 	Type:    optiontype.StringSlice,
 }
 
-var OptionDelayInSeconds = ContextVariable{
+var DelayInSeconds = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_DELAY_IN_SECONDS", 0),
 	Envar:   "SENZING_TOOLS_DELAY_IN_SECONDS",
 	Help:    "Number of seconds to wait before starting process [%s]",
@@ -52,7 +52,7 @@ var OptionDelayInSeconds = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionEnableAll = ContextVariable{
+var EnableAll = ContextVariable{
 	Default: OsLookupEnvBool("SENZING_TOOLS_ENABLE_ALL", false),
 	Envar:   "SENZING_TOOLS_ENABLE_ALL",
 	Help:    "Enable all services [%s]",
@@ -60,7 +60,7 @@ var OptionEnableAll = ContextVariable{
 	Type:    optiontype.Bool,
 }
 
-var OptionEnableG2config = ContextVariable{
+var EnableG2config = ContextVariable{
 	Default: OsLookupEnvBool("SENZING_TOOLS_ENABLE_G2CONFIG", false),
 	Envar:   "SENZING_TOOLS_ENABLE_G2CONFIG",
 	Help:    "Enable G2Config service [%s]",
@@ -68,7 +68,7 @@ var OptionEnableG2config = ContextVariable{
 	Type:    optiontype.Bool,
 }
 
-var OptionEnableG2configmgr = ContextVariable{
+var EnableG2configmgr = ContextVariable{
 	Default: OsLookupEnvBool("SENZING_TOOLS_ENABLE_G2CONFIGMGR", false),
 	Envar:   "SENZING_TOOLS_ENABLE_G2CONFIGMGR",
 	Help:    "Enable G2ConfigMgr service [%s]",
@@ -76,7 +76,7 @@ var OptionEnableG2configmgr = ContextVariable{
 	Type:    optiontype.Bool,
 }
 
-var OptionEnableG2diagnostic = ContextVariable{
+var EnableG2diagnostic = ContextVariable{
 	Default: OsLookupEnvBool("SENZING_TOOLS_ENABLE_G2DIAGNOSTIC", false),
 	Envar:   "SENZING_TOOLS_ENABLE_G2DIAGNOSTIC",
 	Help:    "Enable G2Diagnostic service [%s]",
@@ -84,7 +84,7 @@ var OptionEnableG2diagnostic = ContextVariable{
 	Type:    optiontype.Bool,
 }
 
-var OptionEnableG2engine = ContextVariable{
+var EnableG2engine = ContextVariable{
 	Default: OsLookupEnvBool("SENZING_TOOLS_ENABLE_G2ENGINE", false),
 	Envar:   "SENZING_TOOLS_ENABLE_G2ENGINE",
 	Help:    "Enable G2Config service [%s]",
@@ -92,7 +92,7 @@ var OptionEnableG2engine = ContextVariable{
 	Type:    optiontype.Bool,
 }
 
-var OptionEnableG2product = ContextVariable{
+var EnableG2product = ContextVariable{
 	Default: OsLookupEnvBool("SENZING_TOOLS_ENABLE_G2PRODUCT", false),
 	Envar:   "SENZING_TOOLS_ENABLE_G2PRODUCT",
 	Help:    "Enable G2Config service [%s]",
@@ -100,7 +100,7 @@ var OptionEnableG2product = ContextVariable{
 	Type:    optiontype.Bool,
 }
 
-var OptionEnableSenzingChatApi = ContextVariable{
+var EnableSenzingChatApi = ContextVariable{
 	Default: OsLookupEnvBool("SENZING_TOOLS_ENABLE_SENZING_CHAT_API", false),
 	Envar:   "SENZING_TOOLS_ENABLE_SENZING_CHAT_API",
 	Help:    "Enable the Senzing REST Chat service [%s]",
@@ -108,7 +108,7 @@ var OptionEnableSenzingChatApi = ContextVariable{
 	Type:    optiontype.Bool,
 }
 
-var OptionEnableSenzingRestApi = ContextVariable{
+var EnableSenzingRestApi = ContextVariable{
 	Default: OsLookupEnvBool("SENZING_TOOLS_ENABLE_SENZING_REST_API", false),
 	Envar:   "SENZING_TOOLS_ENABLE_SENZING_REST_API",
 	Help:    "Enable the Senzing REST API service [%s]",
@@ -116,7 +116,7 @@ var OptionEnableSenzingRestApi = ContextVariable{
 	Type:    optiontype.Bool,
 }
 
-var OptionEnableSwaggerUi = ContextVariable{
+var EnableSwaggerUi = ContextVariable{
 	Default: OsLookupEnvBool("SENZING_TOOLS_ENABLE_SWAGGER_UI", false),
 	Envar:   "SENZING_TOOLS_ENABLE_SWAGGER_UI",
 	Help:    "Enable the Swagger UI service [%s]",
@@ -124,7 +124,7 @@ var OptionEnableSwaggerUi = ContextVariable{
 	Type:    optiontype.Bool,
 }
 
-var OptionEnableXterm = ContextVariable{
+var EnableXterm = ContextVariable{
 	Default: OsLookupEnvBool("SENZING_TOOLS_ENABLE_XTERM", false),
 	Envar:   "SENZING_TOOLS_ENABLE_XTERM",
 	Help:    "Enable the XTerm service [%s]",
@@ -132,7 +132,7 @@ var OptionEnableXterm = ContextVariable{
 	Type:    optiontype.Bool,
 }
 
-var OptionEngineConfigurationJson = ContextVariable{
+var EngineConfigurationJson = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON", ""),
 	Envar:   "SENZING_TOOLS_ENGINE_CONFIGURATION_JSON",
 	Help:    "JSON string sent to Senzing's init() function [%s]",
@@ -140,7 +140,7 @@ var OptionEngineConfigurationJson = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionEngineLogLevel = ContextVariable{
+var EngineLogLevel = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_ENGINE_LOG_LEVEL", 0),
 	Envar:   "SENZING_TOOLS_ENGINE_LOG_LEVEL",
 	Help:    "Log level for Senzing Engine [%s]",
@@ -148,7 +148,7 @@ var OptionEngineLogLevel = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionEngineModuleName = ContextVariable{
+var EngineModuleName = ContextVariable{
 	Default: fmt.Sprintf("senzing-tools-%d", time.Now().Unix()),
 	Envar:   "SENZING_TOOLS_ENGINE_MODULE_NAME",
 	Help:    "Identifier given to the Senzing engine [%s]",
@@ -156,7 +156,7 @@ var OptionEngineModuleName = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionGrpcPort = ContextVariable{
+var GrpcPort = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_GRPC_PORT", 8260),
 	Envar:   "SENZING_TOOLS_GRPC_PORT",
 	Help:    "Port used to serve gRPC [%s]",
@@ -164,7 +164,7 @@ var OptionGrpcPort = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionGrpcUrl = ContextVariable{
+var GrpcUrl = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_GRPC_URL", ""),
 	Envar:   "SENZING_TOOLS_GRPC_URL",
 	Help:    "URL of Senzing gRPC service [%s]",
@@ -172,7 +172,7 @@ var OptionGrpcUrl = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionHttpPort = ContextVariable{
+var HttpPort = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_HTTP_PORT", 8261),
 	Envar:   "SENZING_TOOLS_HTTP_PORT",
 	Help:    "Port to serve HTTP [%s]",
@@ -180,7 +180,7 @@ var OptionHttpPort = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionInputFileType = ContextVariable{
+var InputFileType = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_INPUT_FILE_TYPE", ""),
 	Envar:   "SENZING_TOOLS_INPUT_FILE_TYPE",
 	Help:    "Input file type to override auto-detect based on file name [%s]",
@@ -188,7 +188,7 @@ var OptionInputFileType = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionInputURL = ContextVariable{
+var InputURL = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_INPUT_URL", ""),
 	Envar:   "SENZING_TOOLS_INPUT_URL",
 	Help:    "Input URL used for processing [%s]",
@@ -196,7 +196,7 @@ var OptionInputURL = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionLicenseStringBase64 = ContextVariable{
+var LicenseStringBase64 = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_LICENSE_STRING_BASE64", ""),
 	Envar:   "SENZING_TOOLS_LICENSE_STRING_BASE64",
 	Help:    "Base64 representation of a Senzing license [%s]",
@@ -204,7 +204,7 @@ var OptionLicenseStringBase64 = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionLogLevel = ContextVariable{
+var LogLevel = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_LOG_LEVEL", "INFO"),
 	Envar:   "SENZING_TOOLS_LOG_LEVEL",
 	Help:    "Log level of TRACE, DEBUG, INFO, WARN, ERROR, FATAL, or PANIC [%s]",
@@ -212,7 +212,7 @@ var OptionLogLevel = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionMonitoringPeriodInSeconds = ContextVariable{
+var MonitoringPeriodInSeconds = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_MONITORING_PERIOD_IN_SECONDS", 60),
 	Envar:   "SENZING_TOOLS_MONITORING_PERIOD_IN_SECONDS",
 	Help:    "Print monitoring log messages with the period given in seconds [%s]",
@@ -220,7 +220,7 @@ var OptionMonitoringPeriodInSeconds = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionNumberOfWorkers = ContextVariable{
+var NumberOfWorkers = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_NUMBER_OF_WORKERS", 0),
 	Envar:   "SENZING_TOOLS_NUMBER_OF_WORKERS",
 	Help:    "Override the default number of worker routines. Default is GOMAXPROCS [%s]",
@@ -228,7 +228,7 @@ var OptionNumberOfWorkers = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionObserverOrigin = ContextVariable{
+var ObserverOrigin = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_OBSERVER_ORIGIN", ""),
 	Envar:   "SENZING_TOOLS_OBSERVER_ORIGIN",
 	Help:    "Identify this instance to the Observer [%s]",
@@ -236,7 +236,7 @@ var OptionObserverOrigin = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionObserverUrl = ContextVariable{
+var ObserverUrl = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_OBSERVER_URL", ""),
 	Envar:   "SENZING_TOOLS_OBSERVER_URL",
 	Help:    "URL of Observer [%s]",
@@ -244,7 +244,7 @@ var OptionObserverUrl = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionOutputURL = ContextVariable{
+var OutputURL = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_OUTPUT_URL", ""),
 	Envar:   "SENZING_TOOLS_OUTPUT_URL",
 	Help:    "Output URL used for processing [%s]",
@@ -252,7 +252,7 @@ var OptionOutputURL = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionRecordMax = ContextVariable{
+var RecordMax = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_RECORD_MAX", 0),
 	Envar:   "SENZING_TOOLS_RECORD_MAX",
 	Help:    "Process a maximum number of records equal to this number [%s]",
@@ -260,7 +260,7 @@ var OptionRecordMax = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionRecordMin = ContextVariable{
+var RecordMin = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_RECORD_MIN", 0),
 	Envar:   "SENZING_TOOLS_RECORD_MIN",
 	Help:    "Process records starting at this record number, discarding all before [%s]",
@@ -268,7 +268,7 @@ var OptionRecordMin = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionRecordMonitor = ContextVariable{
+var RecordMonitor = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_RECORD_MONITOR", 100000),
 	Envar:   "SENZING_TOOLS_RECORD_MONITOR",
 	Help:    "Log a monitor message after this number of records have been processed [%s]",
@@ -276,7 +276,7 @@ var OptionRecordMonitor = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionResourcePath = ContextVariable{
+var ResourcePath = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_RESOURCE_PATH", ""),
 	Envar:   "SENZING_TOOLS_RESOURCE_PATH",
 	Help:    "Path to SenzingAPI's config, schema, and templates directory [%s]",
@@ -284,7 +284,7 @@ var OptionResourcePath = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionSenzingDirectory = ContextVariable{
+var SenzingDirectory = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_SENZING_DIRECTORY", ""),
 	Envar:   "SENZING_TOOLS_SENZING_DIRECTORY",
 	Help:    "Path to the SenzingAPI installation directory [%s]",
@@ -292,7 +292,7 @@ var OptionSenzingDirectory = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionServerAddress = ContextVariable{
+var ServerAddress = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_SERVER_ADDRESS", "0.0.0.0"),
 	Envar:   "SENZING_TOOLS_SERVER_ADDRESS",
 	Help:    "IP interface server listens on [%s]",
@@ -300,7 +300,7 @@ var OptionServerAddress = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionSupportPath = ContextVariable{
+var SupportPath = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_SUPPORT_PATH", "8261"),
 	Envar:   "SENZING_TOOLS_SUPPORT_PATH",
 	Help:    "Path to SenzingAPI's data directory [%s]",
@@ -308,7 +308,7 @@ var OptionSupportPath = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionVisibilityPeriodInSeconds = ContextVariable{
+var VisibilityPeriodInSeconds = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_VISIBILITY_PERIOD_IN_SECONDS", 60),
 	Envar:   "SENZING_TOOLS_VISIBILITY_PERIOD_IN_SECONDS",
 	Help:    "Number of seconds a record held for processing.  This is renewed if processing takes longer [%s]",
@@ -316,7 +316,7 @@ var OptionVisibilityPeriodInSeconds = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionXtermAllowedHostnames = ContextVariable{
+var XtermAllowedHostnames = ContextVariable{
 	Default: []string{"localhost"},
 	Envar:   "SENZING_TOOLS_XTERM_ALLOWED_HOSTNAMES",
 	Help:    "Comma-delimited list of hostnames permitted to connect to the websocket [%s]",
@@ -324,7 +324,7 @@ var OptionXtermAllowedHostnames = ContextVariable{
 	Type:    optiontype.StringSlice,
 }
 
-var OptionXtermArguments = ContextVariable{
+var XtermArguments = ContextVariable{
 	Default: []string{},
 	Envar:   "SENZING_TOOLS_XTERM_ARGUMENTS",
 	Help:    "Comma-delimited list of arguments passed to the terminal command prompt [%s]",
@@ -332,7 +332,7 @@ var OptionXtermArguments = ContextVariable{
 	Type:    optiontype.StringSlice,
 }
 
-var OptionXtermCommand = ContextVariable{
+var XtermCommand = ContextVariable{
 	Default: OsLookupEnvString("SENZING_TOOLS_XTERM_COMMAND", "/bin/bash"),
 	Envar:   "SENZING_TOOLS_XTERM_COMMAND",
 	Help:    "Path of shell command [%s]",
@@ -340,7 +340,7 @@ var OptionXtermCommand = ContextVariable{
 	Type:    optiontype.String,
 }
 
-var OptionXtermConnectionErrorLimit = ContextVariable{
+var XtermConnectionErrorLimit = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_XTERM_CONNECTION_ERROR_LIMIT", 10),
 	Envar:   "SENZING_TOOLS_XTERM_CONNECTION_ERROR_LIMIT",
 	Help:    "Connection re-attempts before terminating [%s]",
@@ -348,7 +348,7 @@ var OptionXtermConnectionErrorLimit = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionXtermKeepalivePingTimeout = ContextVariable{
+var XtermKeepalivePingTimeout = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_XTERM_KEEPALIVE_PING_TIMEOUT", 20),
 	Envar:   "SENZING_TOOLS_XTERM_KEEPALIVE_PING_TIMEOUT",
 	Help:    "Maximum allowable seconds between a ping message and its response [%s]",
@@ -356,7 +356,7 @@ var OptionXtermKeepalivePingTimeout = ContextVariable{
 	Type:    optiontype.Int,
 }
 
-var OptionXtermMaxBufferSizeBytes = ContextVariable{
+var XtermMaxBufferSizeBytes = ContextVariable{
 	Default: OsLookupEnvInt("SENZING_TOOLS_XTERM_MAX_BUFFER_SIZE_BYTES", 512),
 	Envar:   "SENZING_TOOLS_XTERM_MAX_BUFFER_SIZE_BYTES",
 	Help:    "Maximum length of terminal input [%s]",

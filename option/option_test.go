@@ -24,7 +24,7 @@ func TestOsLookupEnvString(test *testing.T) {
 }
 
 func TestSetDefault(test *testing.T) {
-	assert.Equal(test, "NOT a default", OptionDatabaseUrl.SetDefault("NOT a default").Default)
+	assert.Equal(test, "NOT a default", DatabaseUrl.SetDefault("NOT a default").Default)
 }
 
 // ----------------------------------------------------------------------------
@@ -47,6 +47,6 @@ func ExampleOsLookupEnvString() {
 }
 
 func ExampleContextVariable_SetDefault() {
-	fmt.Println(OptionDatabaseUrl.SetDefault("NOT a default").Default)
+	fmt.Println(DatabaseUrl.SetDefault("NOT a default").Default)
 	// Output: NOT a default
 }
