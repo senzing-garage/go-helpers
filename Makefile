@@ -75,11 +75,6 @@ build-linux:
 # Test
 # -----------------------------------------------------------------------------
 
-echo:
-	@echo "$(OSTYPE) $(OSARCH)"
-	@echo "$(SENZING_DIR)"
-	@echo "$(SENZING_TOOLS_SENZING_DIRECTORY)"
-
 .PHONY: test
 test:
 	@go test -v -p 1 ./...
