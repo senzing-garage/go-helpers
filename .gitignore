@@ -15,3 +15,12 @@
 # vendor/
 
 .history
+
+
+# Visual Studio Code directory
+.vscode/
+.vscode/***
+
+# ignore generated artifacts
+target/
+target/***
