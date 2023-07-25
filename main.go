@@ -5,25 +5,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
 
 	"github.com/senzing/go-common/g2engineconfigurationjson"
-	"github.com/senzing/go-common/jsonutil"
 )
 
 func main() {
-	args := os.Args[1:]
-
-	for _, name := range args {
-		normalized, err := jsonutil.NormalizeJson(name)
-		if err != nil {
-			log.Fatal(err)
-		} else {
-			fmt.Println(normalized)
-		}
-	}
-
 	ctx := context.TODO()
 
 	// ------------------------------------------------------------------------
