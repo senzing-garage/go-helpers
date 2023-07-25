@@ -54,11 +54,25 @@ dependencies:
 
 
 .PHONY: build
-build: build-linux
+build: build-linux-amd64 build-macos-amd64
 
 
-.PHONY: build-linux
-build-linux:
+.PHONY: build-macos-amd64
+build-macos-amd64:
+	@GOOS=darwin \
+	GOARCH=amd64 \
+	go build \
+		-ldflags \
+			"-X 'main.buildIteration=${BUILD_ITERATION}' \
+			-X 'main.buildVersion=${BUILD_VERSION}' \
+			-X 'main.programName=${PROGRAM_NAME}' \
+			" \
+		-o $(GO_PACKAGE_NAME)
+	@mkdir -p $(TARGET_DIRECTORY)/darwin-amd64 || true
+	@mv $(GO_PACKAGE_NAME) $(TARGET_DIRECTORY)/darwin-amd64
+
+.PHONY: build-linux-amd64
+build-linux-amd64:
 	@GOOS=linux \
 	GOARCH=amd64 \
 	go build \
@@ -68,8 +82,8 @@ build-linux:
 			-X 'main.programName=${PROGRAM_NAME}' \
 			" \
 		-o $(GO_PACKAGE_NAME)
-	@mkdir -p $(TARGET_DIRECTORY)/linux || true
-	@mv $(GO_PACKAGE_NAME) $(TARGET_DIRECTORY)/linux
+	@mkdir -p $(TARGET_DIRECTORY)/linux-amd64 || true
+	@mv $(GO_PACKAGE_NAME) $(TARGET_DIRECTORY)/linux-amd64
 
 # -----------------------------------------------------------------------------
 # Test
