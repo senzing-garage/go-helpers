@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.6] - 2023-07-26
+
+### Changed in 0.2.6
+
+- Added `jsonutils` package with `IsJson()` and `NormalizeJson` functions
+- Added unit tests for `jsonutils`
 
 ## [0.2.5] - 2023-07-24
 
