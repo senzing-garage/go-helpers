@@ -85,7 +85,7 @@ func NormalizeAndSortJson(jsonText string) (string, error) {
 	}
 
 	// sort the parsed JSON value
-	sortJsonValue(parsedJson)
+	sortJsonValue(*parsedJson)
 
 	// marshall the parsed object back to text (bytes) and return the text and potential error
 	normalizedJson, err := json.Marshal(*parsedJson)
@@ -93,12 +93,12 @@ func NormalizeAndSortJson(jsonText string) (string, error) {
 	return string(normalizedJson), err
 }
 
-func sortJsonValue(jsonValue *any) {
-	switch typedJson := (*jsonValue).(type) {
+func sortJsonValue(jsonValue any) {
+	switch typedJson := jsonValue.(type) {
 	case map[string]any:
-		sortJsonObject(&typedJson)
+		sortJsonObject(typedJson)
 	case []any:
-		sortJsonArray(&typedJson)
+		sortJsonArray(typedJson)
 	default:
 		// do nothing for JSON values that are not objects or arrays
 		// these values are already "sorted"
@@ -106,35 +106,35 @@ func sortJsonValue(jsonValue *any) {
 
 }
 
-func sortJsonObject(jsonObject *map[string]any) {
+func sortJsonObject(jsonObject map[string]any) {
 	// sort each value in the object
-	for _, value := range *jsonObject {
-		sortJsonValue(&value)
+	for _, jsonValue := range jsonObject {
+		sortJsonValue(jsonValue)
 	}
 }
 
-func sortJsonArray(jsonArray *[]any) {
+func sortJsonArray(jsonArray []any) {
 	// sort each element in the array
-	for _, jsonValue := range *jsonArray {
-		sortJsonValue(&jsonValue)
+	for _, jsonValue := range jsonArray {
+		sortJsonValue(jsonValue)
 	}
 
 	// now sort the array itself
-	sort.Slice(*jsonArray, func(i, j int) bool {
+	sort.Slice(jsonArray, func(i, j int) bool {
 		// special case JSON null values
-		if ((*jsonArray)[i] == nil) && ((*jsonArray)[j] == nil) {
+		if (jsonArray[i] == nil) && (jsonArray[j] == nil) {
 			return false
 		}
-		if ((*jsonArray)[i] == nil) && ((*jsonArray)[j] != nil) {
+		if (jsonArray[i] == nil) && (jsonArray[j] != nil) {
 			return true
 		}
-		if ((*jsonArray)[i] != nil) && ((*jsonArray)[j] == nil) {
+		if (jsonArray[i] != nil) && (jsonArray[j] == nil) {
 			return false
 		}
 
 		// otherwise marshal the value and compare the text
-		json1, _ := json.Marshal((*jsonArray)[i])
-		json2, _ := json.Marshal((*jsonArray)[j])
+		json1, _ := json.Marshal(jsonArray[i])
+		json2, _ := json.Marshal(jsonArray[j])
 		return (strings.Compare(string(json1), string(json2)) < 0)
 	})
 }
