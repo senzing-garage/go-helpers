@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed in 0.2.7
 
-- Added `jsonutils.NormalizeAndSortJSON()` function to sort JSON arrays in addition to normalization
+- Added `jsonutils.NormalizeAndSortJson()` function to sort JSON arrays in addition to normalization
 - Added `-j` option to `main()` in `main.go` to allow command-line JSON normalization testing.
 
 ## [0.2.6] - 2023-07-26
