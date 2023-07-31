@@ -8,19 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.8] - 2023-07-31
+
+### Changed in 0.2.8
+
+- Added `jsonutil.RedactJson()` function recursively nullify JSON property values
+- Added `jsonutil.RedactJsonWithMap()` function to recursively replace JSON property values
+- Added test cases and examples for new redaction functions
+
 ## [0.2.7] - 2023-07-27
 
 ### Changed in 0.2.7
 
-- Added `jsonutils.NormalizeAndSortJson()` function to sort JSON arrays in addition to normalization
+- Added `jsonutil.NormalizeAndSortJson()` function to sort JSON arrays in addition to normalization
 - Added `-j` option to `main()` in `main.go` to allow command-line JSON normalization testing.
 
 ## [0.2.6] - 2023-07-26
 
 ### Changed in 0.2.6
 
-- Added `jsonutils` package with `IsJson()` and `NormalizeJson` functions
-- Added unit tests for `jsonutils`
+- Added `jsonutil` package with `IsJson()` and `NormalizeJson` functions
+- Added unit tests for `jsonutil`
 
 ## [0.2.5] - 2023-07-24
 
