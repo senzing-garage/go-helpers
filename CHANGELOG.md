@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed in 0.2.8
 
-- Added `jsonutil.RedactJson()` function recursively nullify JSON property values
+- Added `jsonutil.RedactJson()` function to recursively nullify JSON property values
 - Added `jsonutil.RedactJsonWithMap()` function to recursively replace JSON property values
 - Added test cases and examples for new redaction functions
 
