@@ -138,3 +138,106 @@ func sortJsonArray(jsonArray []any) {
 		return (strings.Compare(string(json1), string(json2)) < 0)
 	})
 }
+
+/*
+Given JSON text, this will unmarshal it and recursively descend JSON arrays and JSON objects
+to redact the values for any JSON object properties whose property names match those specified
+for redaction.  The values will be replaced with JSON null values and the JSON will be marshalled
+back into text and returned.  This should work with any JSON literal: objects, arrays, null,
+integers, booleans, decimal numbers, etc.... However, this method has no effect on simple numeric,
+boolean, or null values.
+
+Input
+  - jsonText: The JSON text to be redacted.
+  - redactProps: The JSON properties to be redacted.
+
+Output
+  - The JSON text representing the redacted JSON.
+  - An error if a failure occurred in unmarshalling the specified text.
+*/
+func RedactJson(jsonText string, redactProps ...string) (string, error) {
+	redactMap := map[string]any{}
+	for _, jsonProp := range redactProps {
+		redactMap[jsonProp] = nil
+	}
+
+	return RedactJsonWithMap(jsonText, redactMap)
+}
+
+/*
+Given JSON text, this will unmarshal it and recursively descend JSON arrays and JSON objects
+to redact the values for any JSON object properties whose property names match those specified
+for redaction.  The values will be replaced with the corresponding values from the redaction
+map and the JSON will be marshalled back into text and returned.  This should work with any
+JSON literal: objects, arrays, null, integers, booleans, decimal numbers, etc.... However,
+this method has no effect on simple numeric, boolean, or null values.  NOTE: the redacted
+values should be values that can be marshalled back into JSON, if nil, then a JSON null will
+be used.
+
+Input
+  - jsonText: The JSON text to be redacted.
+  - redactMap: The map of JSON properties to be redacted to values to be used for redaction.
+
+Output
+  - The JSON text representing the redacted JSON.
+  - An error if a failure occurred in unmarshalling the specified text or marshalling the
+    redacted JSON.
+*/
+func RedactJsonWithMap(jsonText string, redactMap map[string]any) (string, error) {
+	var parsedJson *any = nil
+
+	// unmarshall the text and let it allocate whatever object it wants to hold the result
+	err := json.Unmarshal([]byte(jsonText), &parsedJson)
+
+	// check for an unmarshalling error
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+
+	// check for a null literal which is unmarshalled as a nil pointer
+	if parsedJson == nil {
+		return "null", nil
+	}
+
+	// sort the parsed JSON value
+	redactJsonValue(*parsedJson, redactMap)
+
+	// marshall the parsed object back to text (bytes) and return the text and potential error
+	redactedJson, err := json.Marshal(*parsedJson)
+
+	return string(redactedJson), err
+
+}
+
+func redactJsonValue(jsonValue any, redactMap map[string]any) {
+	switch typedJson := jsonValue.(type) {
+	case map[string]any:
+		redactJsonObject(typedJson, redactMap)
+	case []any:
+		redactJsonArray(typedJson, redactMap)
+	default:
+		// do nothing for JSON values that are not objects or arrays
+		// these values are already "sorted"
+	}
+
+}
+
+func redactJsonObject(jsonObject map[string]any, redactMap map[string]any) {
+	// sort each value in the object
+	for key, jsonValue := range jsonObject {
+		redactedValue, redacted := redactMap[key]
+		if redacted {
+			jsonObject[key] = redactedValue
+		} else {
+			redactJsonValue(jsonValue, redactMap)
+		}
+	}
+}
+
+func redactJsonArray(jsonArray []any, redactMap map[string]any) {
+	// sort each element in the array
+	for _, jsonValue := range jsonArray {
+		redactJsonValue(jsonValue, redactMap)
+	}
+}
