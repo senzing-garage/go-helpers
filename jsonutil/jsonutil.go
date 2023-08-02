@@ -32,11 +32,11 @@ Output
   - The JSON text that is the normalized representation of the specified text.
   - An error if a failure occurred in interpretting/normalizing the specified text.
 */
-func NormalizeJson(jsonText string) (string, error) {
+func NormalizeJson(jsonText string) (text string, err error) {
 	var parsedJson *any = nil
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err := json.Unmarshal([]byte(jsonText), &parsedJson)
+	err = json.Unmarshal([]byte(jsonText), &parsedJson)
 
 	// check for an unmarshalling error
 	if err != nil {
@@ -67,11 +67,11 @@ Output
   - The JSON text that is the normalized representation of the specified text.
   - An error if a failure occurred in interpretting/normalizing the specified text.
 */
-func NormalizeAndSortJson(jsonText string) (string, error) {
+func NormalizeAndSortJson(jsonText string) (text string, err error) {
 	var parsedJson *any = nil
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err := json.Unmarshal([]byte(jsonText), &parsedJson)
+	err = json.Unmarshal([]byte(jsonText), &parsedJson)
 
 	// check for an unmarshalling error
 	if err != nil {
@@ -155,7 +155,7 @@ Output
   - The JSON text representing the redacted JSON.
   - An error if a failure occurred in unmarshalling the specified text.
 */
-func RedactJson(jsonText string, redactProps ...string) (string, error) {
+func RedactJson(jsonText string, redactProps ...string) (text string, err error) {
 	redactMap := map[string]any{}
 	for _, jsonProp := range redactProps {
 		redactMap[jsonProp] = nil
@@ -183,11 +183,11 @@ Output
   - An error if a failure occurred in unmarshalling the specified text or marshalling the
     redacted JSON.
 */
-func RedactJsonWithMap(jsonText string, redactMap map[string]any) (string, error) {
+func RedactJsonWithMap(jsonText string, redactMap map[string]any) (text string, err error) {
 	var parsedJson *any = nil
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err := json.Unmarshal([]byte(jsonText), &parsedJson)
+	err = json.Unmarshal([]byte(jsonText), &parsedJson)
 
 	// check for an unmarshalling error
 	if err != nil {
