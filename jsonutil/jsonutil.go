@@ -2,7 +2,6 @@ package jsonutil
 
 import (
 	"encoding/json"
-	"fmt"
 	"sort"
 	"strings"
 )
@@ -22,6 +21,25 @@ func IsJson(unknownText string) bool {
 }
 
 /*
+Flattens the tuple result of a string representing JSON text and an error that may have occurred into a single
+string result.  If the error is not nil, then this returns a string representation of the error, otherwise it
+returns the specified JSON text.
+
+Input
+  - jsonText: The JSON text to be flattened.
+  - error: The error that may have occurred or nil.
+
+Output
+  - The flattened text
+*/
+func Flatten(jsonText string, err error) string {
+	if err != nil {
+		return err.Error()
+	}
+	return jsonText
+}
+
+/*
 Normalizes the specified JSON text using the Go encoding/json marshaller to ensure it is formatted consistently.
 This should work with any JSON literal: objects, arrays, null, integers, booleans, decimal numbers, etc....
 
@@ -32,15 +50,14 @@ Output
   - The JSON text that is the normalized representation of the specified text.
   - An error if a failure occurred in interpretting/normalizing the specified text.
 */
-func NormalizeJson(jsonText string) (text string, err error) {
+func NormalizeJson(jsonText string) (string, error) {
 	var parsedJson *any = nil
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err = json.Unmarshal([]byte(jsonText), &parsedJson)
+	err := json.Unmarshal([]byte(jsonText), &parsedJson)
 
 	// check for an unmarshalling error
 	if err != nil {
-		fmt.Println(err)
 		return "", err
 	}
 
@@ -67,15 +84,14 @@ Output
   - The JSON text that is the normalized representation of the specified text.
   - An error if a failure occurred in interpretting/normalizing the specified text.
 */
-func NormalizeAndSortJson(jsonText string) (text string, err error) {
+func NormalizeAndSortJson(jsonText string) (string, error) {
 	var parsedJson *any = nil
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err = json.Unmarshal([]byte(jsonText), &parsedJson)
+	err := json.Unmarshal([]byte(jsonText), &parsedJson)
 
 	// check for an unmarshalling error
 	if err != nil {
-		fmt.Println(err)
 		return "", err
 	}
 
@@ -155,7 +171,7 @@ Output
   - The JSON text representing the redacted JSON.
   - An error if a failure occurred in unmarshalling the specified text.
 */
-func RedactJson(jsonText string, redactProps ...string) (text string, err error) {
+func RedactJson(jsonText string, redactProps ...string) (string, error) {
 	redactMap := map[string]any{}
 	for _, jsonProp := range redactProps {
 		redactMap[jsonProp] = nil
@@ -183,15 +199,14 @@ Output
   - An error if a failure occurred in unmarshalling the specified text or marshalling the
     redacted JSON.
 */
-func RedactJsonWithMap(jsonText string, redactMap map[string]any) (text string, err error) {
+func RedactJsonWithMap(jsonText string, redactMap map[string]any) (string, error) {
 	var parsedJson *any = nil
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err = json.Unmarshal([]byte(jsonText), &parsedJson)
+	err := json.Unmarshal([]byte(jsonText), &parsedJson)
 
 	// check for an unmarshalling error
 	if err != nil {
-		fmt.Println(err)
 		return "", err
 	}
 

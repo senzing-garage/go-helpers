@@ -1,6 +1,7 @@
 package jsonutil
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -726,6 +727,19 @@ func TestRedactJsonWithMap_Formatted4(test *testing.T) {
 	assert.Equal(test, expected, actual, "JSON object (formatted 4) not redacted with map as expected")
 }
 
+func TestFlatten_NoError(test *testing.T) {
+	actual := Flatten(`{"foo": 5, "bar": 6}`, nil)
+	var expected = `{"foo": 5, "bar": 6}`
+	assert.Equal(test, expected, actual, "Flattening without an error did not work as expected: "+actual)
+}
+
+func TestFlatten_WithError(test *testing.T) {
+	err := errors.New("Failed")
+	actual := Flatten(`{"foo": 5, "bar": 6}`, err)
+	var expected = "Failed"
+	assert.Equal(test, expected, actual, "Flattening with an error did not work as expected: "+actual)
+}
+
 // ----------------------------------------------------------------------------
 // Example functions
 // ----------------------------------------------------------------------------
@@ -820,4 +834,24 @@ func ExampleRedactJsonWithMap() {
 
 	fmt.Println(redactedJson)
 	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":"***-**-****","surname":"Schmoe"}
+}
+
+func ExampleFlatten_noError() {
+	// For more information, visit https://github.com/Senzing/go-common/blob/main/jsonutil/jsonutil_test.go
+	var jsonText = `{ "name": "Joe Schmoe", "ssn": "111-22-3333" }`
+
+	redactedJson := Flatten(RedactJsonWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
+
+	fmt.Println(redactedJson)
+	// Output: {"name":"Joe Schmoe","ssn":"***-**-****"}
+}
+
+func ExampleFlatten_withError() {
+	// For more information, visit https://github.com/Senzing/go-common/blob/main/jsonutil/jsonutil_test.go
+	var jsonText = `{ "name": "Joe Schmoe" "ssn": "111-22-3333" }` // missing a comma
+
+	redactedJson := Flatten(RedactJsonWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
+
+	fmt.Println(redactedJson)
+	// Output: invalid character '"' after object key:value pair
 }
