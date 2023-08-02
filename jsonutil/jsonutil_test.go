@@ -727,6 +727,9 @@ func TestRedactJsonWithMap_Formatted4(test *testing.T) {
 	assert.Equal(test, expected, actual, "JSON object (formatted 4) not redacted with map as expected")
 }
 
+// ----------------------------------------------------------------------------
+// Test Flatten function
+// ----------------------------------------------------------------------------
 func TestFlatten_NoError(test *testing.T) {
 	actual := Flatten(`{"foo": 5, "bar": 6}`, nil)
 	var expected = `{"foo": 5, "bar": 6}`
