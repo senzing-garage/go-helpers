@@ -207,10 +207,6 @@ func RedactJsonWithMap(jsonText string, redactMap map[string]any) (string, error
 
 	// check for an unmarshalling error
 	if err != nil {
-<<<<<<< HEAD
-=======
-		fmt.Println(err)
->>>>>>> main
 		return "", err
 	}
 
