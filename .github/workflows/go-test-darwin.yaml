@@ -30,4 +30,5 @@ jobs:
         run: hdiutil attach /tmp/senzingapi.dmg
       - name: Copy files
         run: sudo mkdir -p /opt/senzing/ && sudo cp -R /Volumes/SenzingAPI/senzing/g2 /opt/senzing
-      - run: go test -v -p 1 ./...
+      - name: Run go test
+        run: go test -v -p 1 ./...
