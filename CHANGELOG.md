@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.9] - 2023-08-02
+
+### Changed in 0.2.9
+
+- Added `jsonutil.Flatten()` function to coalesce a string and error tuple into a string
+- Added test cases and examples for new flatten function
+
 ## [0.2.8] - 2023-07-31
 
 ### Changed in 0.2.8

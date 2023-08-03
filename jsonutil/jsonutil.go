@@ -2,7 +2,6 @@ package jsonutil
 
 import (
 	"encoding/json"
-	"fmt"
 	"sort"
 	"strings"
 )
@@ -19,6 +18,25 @@ Output
 func IsJson(unknownText string) bool {
 	var jsonString json.RawMessage
 	return json.Unmarshal([]byte(unknownText), &jsonString) == nil
+}
+
+/*
+Flattens the tuple result of a string representing JSON text and an error that may have occurred into a single
+string result.  If the error is not nil, then this returns a string representation of the error, otherwise it
+returns the specified JSON text.
+
+Input
+  - jsonText: The JSON text to be flattened.
+  - error: The error that may have occurred or nil.
+
+Output
+  - The flattened text
+*/
+func Flatten(jsonText string, err error) string {
+	if err != nil {
+		return err.Error()
+	}
+	return jsonText
 }
 
 /*
@@ -40,7 +58,6 @@ func NormalizeJson(jsonText string) (string, error) {
 
 	// check for an unmarshalling error
 	if err != nil {
-		fmt.Println(err)
 		return "", err
 	}
 
@@ -75,7 +92,6 @@ func NormalizeAndSortJson(jsonText string) (string, error) {
 
 	// check for an unmarshalling error
 	if err != nil {
-		fmt.Println(err)
 		return "", err
 	}
 
@@ -191,7 +207,6 @@ func RedactJsonWithMap(jsonText string, redactMap map[string]any) (string, error
 
 	// check for an unmarshalling error
 	if err != nil {
-		fmt.Println(err)
 		return "", err
 	}
 
