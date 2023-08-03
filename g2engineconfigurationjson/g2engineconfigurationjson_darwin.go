@@ -27,10 +27,14 @@ func buildStruct(attributeMap map[string]string) G2Configuration {
 		return result
 	}
 
-	// Construct directories based on senzingDirectory.
-	// TODO: Implement a real solution.
+	// Determine defaultDirectory.
 
-	defaultDirectory := attributeMap["senzingDirectory"]
+	defaultDirectory := "/opt/senzing/g2"
+	senzingDirectory, ok := attributeMap["senzingDirectory"]
+	if ok {
+		defaultDirectory = senzingDirectory
+	}
+
 	configPath := fmt.Sprintf("%s/etc", defaultDirectory)
 	resourcePath := fmt.Sprintf("%s/resources", defaultDirectory)
 	supportPath := fmt.Sprintf("%s/data", defaultDirectory)
