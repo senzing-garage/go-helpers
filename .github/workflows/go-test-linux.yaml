@@ -17,7 +17,10 @@ jobs:
         go: ["1.20"]
     name: Go ${{ matrix.go }} - linux
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Setup go
         uses: actions/setup-go@v4
         with:
@@ -35,4 +38,5 @@ jobs:
       - run: sudo cp /opt/senzing/g2/resources/templates/customSn.txt        /etc/opt/senzing
       - run: sudo cp /opt/senzing/g2/resources/templates/defaultGNRCP.config /etc/opt/senzing
       - run: sudo cp /opt/senzing/g2/resources/templates/stb.config          /etc/opt/senzing
-      - run: go test -v -p 1 ./...
+      - name: Run go test
+        run: go test -v -p 1 ./...
