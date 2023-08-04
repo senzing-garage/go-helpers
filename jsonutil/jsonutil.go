@@ -34,7 +34,13 @@ Output
 */
 func Flatten(jsonText string, err error) string {
 	if err != nil {
-		return err.Error()
+		errorMap := map[string]any{}
+
+		errorMap["text"] = jsonText
+		errorMap["error"] = err.Error()
+
+		errorJson, _ := json.Marshal(errorMap)
+		return string(errorJson)
 	}
 	return jsonText
 }
@@ -50,7 +56,7 @@ Output
   - The JSON text that is the normalized representation of the specified text.
   - An error if a failure occurred in interpretting/normalizing the specified text.
 */
-func NormalizeJson(jsonText string) (string, error) {
+func Normalize(jsonText string) (string, error) {
 	var parsedJson *any = nil
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
@@ -58,7 +64,7 @@ func NormalizeJson(jsonText string) (string, error) {
 
 	// check for an unmarshalling error
 	if err != nil {
-		return "", err
+		return jsonText, err
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
@@ -84,7 +90,7 @@ Output
   - The JSON text that is the normalized representation of the specified text.
   - An error if a failure occurred in interpretting/normalizing the specified text.
 */
-func NormalizeAndSortJson(jsonText string) (string, error) {
+func NormalizeAndSort(jsonText string) (string, error) {
 	var parsedJson *any = nil
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
@@ -92,7 +98,7 @@ func NormalizeAndSortJson(jsonText string) (string, error) {
 
 	// check for an unmarshalling error
 	if err != nil {
-		return "", err
+		return jsonText, err
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
@@ -101,7 +107,7 @@ func NormalizeAndSortJson(jsonText string) (string, error) {
 	}
 
 	// sort the parsed JSON value
-	sortJsonValue(*parsedJson)
+	sortValue(*parsedJson)
 
 	// marshall the parsed object back to text (bytes) and return the text and potential error
 	normalizedJson, err := json.Marshal(*parsedJson)
@@ -109,12 +115,12 @@ func NormalizeAndSortJson(jsonText string) (string, error) {
 	return string(normalizedJson), err
 }
 
-func sortJsonValue(jsonValue any) {
+func sortValue(jsonValue any) {
 	switch typedJson := jsonValue.(type) {
 	case map[string]any:
-		sortJsonObject(typedJson)
+		sortObject(typedJson)
 	case []any:
-		sortJsonArray(typedJson)
+		sortArray(typedJson)
 	default:
 		// do nothing for JSON values that are not objects or arrays
 		// these values are already "sorted"
@@ -122,17 +128,17 @@ func sortJsonValue(jsonValue any) {
 
 }
 
-func sortJsonObject(jsonObject map[string]any) {
+func sortObject(jsonObject map[string]any) {
 	// sort each value in the object
 	for _, jsonValue := range jsonObject {
-		sortJsonValue(jsonValue)
+		sortValue(jsonValue)
 	}
 }
 
-func sortJsonArray(jsonArray []any) {
+func sortArray(jsonArray []any) {
 	// sort each element in the array
 	for _, jsonValue := range jsonArray {
-		sortJsonValue(jsonValue)
+		sortValue(jsonValue)
 	}
 
 	// now sort the array itself
@@ -171,13 +177,13 @@ Output
   - The JSON text representing the redacted JSON.
   - An error if a failure occurred in unmarshalling the specified text.
 */
-func RedactJson(jsonText string, redactProps ...string) (string, error) {
+func Redact(jsonText string, redactProps ...string) (string, error) {
 	redactMap := map[string]any{}
 	for _, jsonProp := range redactProps {
 		redactMap[jsonProp] = nil
 	}
 
-	return RedactJsonWithMap(jsonText, redactMap)
+	return RedactWithMap(jsonText, redactMap)
 }
 
 /*
@@ -199,7 +205,7 @@ Output
   - An error if a failure occurred in unmarshalling the specified text or marshalling the
     redacted JSON.
 */
-func RedactJsonWithMap(jsonText string, redactMap map[string]any) (string, error) {
+func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 	var parsedJson *any = nil
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
@@ -207,7 +213,7 @@ func RedactJsonWithMap(jsonText string, redactMap map[string]any) (string, error
 
 	// check for an unmarshalling error
 	if err != nil {
-		return "", err
+		return jsonText, err
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
@@ -216,7 +222,7 @@ func RedactJsonWithMap(jsonText string, redactMap map[string]any) (string, error
 	}
 
 	// sort the parsed JSON value
-	redactJsonValue(*parsedJson, redactMap)
+	redactValue(*parsedJson, redactMap)
 
 	// marshall the parsed object back to text (bytes) and return the text and potential error
 	redactedJson, err := json.Marshal(*parsedJson)
@@ -225,12 +231,12 @@ func RedactJsonWithMap(jsonText string, redactMap map[string]any) (string, error
 
 }
 
-func redactJsonValue(jsonValue any, redactMap map[string]any) {
+func redactValue(jsonValue any, redactMap map[string]any) {
 	switch typedJson := jsonValue.(type) {
 	case map[string]any:
-		redactJsonObject(typedJson, redactMap)
+		redactObject(typedJson, redactMap)
 	case []any:
-		redactJsonArray(typedJson, redactMap)
+		redactArray(typedJson, redactMap)
 	default:
 		// do nothing for JSON values that are not objects or arrays
 		// these values are already "sorted"
@@ -238,21 +244,21 @@ func redactJsonValue(jsonValue any, redactMap map[string]any) {
 
 }
 
-func redactJsonObject(jsonObject map[string]any, redactMap map[string]any) {
+func redactObject(jsonObject map[string]any, redactMap map[string]any) {
 	// sort each value in the object
 	for key, jsonValue := range jsonObject {
 		redactedValue, redacted := redactMap[key]
 		if redacted {
 			jsonObject[key] = redactedValue
 		} else {
-			redactJsonValue(jsonValue, redactMap)
+			redactValue(jsonValue, redactMap)
 		}
 	}
 }
 
-func redactJsonArray(jsonArray []any, redactMap map[string]any) {
+func redactArray(jsonArray []any, redactMap map[string]any) {
 	// sort each element in the array
 	for _, jsonValue := range jsonArray {
-		redactJsonValue(jsonValue, redactMap)
+		redactValue(jsonValue, redactMap)
 	}
 }

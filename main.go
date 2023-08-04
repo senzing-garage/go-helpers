@@ -17,11 +17,11 @@ func main() {
 		args := os.Args[2:]
 
 		for _, jsonText := range args {
-			normalized, err := jsonutil.NormalizeJson(jsonText)
+			normalized, err := jsonutil.Normalize(jsonText)
 			if err != nil {
 				log.Fatal(err)
 			}
-			normSorted, err := jsonutil.NormalizeAndSortJson(jsonText)
+			normSorted, err := jsonutil.NormalizeAndSort(jsonText)
 			fmt.Println("- - - - - - - - - - - - - - - - - - - - ")
 			fmt.Println(normalized)
 			fmt.Println()
