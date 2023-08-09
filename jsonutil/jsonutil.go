@@ -163,6 +163,83 @@ func sortArray(jsonArray []any) {
 
 /*
 Given JSON text, this will unmarshal it and recursively descend JSON arrays and JSON objects
+to remove the JSON object properties whose names match those specified for removal.  The JSON
+will then be marshalled back into text and returned.  This should work with any JSON literal:
+objects, arrays, null, integers, booleans, decimal numbers, etc.... However, this method has
+no effect on simple numeric, boolean, or null values.
+
+Input
+  - jsonText: The JSON text to be redacted.
+  - removeProps: The JSON properties to be removed.
+
+Output
+  - The JSON text representing the modified JSON.
+  - An error if a failure occurred in unmarshalling the specified text.
+*/
+func Strip(jsonText string, removeProps ...string) (string, error) {
+	stripMap := map[string]any{}
+	for _, jsonProp := range removeProps {
+		stripMap[jsonProp] = nil
+	}
+
+	var parsedJson *any = nil
+
+	// unmarshall the text and let it allocate whatever object it wants to hold the result
+	err := json.Unmarshal([]byte(jsonText), &parsedJson)
+
+	// check for an unmarshalling error
+	if err != nil {
+		return jsonText, err
+	}
+
+	// check for a null literal which is unmarshalled as a nil pointer
+	if parsedJson == nil {
+		return "null", nil
+	}
+
+	// sort the parsed JSON value
+	stripFieldsFromValue(*parsedJson, stripMap)
+
+	// marshall the parsed object back to text (bytes) and return the text and potential error
+	modifiedJson, err := json.Marshal(*parsedJson)
+
+	return string(modifiedJson), err
+}
+
+func stripFieldsFromValue(jsonValue any, stripMap map[string]any) {
+	switch typedJson := jsonValue.(type) {
+	case map[string]any:
+		stripFieldsFromObject(typedJson, stripMap)
+	case []any:
+		stripFieldsFromArray(typedJson, stripMap)
+	default:
+		// do nothing for JSON values that are not objects or arrays
+		// these values are already "sorted"
+	}
+
+}
+
+func stripFieldsFromObject(jsonObject map[string]any, stripMap map[string]any) {
+	// sort each value in the object
+	for key, jsonValue := range jsonObject {
+		_, remove := stripMap[key]
+		if remove {
+			delete(jsonObject, key)
+		} else {
+			stripFieldsFromValue(jsonValue, stripMap)
+		}
+	}
+}
+
+func stripFieldsFromArray(jsonArray []any, stripMap map[string]any) {
+	// sort each element in the array
+	for _, jsonValue := range jsonArray {
+		stripFieldsFromValue(jsonValue, stripMap)
+	}
+}
+
+/*
+Given JSON text, this will unmarshal it and recursively descend JSON arrays and JSON objects
 to redact the values for any JSON object properties whose property names match those specified
 for redaction.  The values will be replaced with JSON null values and the JSON will be marshalled
 back into text and returned.  This should work with any JSON literal: objects, arrays, null,
