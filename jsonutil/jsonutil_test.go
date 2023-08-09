@@ -728,6 +728,232 @@ func TestRedactWithMap_Formatted4(test *testing.T) {
 }
 
 // ----------------------------------------------------------------------------
+// Test RemoveJson function
+// ----------------------------------------------------------------------------
+func TestStrip_Basic0(test *testing.T) {
+	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
+	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
+	actual, err := Strip(jsonText)
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (basic 0) not redacted as expected")
+}
+
+func TestStrip_Basic1(test *testing.T) {
+	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
+	var expected = `{"bar":"abc","lum":null,"phoo":true}`
+	actual, err := Strip(jsonText, "foo")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (basic 1) not stripped as expected")
+}
+
+func TestStrip_Basic2(test *testing.T) {
+	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
+	var expected = `{"lum":null,"phoo":true}`
+	actual, err := Strip(jsonText, "foo", "bar")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (basic 2) not stripped as expected")
+}
+
+func TestStrip_StringArray(test *testing.T) {
+	var jsonText = `["foo", "bar", "phoo", "lum"]`
+	var expected = `["foo","bar","phoo","lum"]`
+	actual, err := Strip(jsonText, "foo", "bar")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON string array not stripped as expected")
+}
+
+func TestStrip_Compound0(test *testing.T) {
+	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
+	var expected = `{"bar":[4,6,2],"foo":123,"lum":{"bax":5,"phoox":false},"phoo":true}`
+	actual, err := Strip(jsonText)
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (compound 0) not stripped as expected")
+}
+
+func TestStrip_Compound1(test *testing.T) {
+	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
+	var expected = `{"bar":[4,6,2],"foo":123,"lum":{"bax":5},"phoo":true}`
+	actual, err := Strip(jsonText, "phoox")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (compound 1) not stripped as expected")
+}
+
+func TestStrip_Compound2(test *testing.T) {
+	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
+	var expected = `{"foo":123,"lum":{"bax":5},"phoo":true}`
+	actual, err := Strip(jsonText, "phoox", "bar")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (compound 2) not stripped as expected")
+}
+
+func TestStrip_Compound3(test *testing.T) {
+	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoox": true, "lum": {"phoox": false, "bax": 5}}`
+	var expected = `{"foo":123,"lum":{}}`
+	actual, err := Strip(jsonText, "phoox", "bar", "bax")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (compound 3) not stripped as expected")
+}
+
+func TestStrip_Compound4(test *testing.T) {
+	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
+	var expected = `{"lum":{},"phoo":true}`
+	actual, err := Strip(jsonText, "phoox", "bar", "bax", "foo")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (compound 4) not stripped as expected")
+}
+
+func TestStrip_Compound5(test *testing.T) {
+	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
+	var expected = `{}`
+	actual, err := Strip(jsonText, "phoox", "bar", "foo", "phoo", "lum")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (compound 5) not stripped as expected")
+}
+
+func TestStrip_Integer(test *testing.T) {
+	var jsonText = "123"
+	var expected = "123"
+	actual, err := Strip(jsonText, "123", "foo")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON integer number not stripped as expected")
+}
+
+func TestStrip_Decimal(test *testing.T) {
+	var jsonText = "123.4"
+	var expected = "123.4"
+	actual, err := Strip(jsonText, "123.4", "foo")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON decimal number not stripped as expected")
+}
+
+func TestStrip_String(test *testing.T) {
+	var jsonText = `"Hello"`
+	var expected = `"Hello"`
+	actual, err := Strip(jsonText, "Hello", "foo")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON string not stripped as expected")
+}
+
+func TestStrip_Boolean(test *testing.T) {
+	var jsonText = "true"
+	var expected = "true"
+	actual, err := Strip(jsonText, "true", "foo")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON boolean not stripped as expected")
+}
+
+func TestStrip_Null(test *testing.T) {
+	var jsonText = "null"
+	var expected = "null"
+	actual, err := Strip(jsonText, "null", "foo")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON null not stripped as expected")
+}
+
+func TestStrip_MixedArray0(test *testing.T) {
+	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
+	var expected = `[123,123.5,"Hello",null,true,{"bar":6,"foo":5}]`
+	actual, err := Strip(jsonText)
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON array (mixed 0) not stripped as expected")
+}
+
+func TestStrip_MixedArray1(test *testing.T) {
+	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
+	var expected = `[123,123.5,"Hello",null,true,{"foo":5}]`
+	actual, err := Strip(jsonText, "bar")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON array (mixed 1) not stripped as expected")
+}
+
+func TestStrip_MixedArray2(test *testing.T) {
+	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
+	var expected = `[123,123.5,"Hello",null,true,{}]`
+	actual, err := Strip(jsonText, "foo", "bar")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON array (mixed 2) not stripped as expected")
+}
+
+func TestStrip_MixedArray3(test *testing.T) {
+	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
+	var expected = `[123,123.5,"Hello",null,true,{}]`
+	actual, err := Strip(jsonText, "foo", "bar", "Hello")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON array (mixed 3) not stripped as expected")
+}
+
+func TestStrip_BadJson(test *testing.T) {
+	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
+	actual, err := Strip(jsonText, "foo", "bar")
+	assert.NotNil(test, err, "Invalid JSON text was stripped without an error: "+actual)
+}
+
+func TestStrip_Formatted0(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
+	}`
+	var expected = `{"bar":true,"foo":123,"phoo":[{"a":2,"c":4},{"a":1,"c":[9,0,8]},{"a":1,"b":5}]}`
+	actual, err := Strip(jsonText)
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (formatted 0) not stripped as expected")
+}
+
+func TestStrip_Formatted1(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
+	}`
+	var expected = `{"bar":true,"phoo":[{"a":2,"c":4},{"a":1,"c":[9,0,8]},{"a":1,"b":5}]}`
+	actual, err := Strip(jsonText, "foo")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (formatted 1) not stripped as expected")
+}
+
+func TestStrip_Formatted2(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
+	}`
+	var expected = `{"bar":true,"phoo":[{"c":4},{"c":[9,0,8]},{"b":5}]}`
+	actual, err := Strip(jsonText, "foo", "a")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (formatted 2) not stripped as expected")
+}
+
+func TestStrip_Formatted3(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
+	}`
+	var expected = `{"bar":true,"phoo":[{},{},{"b":5}]}`
+	actual, err := Strip(jsonText, "foo", "a", "c")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (formatted 3) not stripped as expected")
+}
+
+func TestStrip_Formatted4(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
+	}`
+	var expected = `{}`
+	actual, err := Strip(jsonText, "foo", "bar", "c", "phoo")
+	testError(test, err)
+	assert.Equal(test, expected, actual, "JSON object (formatted 4) not stripped as expected")
+}
+
+// ----------------------------------------------------------------------------
 // Test Flatten function
 // ----------------------------------------------------------------------------
 func TestFlatten_NoError(test *testing.T) {
@@ -837,6 +1063,26 @@ func ExampleRedactWithMap() {
 
 	fmt.Println(redactedJson)
 	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":"***-**-****","surname":"Schmoe"}
+}
+
+func ExampleStrip() {
+	// For more information, visit https://github.com/Senzing/go-common/blob/main/jsonutil/jsonutil_test.go
+	var jsonText = `
+	{
+		"givenName": "Joe",
+		"surname": "Schmoe",
+		"age": 35,
+		"member": true,
+		"ssn": "111-22-3333"
+	}`
+
+	redactedJson, err := Strip(jsonText, "ssn")
+	if err != nil {
+		fmt.Println("An error occurred: " + err.Error())
+	}
+
+	fmt.Println(redactedJson)
+	// Output: {"age":35,"givenName":"Joe","member":true,"surname":"Schmoe"}
 }
 
 func ExampleFlatten_noError() {
