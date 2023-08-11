@@ -79,14 +79,14 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 	}
 
 	// open the source file
-	source, err := os.Open(sourceFile)
+	source, err := os.Open(fpath.Clean(sourceFile))
 	if err != nil {
 		return "", 0, errors.New("Failed to open source file (" + sourceFile + "): " + err.Error())
 	}
 	defer source.Close() // defer closing the source file
 
 	// create the destination file
-	destination, err := os.Create(destinationPath)
+	destination, err := os.Create(fpath.Clean(destinationPath))
 	if err != nil {
 		return "", 0, errors.New("Failed to create destination file (" + destinationPath +
 			"): " + err.Error())

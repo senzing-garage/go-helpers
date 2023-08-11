@@ -41,7 +41,7 @@ func sourceFilePath2() (path string, fileSize int64) {
 }
 
 func createTextFile(path string, text string) (int64, error) {
-	source, err := os.Create(path)
+	source, err := os.Create(fpath.Clean(path))
 	if err != nil {
 		return 0, errors.New("Failed to create file (" + path + "): " + err.Error())
 	}
@@ -55,7 +55,7 @@ func createTextFile(path string, text string) (int64, error) {
 }
 
 func createTextFileN(path string, byteCount int64) (int64, error) {
-	source, err := os.Create(path)
+	source, err := os.Create(fpath.Clean(path))
 	if err != nil {
 		return 0, errors.New("Failed to create file (" + path + "): " + err.Error())
 	}
