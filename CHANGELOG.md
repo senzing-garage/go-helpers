@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.13] - 2023-08-11
+
+### Changed in 0.2.13
+
+- Added `fileutil` package with `fileutil.CopyFile()` function
+- Added tests and examples for `fileutil.CopyFile()` function
+
 ## [0.2.12] - 2023-08-09
 
 ### Changed in 0.2.12

@@ -1,0 +1,425 @@
+package fileutil
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	filepath "path/filepath"
+	fpath "path/filepath"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+// ----------------------------------------------------------------------------
+// Internal functions
+// ----------------------------------------------------------------------------
+func testError(test *testing.T, err error) {
+	if err != nil {
+		assert.FailNow(test, err.Error())
+	}
+}
+
+func baseDirectoryPath() string {
+	return fpath.FromSlash("../target/test/fileutil")
+}
+
+func sourceDirectoryPath() string {
+	return fpath.Join(baseDirectoryPath(), "source")
+}
+
+func destinationDirectoryPath() string {
+	return fpath.Join(baseDirectoryPath(), "destination")
+}
+
+func sourceFilePath1() (path string, fileSize int64) {
+	return fpath.Join(sourceDirectoryPath(), "Five_Byte_File.txt"), 5
+}
+
+func sourceFilePath2() (path string, fileSize int64) {
+	return fpath.Join(sourceDirectoryPath(), "Ten_Byte_File.txt"), 10
+}
+
+func createTextFile(path string, text string) (int64, error) {
+	source, err := os.Create(path)
+	if err != nil {
+		return 0, errors.New("Failed to create file (" + path + "): " + err.Error())
+	}
+	defer source.Close()
+	byteCount, err := source.WriteString(text)
+	if err != nil {
+		return 0, errors.New("Failed to write content (" + text +
+			") to file (" + path + "): " + err.Error())
+	}
+	return int64(byteCount), err
+}
+
+func createTextFileN(path string, byteCount int64) (int64, error) {
+	source, err := os.Create(path)
+	if err != nil {
+		return 0, errors.New("Failed to create file (" + path + "): " + err.Error())
+	}
+	defer source.Close()
+	var index, writeCount int64 = 0, 0
+	for index = 0; index < byteCount; index++ {
+		count, err := source.WriteString("A")
+		if err != nil {
+			return 0, errors.New("Failed to write letter (" + fmt.Sprint(index) +
+				") to file (" + path + "): " + err.Error())
+		}
+		writeCount += int64(count)
+	}
+	if writeCount != byteCount {
+		return int64(writeCount), errors.New("Wrote wrong number of bytes (" +
+			fmt.Sprint(writeCount) + ") to file (" + path + ")")
+	}
+	return int64(byteCount), err
+}
+
+// ----------------------------------------------------------------------------
+// Test harness
+// ----------------------------------------------------------------------------
+func TestMain(m *testing.M) {
+	err := setup()
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
+	code := m.Run()
+	err = teardown()
+	if err != nil {
+		fmt.Print(err)
+	}
+	os.Exit(code)
+}
+
+func setup() error {
+	baseDir := baseDirectoryPath()
+
+	// remove any previously existing test directory
+	err := os.RemoveAll(baseDir)
+	if err != nil {
+		return errors.New("Failed to delete old test targets in " +
+			baseDir + ": " + err.Error())
+	}
+
+	// define the source and destination directories
+	sourceDir := sourceDirectoryPath()
+	destinationDir := destinationDirectoryPath()
+
+	// make the source directory and any required parents
+	err = os.MkdirAll(sourceDir, 0770)
+	if err != nil {
+		return errors.New("Failed to create source directory (" +
+			sourceDir + "): " + err.Error())
+	}
+
+	// make the destinaton directory and any required parents
+	err = os.MkdirAll(destinationDir, 0770)
+	if err != nil {
+		return errors.New("Failed to create destination directory (" +
+			destinationDir + "): " + err.Error())
+	}
+
+	// define paths to
+	sourcePath1, fileSize1 := sourceFilePath1()
+	sourcePath2, fileSize2 := sourceFilePath2()
+
+	_, err = createTextFileN(sourcePath1, fileSize1)
+	if err != nil {
+		return err
+	}
+	_, err = createTextFileN(sourcePath2, fileSize2)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func teardown() error {
+	baseDir := baseDirectoryPath()
+
+	// remove any previously existing test directory
+	err := os.RemoveAll(baseDir)
+	if err != nil {
+		return errors.New("Failed to delete old test targets in " +
+			baseDir + ": " + err.Error())
+	}
+
+	return err
+}
+
+// ----------------------------------------------------------------------------
+// Test CopyFile() function
+// ----------------------------------------------------------------------------
+func TestCopyFile_Basic1(test *testing.T) {
+	destinationDir := destinationDirectoryPath()
+	destinationFile := fpath.Join(destinationDir, "basic_file_1.txt")
+	sourceFile, fileSize := sourceFilePath1()
+	createdFile, byteCount, err := CopyFile(sourceFile, destinationFile, true)
+	testError(test, err)
+	assert.Equal(test, fileSize, byteCount, "Byte Count for CopyFile() not as expected for basic file 1")
+	assert.Equal(test, destinationFile, createdFile, "Created file path is not as expected for basic file 1")
+
+	stat, err := os.Stat(destinationFile)
+	testError(test, err)
+	assert.Equal(test, fileSize, stat.Size(), "File size of basic file 1 not as expected post CopyFile()")
+
+	content, err := os.ReadFile(sourceFile)
+	testError(test, err)
+	expectedContent := string(content)
+
+	content, err = os.ReadFile(destinationFile)
+	testError(test, err)
+	actualContent := string(content)
+	assert.Equal(test, expectedContent, actualContent, "File contents of basic file 1 not as expected post CopyFile()")
+}
+
+func TestCopyFile_Basic2(test *testing.T) {
+	destinationDir := destinationDirectoryPath()
+	destinationFile := fpath.Join(destinationDir, "basic_file_2.txt")
+	sourceFile, fileSize := sourceFilePath2()
+	createdFile, byteCount, err := CopyFile(sourceFile, destinationFile, false)
+	testError(test, err)
+	assert.Equal(test, fileSize, byteCount, "Byte Count for CopyFile() not as expected for basic file 2")
+	assert.Equal(test, destinationFile, createdFile, "Created file path is not as expected for basic file 2")
+
+	stat, err := os.Stat(destinationFile)
+	testError(test, err)
+	assert.Equal(test, fileSize, stat.Size(), "File size of basic file 2 not as expected post CopyFile()")
+
+	content, err := os.ReadFile(sourceFile)
+	testError(test, err)
+	expectedContent := string(content)
+
+	content, err = os.ReadFile(destinationFile)
+	testError(test, err)
+	actualContent := string(content)
+	assert.Equal(test, expectedContent, actualContent, "File contents of basic file 2 not as expected post CopyFile()")
+}
+
+func TestCopyFile_ToDirectory(test *testing.T) {
+	destinationDir := destinationDirectoryPath()
+	sourceFile, fileSize := sourceFilePath1()
+
+	// determine what the file name should be
+	destinationFile := fpath.Join(destinationDir, fpath.Base(sourceFile))
+
+	createdFile, byteCount, err := CopyFile(sourceFile, destinationDir, true)
+	testError(test, err)
+	assert.Equal(test, fileSize, byteCount, "Byte Count for CopyFile() not as expected when copying to directory")
+	assert.Equal(test, destinationFile, createdFile, "Created file path is not as expected for CopyFile() to directory")
+
+	stat, err := os.Stat(destinationFile)
+	testError(test, err)
+	assert.Equal(test, fileSize, stat.Size(), "File size not as expected post CopyFile() when copying to directory")
+
+	content, err := os.ReadFile(sourceFile)
+	testError(test, err)
+	expectedContent := string(content)
+
+	content, err = os.ReadFile(destinationFile)
+	testError(test, err)
+	actualContent := string(content)
+	assert.Equal(test, expectedContent, actualContent, "File contents of not as expected post CopyFile() to directory")
+}
+
+func TestCopyFile_WithOverwrite(test *testing.T) {
+	destinationDir := destinationDirectoryPath()
+	destinationFile := fpath.Join(destinationDir, "with_overwrite.txt")
+
+	_, err := createTextFile(destinationFile, "Already Exists")
+	testError(test, err)
+
+	sourceFile, fileSize := sourceFilePath2()
+
+	content, err := os.ReadFile(sourceFile)
+	testError(test, err)
+	expectedContent := string(content)
+
+	createdFile, byteCount, err := CopyFile(sourceFile, destinationFile, true)
+	testError(test, err)
+	assert.Equal(test, fileSize, byteCount, "Byte Count for CopyFile() not as expected for overwritten file")
+	assert.Equal(test, destinationFile, createdFile, "Overwritten file path is not as expected for CopyFile()")
+
+	stat, err := os.Stat(destinationFile)
+	testError(test, err)
+	assert.Equal(test, fileSize, stat.Size(), "File size not as expected post CopyFile() for overwritten file")
+
+	content, err = os.ReadFile(destinationFile)
+	testError(test, err)
+	actualContent := string(content)
+	assert.Equal(test, expectedContent, actualContent, "File contents of overwritten file not as expected post CopyFile()")
+}
+
+func TestCopyFile_NoOverwrite(test *testing.T) {
+	destinationDir := destinationDirectoryPath()
+	destinationFile := fpath.Join(destinationDir, "no_overwrite.txt")
+
+	expectedContent := "Already Exists"
+	byteCount, err := createTextFile(destinationFile, expectedContent)
+	testError(test, err)
+
+	sourceFile, _ := sourceFilePath1()
+	_, _, err = CopyFile(sourceFile, destinationFile, false)
+	assert.NotEqual(test, nil, err, "Expected an error when attempting to overwrite file with CopyFile()")
+
+	stat, err := os.Stat(destinationFile)
+	testError(test, err)
+	assert.Equal(test, byteCount, stat.Size(), "File size not as expected post CopyFile() with no overwrite")
+
+	content, err := os.ReadFile(destinationFile)
+	testError(test, err)
+	actualContent := string(content)
+	assert.Equal(test, expectedContent, actualContent,
+		"File contents not as expected post CopyFile() with no overwrite")
+}
+
+func TestCopyFile_ToDirectoryWithOverwrite(test *testing.T) {
+	destinationDir := destinationDirectoryPath()
+	sourceFile, fileSize := sourceFilePath1()
+
+	// determine what the file name should be
+	destinationFile := fpath.Join(destinationDir, fpath.Base(sourceFile))
+
+	// remove the destination file if it already exists
+	stat, err := os.Stat(destinationFile)
+	if err == nil {
+		// remove the file
+		err := os.Remove(destinationFile)
+		testError(test, err)
+
+	} else if !os.IsNotExist(err) {
+		// file exists, but we got a different error
+		testError(test, err)
+	}
+
+	_, err = createTextFile(destinationFile, "Already Exists")
+	testError(test, err)
+
+	content, err := os.ReadFile(sourceFile)
+	testError(test, err)
+	expectedContent := string(content)
+
+	createdFile, byteCount, err := CopyFile(sourceFile, destinationDir, true)
+	testError(test, err)
+	assert.Equal(test, fileSize, byteCount, "Byte Count for CopyFile() to directory not as expected for overwritten file")
+	assert.Equal(test, destinationFile, createdFile, "Overwritten file path is not as expected for CopyFile() to directory")
+
+	stat, err = os.Stat(destinationFile)
+	testError(test, err)
+	assert.Equal(test, fileSize, stat.Size(), "File size of overwritten file not as expected post CopyFile() to directory")
+
+	content, err = os.ReadFile(destinationFile)
+	testError(test, err)
+	actualContent := string(content)
+	assert.Equal(test, expectedContent, actualContent, "File contents of overwritten file not as expected post CopyFile() to directory")
+}
+
+func TestCopyFile_ToDirectoryNoOverwrite(test *testing.T) {
+	destinationDir := destinationDirectoryPath()
+	sourceFile, _ := sourceFilePath2()
+
+	// determine what the file name should be
+	destinationFile := fpath.Join(destinationDir, fpath.Base(sourceFile))
+
+	// remove the destination file if it already exists
+	stat, err := os.Stat(destinationFile)
+	if err == nil {
+		// remove the file
+		err := os.Remove(destinationFile)
+		testError(test, err)
+
+	} else if !os.IsNotExist(err) {
+		// file exists, but we got a different error
+		testError(test, err)
+	}
+
+	expectedContent := "Already Exists"
+	byteCount, err := createTextFile(destinationFile, expectedContent)
+	testError(test, err)
+
+	_, _, err = CopyFile(sourceFile, destinationDir, false)
+	assert.NotEqual(test, nil, err, "Expected an error when attempting to overwrite file with CopyFile() to directory")
+
+	stat, err = os.Stat(destinationFile)
+	testError(test, err)
+	assert.Equal(test, byteCount, stat.Size(), "File size not as expected post CopyFile() to directory with no overwrite")
+
+	content, err := os.ReadFile(destinationFile)
+	testError(test, err)
+	actualContent := string(content)
+	assert.Equal(test, expectedContent, actualContent,
+		"File contents not as expected post CopyFile() to directory with no overwrite")
+}
+
+func TestCopyFile_FromDirectory(test *testing.T) {
+	sourceDir := sourceDirectoryPath()
+	destinationDir := destinationDirectoryPath()
+	destinationFile := fpath.Join(destinationDir, "directory_copy")
+
+	_, _, err := CopyFile(sourceDir, destinationFile, true)
+	assert.NotEqual(test, nil, err, "Did not get expected error when trying to copy a directory")
+}
+
+func TestCopyFile_SourceNotFound(test *testing.T) {
+	sourceDir := sourceDirectoryPath()
+	sourceFile := fpath.Join(sourceDir, "does_not_exist.txt")
+	destinationDir := destinationDirectoryPath()
+	destinationFile := fpath.Join(destinationDir, "will_not_exist.txt")
+
+	_, _, err := CopyFile(sourceFile, destinationFile, true)
+	assert.NotEqual(test, nil, err, "Did not get expected error when trying to copy a non-existent file")
+}
+
+func TestCopyFile_DestinationNotFound(test *testing.T) {
+	sourceFile, _ := sourceFilePath1()
+	destinationDir := destinationDirectoryPath()
+	badSubDirectory := fpath.Join(destinationDir, "does_not_exist")
+	destinationFile := fpath.Join(badSubDirectory, "will_not_exist.txt")
+
+	_, _, err := CopyFile(sourceFile, destinationFile, true)
+	assert.NotEqual(test, nil, err, "Did not get expected error when trying to copy a bad destination path")
+}
+
+// ----------------------------------------------------------------------------
+// Test CopyFile() function
+// ----------------------------------------------------------------------------
+func ExampleCopyFile() {
+	// create a file that we will copy (usually this already exists)
+	sourceFilePath := filepath.Join(os.TempDir(), "source-file.txt")
+	os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0666)
+
+	// define the target path to copy the file to
+	targetFilePath := filepath.Join(os.TempDir(), "target-file.txt")
+
+	// copy the file
+	createdFile, byteCount, err := CopyFile(sourceFilePath, targetFilePath, true)
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Printf("Copied %v bytes to %v.\n", byteCount, filepath.Base(createdFile))
+	}
+
+	// Output: Copied 13 bytes to target-file.txt.
+}
+
+func ExampleCopyFile_toDirectory() {
+	// create a file that we will copy (usually this already exists)
+	sourceFilePath := filepath.Join(os.TempDir(), "source-file.txt")
+	os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0666)
+
+	// define the target path to copy the file to
+	targetDirectory, _ := os.MkdirTemp("", "target-directory-*")
+
+	// copy the file
+	createdFile, byteCount, err := CopyFile(sourceFilePath, targetDirectory, true)
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Printf("Copied %v bytes to %v.\n", byteCount, filepath.Base(createdFile))
+	}
+
+	// Output: Copied 13 bytes to source-file.txt.
+}
