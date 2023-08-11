@@ -20,6 +20,7 @@ Input
     file or false if you want to prevent overwriting an existing destination file.
 
 Output
+  - The path to the file that was created or ovewritten (more useful when copying to a directory)
   - The number of bytes that were copied (zero in case there was an error)
   - An error if one occurred or nil if no error occurred.
 */
