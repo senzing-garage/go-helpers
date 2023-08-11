@@ -2,9 +2,11 @@ package fileutil
 
 import (
 	"errors"
+	"fmt"
 	"io"
+	"io/fs"
 	"os"
-	fpath "path/filepath"
+	"path/filepath"
 )
 
 /*
@@ -28,68 +30,68 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 	// stat the source file
 	stat, err := os.Stat(sourceFile)
 	if err != nil {
-		return "", 0, errors.New("Failed to stat source file (" + sourceFile + "): " + err.Error())
+		return "", 0, fmt.Errorf("failed to stat source file (%v): %v", sourceFile, err.Error())
 	}
 
 	// check if it is a regular file and not a directory
 	if !stat.Mode().IsRegular() {
-		return "", 0, errors.New(sourceFile + " is not a regular file")
+		return "", 0, fmt.Errorf("%v is not a regular file", sourceFile)
 	}
 
 	destinationPath := destinationFileOrDirectory
 
 	// check if the destination file is a directory and if so, append the source file name
 	stat, err = os.Stat(destinationPath)
-	if err != nil && !os.IsNotExist(err) {
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		// we got an error and the error was not due to the path not existing
-		return "", 0, errors.New("Failed to stat destination path (" +
-			destinationPath + "): " + err.Error())
+		return "", 0, fmt.Errorf("failed to stat destination path (%v): %v",
+			destinationPath, err.Error())
 
 	} else if err != nil {
 		// we have a non-existent file path -- check that its parent directory exists
-		dir := fpath.Dir(destinationPath)
+		dir := filepath.Dir(destinationPath)
 		dirStat, err := os.Stat(dir)
 		if err != nil {
-			return "", 0, errors.New("Failed to stat directory (" + dir +
+			return "", 0, fmt.Errorf("failed to stat directory (" + dir +
 				") for destination path (" + destinationPath +
 				"): " + err.Error())
 		}
 		if !dirStat.Mode().IsDir() {
-			return "", 0, errors.New("Directory (" + dir + ") for destination path (" +
-				destinationPath + ") is not a directory.")
+			return "", 0, fmt.Errorf("directory (%v) for destination path (%v) is not a directory",
+				dir, destinationPath)
 		}
 
 	} else if stat.Mode().IsDir() {
 		// the destination is a directory so append the file name
-		destinationPath = fpath.Join(destinationPath, fpath.Base(sourceFile))
+		destinationPath = filepath.Join(destinationPath, filepath.Base(sourceFile))
 
 		// if not allowing overwrite, check if the new path exists
 		if !overwrite {
 			// check if the new file path exists
 			_, err = os.Stat(destinationPath)
-			if err == nil || (err != nil && !os.IsNotExist(err)) {
-				return "", 0, errors.New("The target file already exists in the destination " +
-					"directory and overwrite is not allowed: " + destinationPath)
+			if err == nil || (err != nil && !errors.Is(err, fs.ErrNotExist)) {
+				return "", 0, fmt.Errorf("the target file already exists in the destination "+
+					"directory and overwrite is not allowed: %v", destinationPath)
 			}
 		}
 
 	} else if !overwrite {
-		return "", 0, errors.New("Destination file already exists and overwrite is not allowed: " +
+		return "", 0, fmt.Errorf("destination file already exists and overwrite is not allowed: %v",
 			destinationPath)
 	}
 
 	// open the source file
-	source, err := os.Open(fpath.Clean(sourceFile))
+	source, err := os.Open(filepath.Clean(sourceFile))
 	if err != nil {
-		return "", 0, errors.New("Failed to open source file (" + sourceFile + "): " + err.Error())
+		return "", 0, fmt.Errorf("failed to open source file ("+sourceFile+"): %v", err.Error())
 	}
 	defer source.Close() // defer closing the source file
 
 	// create the destination file
-	destination, err := os.Create(fpath.Clean(destinationPath))
+	destination, err := os.Create(filepath.Clean(destinationPath))
 	if err != nil {
-		return "", 0, errors.New("Failed to create destination file (" + destinationPath +
-			"): " + err.Error())
+		return "", 0, fmt.Errorf("failed to create destination file (%v): %v",
+			destinationPath, err.Error())
 	}
 	defer destination.Close()
 

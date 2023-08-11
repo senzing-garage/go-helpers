@@ -963,9 +963,9 @@ func TestFlatten_NoError(test *testing.T) {
 }
 
 func TestFlatten_WithError(test *testing.T) {
-	err := errors.New("Failed")
+	err := errors.New("failed")
 	actual := Flatten(`{"foo": 5, "bar": 6}`, err)
-	var expected = `{"error":"Failed","text":"{\"foo\": 5, \"bar\": 6}"}`
+	var expected = `{"error":"failed","text":"{\"foo\": 5, \"bar\": 6}"}`
 	assert.Equal(test, expected, actual, "Flattening with an error did not work as expected: "+actual)
 }
 

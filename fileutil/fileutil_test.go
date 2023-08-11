@@ -3,9 +3,9 @@ package fileutil
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
-	filepath "path/filepath"
-	fpath "path/filepath"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,57 +21,57 @@ func testError(test *testing.T, err error) {
 }
 
 func baseDirectoryPath() string {
-	return fpath.FromSlash("../target/test/fileutil")
+	return filepath.FromSlash("../target/test/fileutil")
 }
 
 func sourceDirectoryPath() string {
-	return fpath.Join(baseDirectoryPath(), "source")
+	return filepath.Join(baseDirectoryPath(), "source")
 }
 
 func destinationDirectoryPath() string {
-	return fpath.Join(baseDirectoryPath(), "destination")
+	return filepath.Join(baseDirectoryPath(), "destination")
 }
 
 func sourceFilePath1() (path string, fileSize int64) {
-	return fpath.Join(sourceDirectoryPath(), "Five_Byte_File.txt"), 5
+	return filepath.Join(sourceDirectoryPath(), "Five_Byte_File.txt"), 5
 }
 
 func sourceFilePath2() (path string, fileSize int64) {
-	return fpath.Join(sourceDirectoryPath(), "Ten_Byte_File.txt"), 10
+	return filepath.Join(sourceDirectoryPath(), "Ten_Byte_File.txt"), 10
 }
 
 func createTextFile(path string, text string) (int64, error) {
-	source, err := os.Create(fpath.Clean(path))
+	source, err := os.Create(filepath.Clean(path))
 	if err != nil {
-		return 0, errors.New("Failed to create file (" + path + "): " + err.Error())
+		return 0, fmt.Errorf("failed to create file (%v): %v", path, err.Error())
 	}
 	defer source.Close()
 	byteCount, err := source.WriteString(text)
 	if err != nil {
-		return 0, errors.New("Failed to write content (" + text +
-			") to file (" + path + "): " + err.Error())
+		return 0, fmt.Errorf("failed to write content (%v) to file (%v): %v",
+			text, path, err.Error())
 	}
 	return int64(byteCount), err
 }
 
 func createTextFileN(path string, byteCount int64) (int64, error) {
-	source, err := os.Create(fpath.Clean(path))
+	source, err := os.Create(filepath.Clean(path))
 	if err != nil {
-		return 0, errors.New("Failed to create file (" + path + "): " + err.Error())
+		return 0, fmt.Errorf("failed to create file (%v): %v", path, err.Error())
 	}
 	defer source.Close()
 	var index, writeCount int64 = 0, 0
 	for index = 0; index < byteCount; index++ {
 		count, err := source.WriteString("A")
 		if err != nil {
-			return 0, errors.New("Failed to write letter (" + fmt.Sprint(index) +
-				") to file (" + path + "): " + err.Error())
+			return 0, fmt.Errorf("failed to write letter (%v) to file (%v): %v",
+				index, path, err.Error())
 		}
 		writeCount += int64(count)
 	}
 	if writeCount != byteCount {
-		return int64(writeCount), errors.New("Wrote wrong number of bytes (" +
-			fmt.Sprint(writeCount) + ") to file (" + path + ")")
+		return int64(writeCount), fmt.Errorf("wrote wrong number of bytes (%v) to file (%v)",
+			writeCount, path)
 	}
 	return int64(byteCount), err
 }
@@ -99,8 +99,8 @@ func setup() error {
 	// remove any previously existing test directory
 	err := os.RemoveAll(baseDir)
 	if err != nil {
-		return errors.New("Failed to delete old test targets in " +
-			baseDir + ": " + err.Error())
+		return fmt.Errorf("failed to delete old test targets in %v: %v",
+			baseDir, err.Error())
 	}
 
 	// define the source and destination directories
@@ -110,15 +110,15 @@ func setup() error {
 	// make the source directory and any required parents
 	err = os.MkdirAll(sourceDir, 0770)
 	if err != nil {
-		return errors.New("Failed to create source directory (" +
-			sourceDir + "): " + err.Error())
+		return fmt.Errorf("failed to create source directory (%v): %v",
+			sourceDir, err.Error())
 	}
 
 	// make the destinaton directory and any required parents
 	err = os.MkdirAll(destinationDir, 0770)
 	if err != nil {
-		return errors.New("Failed to create destination directory (" +
-			destinationDir + "): " + err.Error())
+		return fmt.Errorf("failed to create destination directory (%v): %v",
+			destinationDir, err.Error())
 	}
 
 	// define paths to
@@ -143,8 +143,8 @@ func teardown() error {
 	// remove any previously existing test directory
 	err := os.RemoveAll(baseDir)
 	if err != nil {
-		return errors.New("Failed to delete old test targets in " +
-			baseDir + ": " + err.Error())
+		return fmt.Errorf("failed to delete old test targets in %v: %v",
+			baseDir, err.Error())
 	}
 
 	return err
@@ -155,7 +155,7 @@ func teardown() error {
 // ----------------------------------------------------------------------------
 func TestCopyFile_Basic1(test *testing.T) {
 	destinationDir := destinationDirectoryPath()
-	destinationFile := fpath.Join(destinationDir, "basic_file_1.txt")
+	destinationFile := filepath.Join(destinationDir, "basic_file_1.txt")
 	sourceFile, fileSize := sourceFilePath1()
 	createdFile, byteCount, err := CopyFile(sourceFile, destinationFile, true)
 	testError(test, err)
@@ -178,7 +178,7 @@ func TestCopyFile_Basic1(test *testing.T) {
 
 func TestCopyFile_Basic2(test *testing.T) {
 	destinationDir := destinationDirectoryPath()
-	destinationFile := fpath.Join(destinationDir, "basic_file_2.txt")
+	destinationFile := filepath.Join(destinationDir, "basic_file_2.txt")
 	sourceFile, fileSize := sourceFilePath2()
 	createdFile, byteCount, err := CopyFile(sourceFile, destinationFile, false)
 	testError(test, err)
@@ -204,7 +204,7 @@ func TestCopyFile_ToDirectory(test *testing.T) {
 	sourceFile, fileSize := sourceFilePath1()
 
 	// determine what the file name should be
-	destinationFile := fpath.Join(destinationDir, fpath.Base(sourceFile))
+	destinationFile := filepath.Join(destinationDir, filepath.Base(sourceFile))
 
 	createdFile, byteCount, err := CopyFile(sourceFile, destinationDir, true)
 	testError(test, err)
@@ -227,7 +227,7 @@ func TestCopyFile_ToDirectory(test *testing.T) {
 
 func TestCopyFile_WithOverwrite(test *testing.T) {
 	destinationDir := destinationDirectoryPath()
-	destinationFile := fpath.Join(destinationDir, "with_overwrite.txt")
+	destinationFile := filepath.Join(destinationDir, "with_overwrite.txt")
 
 	_, err := createTextFile(destinationFile, "Already Exists")
 	testError(test, err)
@@ -255,7 +255,7 @@ func TestCopyFile_WithOverwrite(test *testing.T) {
 
 func TestCopyFile_NoOverwrite(test *testing.T) {
 	destinationDir := destinationDirectoryPath()
-	destinationFile := fpath.Join(destinationDir, "no_overwrite.txt")
+	destinationFile := filepath.Join(destinationDir, "no_overwrite.txt")
 
 	expectedContent := "Already Exists"
 	byteCount, err := createTextFile(destinationFile, expectedContent)
@@ -281,16 +281,16 @@ func TestCopyFile_ToDirectoryWithOverwrite(test *testing.T) {
 	sourceFile, fileSize := sourceFilePath1()
 
 	// determine what the file name should be
-	destinationFile := fpath.Join(destinationDir, fpath.Base(sourceFile))
+	destinationFile := filepath.Join(destinationDir, filepath.Base(sourceFile))
 
 	// remove the destination file if it already exists
-	stat, err := os.Stat(destinationFile)
+	_, err := os.Stat(destinationFile)
 	if err == nil {
 		// remove the file
 		err := os.Remove(destinationFile)
 		testError(test, err)
 
-	} else if !os.IsNotExist(err) {
+	} else if !errors.Is(err, fs.ErrNotExist) {
 		// file exists, but we got a different error
 		testError(test, err)
 	}
@@ -307,7 +307,7 @@ func TestCopyFile_ToDirectoryWithOverwrite(test *testing.T) {
 	assert.Equal(test, fileSize, byteCount, "Byte Count for CopyFile() to directory not as expected for overwritten file")
 	assert.Equal(test, destinationFile, createdFile, "Overwritten file path is not as expected for CopyFile() to directory")
 
-	stat, err = os.Stat(destinationFile)
+	stat, err := os.Stat(destinationFile)
 	testError(test, err)
 	assert.Equal(test, fileSize, stat.Size(), "File size of overwritten file not as expected post CopyFile() to directory")
 
@@ -322,16 +322,16 @@ func TestCopyFile_ToDirectoryNoOverwrite(test *testing.T) {
 	sourceFile, _ := sourceFilePath2()
 
 	// determine what the file name should be
-	destinationFile := fpath.Join(destinationDir, fpath.Base(sourceFile))
+	destinationFile := filepath.Join(destinationDir, filepath.Base(sourceFile))
 
 	// remove the destination file if it already exists
-	stat, err := os.Stat(destinationFile)
+	_, err := os.Stat(destinationFile)
 	if err == nil {
 		// remove the file
 		err := os.Remove(destinationFile)
 		testError(test, err)
 
-	} else if !os.IsNotExist(err) {
+	} else if !errors.Is(err, fs.ErrNotExist) {
 		// file exists, but we got a different error
 		testError(test, err)
 	}
@@ -343,7 +343,7 @@ func TestCopyFile_ToDirectoryNoOverwrite(test *testing.T) {
 	_, _, err = CopyFile(sourceFile, destinationDir, false)
 	assert.NotEqual(test, nil, err, "Expected an error when attempting to overwrite file with CopyFile() to directory")
 
-	stat, err = os.Stat(destinationFile)
+	stat, err := os.Stat(destinationFile)
 	testError(test, err)
 	assert.Equal(test, byteCount, stat.Size(), "File size not as expected post CopyFile() to directory with no overwrite")
 
@@ -357,7 +357,7 @@ func TestCopyFile_ToDirectoryNoOverwrite(test *testing.T) {
 func TestCopyFile_FromDirectory(test *testing.T) {
 	sourceDir := sourceDirectoryPath()
 	destinationDir := destinationDirectoryPath()
-	destinationFile := fpath.Join(destinationDir, "directory_copy")
+	destinationFile := filepath.Join(destinationDir, "directory_copy")
 
 	_, _, err := CopyFile(sourceDir, destinationFile, true)
 	assert.NotEqual(test, nil, err, "Did not get expected error when trying to copy a directory")
@@ -365,9 +365,9 @@ func TestCopyFile_FromDirectory(test *testing.T) {
 
 func TestCopyFile_SourceNotFound(test *testing.T) {
 	sourceDir := sourceDirectoryPath()
-	sourceFile := fpath.Join(sourceDir, "does_not_exist.txt")
+	sourceFile := filepath.Join(sourceDir, "does_not_exist.txt")
 	destinationDir := destinationDirectoryPath()
-	destinationFile := fpath.Join(destinationDir, "will_not_exist.txt")
+	destinationFile := filepath.Join(destinationDir, "will_not_exist.txt")
 
 	_, _, err := CopyFile(sourceFile, destinationFile, true)
 	assert.NotEqual(test, nil, err, "Did not get expected error when trying to copy a non-existent file")
@@ -376,8 +376,8 @@ func TestCopyFile_SourceNotFound(test *testing.T) {
 func TestCopyFile_DestinationNotFound(test *testing.T) {
 	sourceFile, _ := sourceFilePath1()
 	destinationDir := destinationDirectoryPath()
-	badSubDirectory := fpath.Join(destinationDir, "does_not_exist")
-	destinationFile := fpath.Join(badSubDirectory, "will_not_exist.txt")
+	badSubDirectory := filepath.Join(destinationDir, "does_not_exist")
+	destinationFile := filepath.Join(badSubDirectory, "will_not_exist.txt")
 
 	_, _, err := CopyFile(sourceFile, destinationFile, true)
 	assert.NotEqual(test, nil, err, "Did not get expected error when trying to copy a bad destination path")
