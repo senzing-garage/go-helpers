@@ -2,7 +2,10 @@
 
 package g2engineconfigurationjson
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // ----------------------------------------------------------------------------
 // Internal methods
