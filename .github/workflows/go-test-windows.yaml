@@ -32,7 +32,5 @@ jobs:
         run: 7z x -y -o"C:\Program Files" senzingapi.zip
       - name: Rename directory
         run: ren "C:\Program Files\senzing" "C:\Program Files\senzing2" && ren "C:\Program Files\senzing2" "C:\Program Files\Senzing"
-      - name: Copy test database files
-        run: mkdir "C:\Temp\sqlite" && copy testdata/sqlite/G2C.db "C:\Temp\sqlite\G2C.db"
       - name: Run go test
         run: go test -v -p 1 ./...
