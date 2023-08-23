@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
-      - name: Install Senzing
-        uses: Senzing/github-action-install-senzing@main
+      - name: Install Senzing API
+        uses: Senzing/github-action-install-senzing-api@latest
       - name: Run go test
         run: go test -v -p 1 ./...
