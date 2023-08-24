@@ -1,20 +1,20 @@
 # Based on
 # - https://github.com/marketplace/actions/setup-go-environment
 
-name: go-test-darwin.yaml
+name: go-test-windows.yaml
 
 on: [push]
 
 env:
-  SENZING_TOOLS_DATABASE_URL: "sqlite3://na:na@/tmp/sqlite/G2C.db"
+  SENZING_TOOLS_DATABASE_URL: 'sqlite3://na:na@nowhere/C:\Temp\sqlite\G2C.db'
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: windows-latest
     strategy:
       matrix:
         go: ["1.21"]
-    name: Go ${{ matrix.go }} - darwin
+    name: Go ${{ matrix.go }} - windows
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
