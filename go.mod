@@ -1,6 +1,6 @@
 module github.com/senzing/go-common
 
-go 1.20
+go 1.21
 
 require (
 	github.com/senzing/go-logging v1.3.2
