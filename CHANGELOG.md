@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.14] - 2023-08-24
+
+### Fixed in 0.2.14
+
+- Windows: missing import
+
 ## [0.2.13] - 2023-08-11
 
 ### Changed in 0.2.13
