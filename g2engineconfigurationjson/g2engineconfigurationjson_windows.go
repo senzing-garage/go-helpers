@@ -5,6 +5,7 @@ package g2engineconfigurationjson
 import (
 	"context"
 	"fmt"
+	"os"
 )
 
 // ----------------------------------------------------------------------------
@@ -33,9 +34,9 @@ func buildStruct(attributeMap map[string]string) G2Configuration {
 	if !ok {
 		senzingDirectory = `C:\Program Files\Senzing\g2`
 	}
-	configPath := fmt.Sprintf("%s\etc", senzingDirectory)
-	resourcePath := fmt.Sprintf("%s\resources", senzingDirectory)
-	supportPath := fmt.Sprintf("%s\data", senzingDirectory)
+	configPath := fmt.Sprintf("%s%setc", senzingDirectory, os.PathSeparator)
+	resourcePath := fmt.Sprintf("%s%sresources", senzingDirectory, os.PathSeparator)
+	supportPath := fmt.Sprintf("%s%sdata", senzingDirectory, os.PathSeparator)
 
 	// Apply attributeMap.
 
