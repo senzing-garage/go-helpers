@@ -76,7 +76,8 @@ dependencies:
 PLATFORMS := darwin/amd64 linux/amd64 windows/amd64
 $(PLATFORMS):
 	@echo Building $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH)/$(PROGRAM_NAME)
-	@mkdir -p $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH) || true
+	# @mkdir -p $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH) || true
+	@mkdir -p $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH)
 	@GOOS=$(GO_OS) GOARCH=$(GO_ARCH) go build -o $(TARGET_DIRECTORY)/$(GO_OS)-$(GO_ARCH)/$(PROGRAM_NAME)
 
 
