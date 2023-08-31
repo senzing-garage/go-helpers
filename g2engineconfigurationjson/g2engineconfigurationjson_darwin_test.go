@@ -2,36 +2,15 @@
 
 package g2engineconfigurationjson
 
-import (
-	"context"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-)
-
-// ----------------------------------------------------------------------------
-// Internal functions
-// ----------------------------------------------------------------------------
-
-func testError(test *testing.T, err error) {
-	if err != nil {
-		assert.FailNow(test, err.Error())
-	}
-}
-
-// ----------------------------------------------------------------------------
-// Test interface functions
-// ----------------------------------------------------------------------------
-
-func TestBuildSimpleSystemConfigurationJson(test *testing.T) {
-	_, err := BuildSimpleSystemConfigurationJson("postgresql://postgres:postgres@$10.0.0.1:5432/G2")
-	testError(test, err)
-}
-
-func TestVerifySenzingEngineConfigurationJson(test *testing.T) {
-	ctx := context.TODO()
-	testJson, err := BuildSimpleSystemConfigurationJson("postgresql://postgres:postgres@10.0.0.1:5432/G2")
-	testError(test, err)
-	err = VerifySenzingEngineConfigurationJson(ctx, testJson)
-	testError(test, err)
+var testCasesForOsArch = []testCaseMetadata{
+	{
+		name:            "sqlite3-001",
+		databaseUrl:     "sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db",
+		databaseUrlPath: "/var/opt/senzing/sqlite/G2C.db",
+	},
+	{
+		name:            "sqlite3-002",
+		databaseUrl:     `sqlite3://na:na@hostname/var/opt/senzing/sqlite/G2C.db`,
+		databaseUrlPath: "/var/opt/senzing/sqlite/G2C.db",
+	},
 }

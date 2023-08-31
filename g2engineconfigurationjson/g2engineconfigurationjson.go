@@ -100,31 +100,6 @@ func buildSpecificDatabaseUrl(databaseUrl string) (string, error) {
 // ----------------------------------------------------------------------------
 
 /*
-The BuildSimpleSystemConfigurationJson method is a convenience method
-for invoking BuildSimpleSystemConfigurationJsonUsingMap() passing in only the
-"databaseUrl" mapped value.
-
-Input
-  - senzingDatabaseUrl: A Database URL.
-
-Output
-  - A string containing a JSON document use when calling Senzing's Init(...) methods.
-    See the example output.
-
-Deprecated: Use BuildSimpleSystemConfigurationJsonUsingEnvVars() or BuildSimpleSystemConfigurationJsonUsingMap() instead.
-*/
-func BuildSimpleSystemConfigurationJson(senzingDatabaseUrl string) (string, error) {
-	specificDatabaseUrl, err := buildSpecificDatabaseUrl(senzingDatabaseUrl)
-	if err != nil {
-		return "", err
-	}
-	attributeMap := map[string]string{
-		"databaseUrl": specificDatabaseUrl,
-	}
-	return BuildSimpleSystemConfigurationJsonUsingMap(attributeMap)
-}
-
-/*
 The BuildSimpleSystemConfigurationJsonUsingEnvVars method is a convenience method
 for invoking BuildSimpleSystemConfigurationJsonUsingMap without any mapped values.
 In other words, only environment variables will be used.
@@ -157,11 +132,11 @@ The keys and corresponding environment variables are:
 
 	Key						Environment variable
 	---------------------  	----------------------------------
+	configPath          	SENZING_TOOLS_CONFIG_PATH
 	databaseUrl 			SENZING_TOOLS_DATABASE_URL
 	licenseStringBase64 	SENZING_TOOLS_LICENSE_STRING_BASE64
-	senzingDirectory    	SENZING_TOOLS_SENZING_DIRECTORY
-	configPath          	SENZING_TOOLS_CONFIG_PATH
 	resourcePath        	SENZING_TOOLS_RESOURCE_PATH
+	senzingDirectory    	SENZING_TOOLS_SENZING_DIRECTORY
 	supportPath         	SENZING_TOOLS_SUPPORT_PATH
 
 Input
@@ -193,18 +168,18 @@ func BuildSimpleSystemConfigurationJsonUsingMap(attributeMap map[string]string) 
 
 	// Add database URL.
 
-	_, inMap := attributeMap["databaseUrl"]
+	senzingDatabaseUrl, inMap := attributeMap["databaseUrl"]
 	if !inMap {
-		senzingDatabaseUrl, err := getOsEnv("SENZING_TOOLS_DATABASE_URL")
+		senzingDatabaseUrl, err = getOsEnv("SENZING_TOOLS_DATABASE_URL")
 		if err != nil {
 			return "", err
 		}
-		specificDatabaseUrl, err := buildSpecificDatabaseUrl(senzingDatabaseUrl)
-		if err != nil {
-			return "", err
-		}
-		attributeMap["databaseUrl"] = specificDatabaseUrl
 	}
+	specificDatabaseUrl, err := buildSpecificDatabaseUrl(senzingDatabaseUrl)
+	if err != nil {
+		return "", err
+	}
+	attributeMap["databaseUrl"] = specificDatabaseUrl
 
 	// Add Environment Variables to the map, if not already specified in the map.
 
