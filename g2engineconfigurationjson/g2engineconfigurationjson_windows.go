@@ -34,9 +34,9 @@ func buildStruct(attributeMap map[string]string) G2Configuration {
 	if !ok {
 		senzingDirectory = `C:\Program Files\Senzing\g2`
 	}
-	configPath := fmt.Sprintf("%s%setc", senzingDirectory, os.PathSeparator)
-	resourcePath := fmt.Sprintf("%s%sresources", senzingDirectory, os.PathSeparator)
-	supportPath := fmt.Sprintf("%s%sdata", senzingDirectory, os.PathSeparator)
+	configPath := fmt.Sprintf("%s%cetc", senzingDirectory, os.PathSeparator)
+	resourcePath := fmt.Sprintf("%s%cresources", senzingDirectory, os.PathSeparator)
+	supportPath := fmt.Sprintf("%s%cdata", senzingDirectory, os.PathSeparator)
 
 	// Apply attributeMap.
 
