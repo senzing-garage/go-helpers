@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2023-08-31
+
+### Fixed in 0.3.0
+
+- In `g2engineconfigurationjson`, Windows paths
+
+### Removed in 0.3.0
+
+- `g2engineconfigurationjson.BuildSimpleSystemConfigurationJson()`
+
 ## [0.2.14] - 2023-08-24
 
 ### Fixed in 0.2.14

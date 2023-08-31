@@ -100,31 +100,6 @@ func buildSpecificDatabaseUrl(databaseUrl string) (string, error) {
 // ----------------------------------------------------------------------------
 
 /*
-The BuildSimpleSystemConfigurationJson method is a convenience method
-for invoking BuildSimpleSystemConfigurationJsonUsingMap() passing in only the
-"databaseUrl" mapped value.
-
-Input
-  - senzingDatabaseUrl: A Database URL.
-
-Output
-  - A string containing a JSON document use when calling Senzing's Init(...) methods.
-    See the example output.
-
-Deprecated: Use BuildSimpleSystemConfigurationJsonUsingEnvVars() or BuildSimpleSystemConfigurationJsonUsingMap() instead.
-*/
-// func BuildSimpleSystemConfigurationJson(senzingDatabaseUrl string) (string, error) {
-// 	specificDatabaseUrl, err := buildSpecificDatabaseUrl(senzingDatabaseUrl)
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	attributeMap := map[string]string{
-// 		"databaseUrl": specificDatabaseUrl,
-// 	}
-// 	return BuildSimpleSystemConfigurationJsonUsingMap(attributeMap)
-// }
-
-/*
 The BuildSimpleSystemConfigurationJsonUsingEnvVars method is a convenience method
 for invoking BuildSimpleSystemConfigurationJsonUsingMap without any mapped values.
 In other words, only environment variables will be used.
