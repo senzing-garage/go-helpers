@@ -11,8 +11,8 @@ import (
 
 type testCaseMetadata struct {
 	configPath          string
-	databaseFile        string
 	databaseUrl         string
+	databaseUrlPath     string
 	licenseStringBase64 string
 	name                string
 	resourcePath        string
@@ -127,7 +127,7 @@ func TestVerifySenzingEngineConfigurationJson(test *testing.T) {
 func TestBuildSimpleSystemConfigurationJsonUsingMap_ParseResult(test *testing.T) {
 	ctx := context.TODO()
 	for _, testCase := range testCases {
-		if len(testCase.databaseFile) > 0 {
+		if len(testCase.databaseUrlPath) > 0 {
 			test.Run(testCase.name, func(test *testing.T) {
 				aMap := buildMap(testCase)
 				engineConfigurationJson, err := BuildSimpleSystemConfigurationJsonUsingMap(aMap)
@@ -136,11 +136,9 @@ func TestBuildSimpleSystemConfigurationJsonUsingMap_ParseResult(test *testing.T)
 				testError(test, err)
 				databaseUrls, err := parsedEngineConfigurationJson.GetDatabaseUrls(ctx)
 				testError(test, err)
-				for _, databaseUrl := range databaseUrls {
-					parsedDatabaseUrl, err := url.Parse(databaseUrl)
-					testError(test, err)
-					test.Log(parsedDatabaseUrl.Path)
-				}
+				parsedDatabaseUrl, err := url.Parse(databaseUrls[0])
+				testError(test, err)
+				assert.Equal(test, testCase.databaseUrlPath, parsedDatabaseUrl.Path)
 			})
 		}
 	}
