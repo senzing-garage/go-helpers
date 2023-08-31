@@ -52,8 +52,8 @@ func buildStruct(attributeMap map[string]string) G2Configuration {
 		},
 	}
 
-	licenseStringBase64, inMap := attributeMap["licenseStringBase64"]
-	if inMap {
+	licenseStringBase64, ok := attributeMap["licenseStringBase64"]
+	if ok {
 		result.Pipeline.LicenseStringBase64 = licenseStringBase64
 	}
 
