@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2023-10-17
+
+### Changed in 0.3.1
+
+- Refactor to [template-go](https://github.com/Senzing/template-go)
+- Update dependencies
+  - github.com/senzing/go-logging v1.3.3
+
 ## [0.3.0] - 2023-08-31
 
 ### Fixed in 0.3.0
