@@ -1,6 +1,6 @@
 package truthset
 
-import "github.com/senzing/go-common/record"
+import "github.com/senzing-garage/go-common/record"
 
 // ----------------------------------------------------------------------------
 // Constants

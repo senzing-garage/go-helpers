@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/senzing/go-common/engineconfigurationjsonparser"
+	"github.com/senzing-garage/go-common/engineconfigurationjsonparser"
 	"github.com/stretchr/testify/assert"
 )
 

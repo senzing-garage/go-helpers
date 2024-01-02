@@ -173,7 +173,7 @@ func TestEngineConfigurationJsonParserImpl_New(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func ExampleEngineConfigurationJsonParserImpl_GetConfigPath() {
-	// For more information, visit https://github.com/Senzing/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
 	configPath, err := parser.GetConfigPath(ctx)
@@ -185,7 +185,7 @@ func ExampleEngineConfigurationJsonParserImpl_GetConfigPath() {
 }
 
 func ExampleEngineConfigurationJsonParserImpl_GetDatabaseUrls() {
-	// For more information, visit https://github.com/Senzing/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
 	configPath, err := parser.GetDatabaseUrls(ctx)
@@ -197,7 +197,7 @@ func ExampleEngineConfigurationJsonParserImpl_GetDatabaseUrls() {
 }
 
 func ExampleEngineConfigurationJsonParserImpl_GetResourcePath() {
-	// For more information, visit https://github.com/Senzing/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
 	configPath, err := parser.GetResourcePath(ctx)
@@ -209,7 +209,7 @@ func ExampleEngineConfigurationJsonParserImpl_GetResourcePath() {
 }
 
 func ExampleEngineConfigurationJsonParserImpl_GetSupportPath() {
-	// For more information, visit https://github.com/Senzing/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
 	configPath, err := parser.GetSupportPath(ctx)

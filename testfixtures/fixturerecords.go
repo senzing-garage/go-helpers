@@ -3,7 +3,7 @@ package testfixtures
 import (
 	"strings"
 
-	"github.com/senzing/go-common/record"
+	"github.com/senzing-garage/go-common/record"
 )
 
 // ----------------------------------------------------------------------------
