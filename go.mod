@@ -1,16 +1,16 @@
-module github.com/senzing/go-common
+module github.com/senzing-garage/go-common
 
 go 1.21
 
 require (
-	github.com/senzing/go-logging v1.3.3
+	github.com/senzing-garage/go-logging v1.4.0
 	github.com/stretchr/testify v1.8.4
 )
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/senzing/go-messaging v1.3.3 // indirect
-	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
+	github.com/senzing-garage/go-messaging v1.4.0 // indirect
+	golang.org/x/exp v0.0.0-20231226003508-02704c960a9b // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -12,9 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed in 0.3.1
 
-- Refactor to [template-go](https://github.com/Senzing/template-go)
+- Refactor to [template-go](https://github.com/senzing-garage/template-go)
 - Update dependencies
-  - github.com/senzing/go-logging v1.3.3
+  - github.com/senzing-garage/go-logging v1.3.3
 
 ## [0.3.0] - 2023-08-31
 
@@ -119,7 +119,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added support for a Senzing directory
 - Update dependencies
-  - github.com/senzing/go-logging v1.3.1
+  - github.com/senzing-garage/go-logging v1.3.1
 
 ## [0.2.0] - 2023-07-12
 
@@ -132,14 +132,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed in 0.1.5
 
 - Update dependencies
-  - github.com/senzing/go-logging v1.3.0
+  - github.com/senzing-garage/go-logging v1.3.0
 
 ## [0.1.4] - 2023-05-16
 
 ### Added to 0.1.4
 
 - Update dependencies
-  - github.com/senzing/go-logging v1.2.6
+  - github.com/senzing-garage/go-logging v1.2.6
   - github.com/stretchr/testify v1.8.4
 
 ## [0.1.3] - 2023-05-11
@@ -148,7 +148,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - In `engineconfigurationjsonparser`, RedactedJson()
 - Update dependencies
-  - github.com/senzing/go-logging v1.2.3
+  - github.com/senzing-garage/go-logging v1.2.3
 
 ## [0.1.2] - 2023-03-01
 

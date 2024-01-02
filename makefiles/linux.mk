@@ -1,29 +1,28 @@
-# Makefile extensions for windows.
+# Makefile extensions for linux.
 
 # -----------------------------------------------------------------------------
 # Variables
 # -----------------------------------------------------------------------------
 
-SENZING_TOOLS_DATABASE_URL ?= sqlite3://na:na@nowhere/C:\Temp\sqlite\G2C.db
+SENZING_TOOLS_DATABASE_URL ?= sqlite3://na:na@/tmp/sqlite/G2C.db
 
 # -----------------------------------------------------------------------------
-# OS-ARCH specific targets
+# OS specific targets
 # -----------------------------------------------------------------------------
 
 .PHONY: build-osarch-specific
-build-osarch-specific: windows/amd64
-	@mv $(TARGET_DIRECTORY)/windows-amd64/$(PROGRAM_NAME) $(TARGET_DIRECTORY)/windows-amd64/$(PROGRAM_NAME).exe
+build-osarch-specific: linux/amd64
 
 
 .PHONY: clean-osarch-specific
 clean-osarch-specific:
-	del /F /S /Q $(TARGET_DIRECTORY)
-	del /F /S /Q $(GOPATH)/bin/$(PROGRAM_NAME)
+	@rm -rf $(TARGET_DIRECTORY) || true
+	@rm -f $(GOPATH)/bin/$(PROGRAM_NAME) || true
 
 
 .PHONY: hello-world-osarch-specific
 hello-world-osarch-specific:
-	@echo "Hello World, from windows."
+	@echo "Hello World, from linux."
 
 
 .PHONY: run-osarch-specific
@@ -44,6 +43,6 @@ test-osarch-specific:
 # Makefile targets supported only by this platform.
 # -----------------------------------------------------------------------------
 
-.PHONY: only-windows
-only-windows:
-	@echo "Only windows has this Makefile target."
+.PHONY: only-linux
+only-linux:
+	@echo "Only linux has this Makefile target."

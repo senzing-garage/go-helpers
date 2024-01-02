@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/senzing/go-common/engineconfigurationjsonparser"
+	"github.com/senzing-garage/go-common/engineconfigurationjsonparser"
 )
 
 // ----------------------------------------------------------------------------
@@ -220,7 +220,7 @@ Errors are documented at https://hub.senzing.com/go-common/errors.
 
 Input
   - ctx: A context to control lifecycle.
-  - senzingEngineConfigurationJson: A JSON string. See https://github.com/Senzing/knowledge-base/blob/main/lists/environment-variables.md#senzing_tools_engine_configuration_json
+  - senzingEngineConfigurationJson: A JSON string. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_tools_engine_configuration_json
 */
 func VerifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConfigurationJson string) error {
 	var err error = nil
