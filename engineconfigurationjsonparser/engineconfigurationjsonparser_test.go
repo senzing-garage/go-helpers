@@ -17,10 +17,12 @@ var (
 // ----------------------------------------------------------------------------
 
 func getTestObject(ctx context.Context, test *testing.T) *EngineConfigurationJsonParserImpl {
+	_ = test
 	return getParser(ctx)
 }
 
 func getParser(ctx context.Context) *EngineConfigurationJsonParserImpl {
+	_ = ctx
 	if engineConfigurationJsonParserSingleton == nil {
 		engineConfigurationJsonParserSingleton = &EngineConfigurationJsonParserImpl{
 			EngineConfigurationJson: `

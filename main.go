@@ -21,7 +21,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			normSorted, err := jsonutil.NormalizeAndSort(jsonText)
+			normSorted, _ := jsonutil.NormalizeAndSort(jsonText)
 			fmt.Println("- - - - - - - - - - - - - - - - - - - - ")
 			fmt.Println(normalized)
 			fmt.Println()
