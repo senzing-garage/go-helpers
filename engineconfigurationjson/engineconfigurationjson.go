@@ -1,7 +1,7 @@
 /*
-Package g2engineconfigurationjson is used to generate the JSON document used to configure a Senzing client.
+Package engineconfigurationjson is used to generate the JSON document used to configure a Senzing client.
 */
-package g2engineconfigurationjson
+package engineconfigurationjson
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/senzing-garage/go-common/engineconfigurationjsonparser"
+	"github.com/senzing-garage/go-helpers/engineconfigurationjsonparser"
 )
 
 // ----------------------------------------------------------------------------
@@ -216,7 +216,7 @@ func BuildSimpleSystemConfigurationJsonUsingMap(attributeMap map[string]string) 
 /*
 The VerifySenzingEngineConfigurationJson method inspects the Senzing engine configuration JSON to see if it is misconfigured.
 
-Errors are documented at https://hub.senzing.com/go-common/errors.
+Errors are documented at https://hub.senzing.com/go-helpers/errors.
 
 Input
   - ctx: A context to control lifecycle.
@@ -236,7 +236,7 @@ func VerifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConf
 	}
 	for _, value := range databaseUrls {
 		if len(value) == 0 {
-			return fmt.Errorf("SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://hub.senzing.com/go-common/errors")
+			return fmt.Errorf("SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://hub.senzing.com/go-helpers/errors")
 		}
 	}
 
@@ -253,7 +253,7 @@ func VerifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConf
 	for _, configFile := range configFiles {
 		targetFile := fmt.Sprintf("%s/%s", configPath, configFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("CONFIGPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-common/errors", targetFile)
+			return fmt.Errorf("CONFIGPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-helpers/errors", targetFile)
 		}
 	}
 
@@ -269,7 +269,7 @@ func VerifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConf
 	for _, resourceFile := range resourceFiles {
 		targetFile := fmt.Sprintf("%s/%s", resourcePath, resourceFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("RESOURCEPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-common/errors", targetFile)
+			return fmt.Errorf("RESOURCEPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-helpers/errors", targetFile)
 		}
 	}
 
@@ -286,7 +286,7 @@ func VerifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConf
 	for _, resourceFile := range supportFiles {
 		targetFile := fmt.Sprintf("%s/%s", supportPath, resourceFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("SUPPORTPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-common/errors", targetFile)
+			return fmt.Errorf("SUPPORTPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-helpers/errors", targetFile)
 		}
 	}
 

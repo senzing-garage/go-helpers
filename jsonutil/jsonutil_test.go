@@ -973,7 +973,7 @@ func TestFlatten_WithError(test *testing.T) {
 // Example functions
 // ----------------------------------------------------------------------------
 func ExampleIsJson() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/jsonutil/jsonutil_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true}`
 
 	validJson := IsJson(jsonText)
@@ -987,7 +987,7 @@ func ExampleIsJson() {
 }
 
 func ExampleNormalize() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/jsonutil/jsonutil_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `
 	{
 		"givenName": "Joe",
@@ -1006,7 +1006,7 @@ func ExampleNormalize() {
 }
 
 func ExampleNormalizeAndSort() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/jsonutil/jsonutil_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `
 	{
 		"givenName": "Joe",
@@ -1026,7 +1026,7 @@ func ExampleNormalizeAndSort() {
 }
 
 func ExampleRedact() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/jsonutil/jsonutil_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `
 	{
 		"givenName": "Joe",
@@ -1046,7 +1046,7 @@ func ExampleRedact() {
 }
 
 func ExampleRedactWithMap() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/jsonutil/jsonutil_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `
 	{
 		"givenName": "Joe",
@@ -1066,7 +1066,7 @@ func ExampleRedactWithMap() {
 }
 
 func ExampleStrip() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/jsonutil/jsonutil_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `
 	{
 		"givenName": "Joe",
@@ -1086,7 +1086,7 @@ func ExampleStrip() {
 }
 
 func ExampleFlatten_noError() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/jsonutil/jsonutil_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{ "name": "Joe Schmoe", "ssn": "111-22-3333" }`
 
 	redactedJson := Flatten(RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
@@ -1096,7 +1096,7 @@ func ExampleFlatten_noError() {
 }
 
 func ExampleFlatten_withError() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/jsonutil/jsonutil_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{ "name": "Joe Schmoe" "ssn": "111-22-3333" }` // missing a comma
 
 	redactedJson := Flatten(RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))

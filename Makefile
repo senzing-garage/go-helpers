@@ -1,4 +1,4 @@
-# Makefile for go-common.
+# Makefile for go-helpers.
 
 # Detect the operating system and architecture.
 

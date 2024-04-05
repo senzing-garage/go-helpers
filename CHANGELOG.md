@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2024-04-05
+
+### Changed in 0.5.0
+
+- Move from "G2" to "Sz" prefix
+- Renamed module to `github.com/senzing-garage/go-helpers`
+
 ## [0.4.0] - 2024-01-02
 
 ### Changed in 0.4.0
@@ -29,11 +36,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed in 0.3.0
 
-- In `g2engineconfigurationjson`, Windows paths
+- In `engineconfigurationjson`, Windows paths
 
 ### Removed in 0.3.0
 
-- `g2engineconfigurationjson.BuildSimpleSystemConfigurationJson()`
+- `engineconfigurationjson.BuildSimpleSystemConfigurationJson()`
 
 ## [0.2.14] - 2023-08-24
 
@@ -120,7 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added in 0.2.2
 
-- `g2engineconfigurationjson.VerifySenzingEngineConfigurationJson()`
+- `engineconfigurationjson.VerifySenzingEngineConfigurationJson()`
 
 ## [0.2.1] - 2023-07-13
 

@@ -17,25 +17,27 @@ var (
 // ----------------------------------------------------------------------------
 
 func getTestObject(ctx context.Context, test *testing.T) *EngineConfigurationJsonParserImpl {
+	_ = test
 	return getParser(ctx)
 }
 
 func getParser(ctx context.Context) *EngineConfigurationJsonParserImpl {
+	_ = ctx
 	if engineConfigurationJsonParserSingleton == nil {
 		engineConfigurationJsonParserSingleton = &EngineConfigurationJsonParserImpl{
 			EngineConfigurationJson: `
-			{
-				"PIPELINE": {
-					"CONFIGPATH": "/etc/opt/senzing",
-					"LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
-					"RESOURCEPATH": "/opt/senzing/g2/resources",
-					"SUPPORTPATH": "/opt/senzing/data"
-				},
-				"SQL": {
-					"CONNECTION": "postgresql://username:password@db.example.com:5432:G2"
-				}
-			}
-			`,
+            {
+                "PIPELINE": {
+                    "CONFIGPATH": "/etc/opt/senzing",
+                    "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                    "RESOURCEPATH": "/opt/senzing/g2/resources",
+                    "SUPPORTPATH": "/opt/senzing/data"
+                },
+                "SQL": {
+                    "CONNECTION": "postgresql://username:password@db.example.com:5432:G2"
+                }
+            }
+            `,
 		}
 	}
 	return engineConfigurationJsonParserSingleton
@@ -63,19 +65,19 @@ func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls(test *testing.T) {
 	ctx := context.TODO()
 	parser := &EngineConfigurationJsonParserImpl{
 		EngineConfigurationJson: `
-		{
-			"PIPELINE": {
-				"CONFIGPATH": "/etc/opt/senzing",
-				"LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
-				"RESOURCEPATH": "/opt/senzing/g2/resources",
-				"SUPPORTPATH": "/opt/senzing/data"
-			},
-			"SQL": {
-				"BACKEND": "SQL",
-				"CONNECTION": "postgresql://username:password@db.example.com:5432:G2"
-			}
-		}
-		`,
+        {
+            "PIPELINE": {
+                "CONFIGPATH": "/etc/opt/senzing",
+                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "SUPPORTPATH": "/opt/senzing/data"
+            },
+            "SQL": {
+                "BACKEND": "SQL",
+                "CONNECTION": "postgresql://username:password@db.example.com:5432:G2"
+            }
+        }
+        `,
 	}
 	actual, err := parser.GetDatabaseUrls(ctx)
 	testError(test, err)
@@ -86,35 +88,35 @@ func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls_Multi(test *testing.T
 	ctx := context.TODO()
 	parser := &EngineConfigurationJsonParserImpl{
 		EngineConfigurationJson: `
-		{
-			"PIPELINE": {
-				"CONFIGPATH": "/etc/opt/senzing",
-				"LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
-				"RESOURCEPATH": "/opt/senzing/g2/resources",
-				"SUPPORTPATH": "/opt/senzing/data"
-			},
-			"SQL": {
-				"BACKEND": "HYBRID",
-				"CONNECTION": "postgresql://username:password@db-1.example.com:5432:G2"
-			},
-			"C1": {
-				"CLUSTER_SIZE": "1",
-				"DB_1": "postgresql://username:password@db-2.example.com:5432:G2"
-			},
-			"C2": {
-				"CLUSTER_SIZE": "1",
-				"DB_1": "postgresql://username:password@db-3.example.com:5432:G2"
-			},
-			"HYBRID": {
-				"RES_FEAT": "C1",
-				"RES_FEAT_EKEY": "C1",
-				"RES_FEAT_LKEY": "C1",
-				"RES_FEAT_STAT": "C1",
-				"LIB_FEAT": "C2",
-				"LIB_FEAT_HKEY": "C2"
-			}
-		}
-		`,
+        {
+            "PIPELINE": {
+                "CONFIGPATH": "/etc/opt/senzing",
+                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "SUPPORTPATH": "/opt/senzing/data"
+            },
+            "SQL": {
+                "BACKEND": "HYBRID",
+                "CONNECTION": "postgresql://username:password@db-1.example.com:5432:G2"
+            },
+            "C1": {
+                "CLUSTER_SIZE": "1",
+                "DB_1": "postgresql://username:password@db-2.example.com:5432:G2"
+            },
+            "C2": {
+                "CLUSTER_SIZE": "1",
+                "DB_1": "postgresql://username:password@db-3.example.com:5432:G2"
+            },
+            "HYBRID": {
+                "RES_FEAT": "C1",
+                "RES_FEAT_EKEY": "C1",
+                "RES_FEAT_LKEY": "C1",
+                "RES_FEAT_STAT": "C1",
+                "LIB_FEAT": "C2",
+                "LIB_FEAT_HKEY": "C2"
+            }
+        }
+        `,
 	}
 	actual, err := parser.GetDatabaseUrls(ctx)
 	testError(test, err)
@@ -128,35 +130,35 @@ func TestEngineConfigurationJsonParserImpl_New(test *testing.T) {
 	ctx := context.TODO()
 
 	enginConfigurationJson := `
-		{
-			"PIPELINE": {
-				"CONFIGPATH": "/etc/opt/senzing",
-				"LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
-				"RESOURCEPATH": "/opt/senzing/g2/resources",
-				"SUPPORTPATH": "/opt/senzing/data"
-			},
-			"SQL": {
-				"BACKEND": "HYBRID",
-				"CONNECTION": "postgresql://username:password@db-1.example.com:5432:G2"
-			},
-			"C1": {
-				"CLUSTER_SIZE": "1",
-				"DB_1": "postgresql://username:password@db-2.example.com:5432:G2"
-			},
-			"C2": {
-				"CLUSTER_SIZE": "1",
-				"DB_1": "postgresql://username:password@db-3.example.com:5432:G2"
-			},
-			"HYBRID": {
-				"RES_FEAT": "C1",
-				"RES_FEAT_EKEY": "C1",
-				"RES_FEAT_LKEY": "C1",
-				"RES_FEAT_STAT": "C1",
-				"LIB_FEAT": "C2",
-				"LIB_FEAT_HKEY": "C2"
-			}
-		}
-		`
+        {
+            "PIPELINE": {
+                "CONFIGPATH": "/etc/opt/senzing",
+                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "SUPPORTPATH": "/opt/senzing/data"
+            },
+            "SQL": {
+                "BACKEND": "HYBRID",
+                "CONNECTION": "postgresql://username:password@db-1.example.com:5432:G2"
+            },
+            "C1": {
+                "CLUSTER_SIZE": "1",
+                "DB_1": "postgresql://username:password@db-2.example.com:5432:G2"
+            },
+            "C2": {
+                "CLUSTER_SIZE": "1",
+                "DB_1": "postgresql://username:password@db-3.example.com:5432:G2"
+            },
+            "HYBRID": {
+                "RES_FEAT": "C1",
+                "RES_FEAT_EKEY": "C1",
+                "RES_FEAT_LKEY": "C1",
+                "RES_FEAT_STAT": "C1",
+                "LIB_FEAT": "C2",
+                "LIB_FEAT_HKEY": "C2"
+            }
+        }
+        `
 
 	parser, err := New(enginConfigurationJson)
 	testError(test, err)
@@ -173,7 +175,7 @@ func TestEngineConfigurationJsonParserImpl_New(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func ExampleEngineConfigurationJsonParserImpl_GetConfigPath() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
 	configPath, err := parser.GetConfigPath(ctx)
@@ -185,7 +187,7 @@ func ExampleEngineConfigurationJsonParserImpl_GetConfigPath() {
 }
 
 func ExampleEngineConfigurationJsonParserImpl_GetDatabaseUrls() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
 	configPath, err := parser.GetDatabaseUrls(ctx)
@@ -197,7 +199,7 @@ func ExampleEngineConfigurationJsonParserImpl_GetDatabaseUrls() {
 }
 
 func ExampleEngineConfigurationJsonParserImpl_GetResourcePath() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
 	configPath, err := parser.GetResourcePath(ctx)
@@ -209,7 +211,7 @@ func ExampleEngineConfigurationJsonParserImpl_GetResourcePath() {
 }
 
 func ExampleEngineConfigurationJsonParserImpl_GetSupportPath() {
-	// For more information, visit https://github.com/senzing-garage/go-common/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
 	configPath, err := parser.GetSupportPath(ctx)
@@ -224,19 +226,19 @@ func ExampleEngineConfigurationJsonParserImpl_RedactedJson_single() {
 	ctx := context.TODO()
 	parser := &EngineConfigurationJsonParserImpl{
 		EngineConfigurationJson: `
-		{
-			"PIPELINE": {
-				"CONFIGPATH": "/etc/opt/senzing",
-				"LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
-				"RESOURCEPATH": "/opt/senzing/g2/resources",
-				"SUPPORTPATH": "/opt/senzing/data"
-			},
-			"SQL": {
-				"BACKEND": "SQL",
-				"CONNECTION": "postgresql://username:password@db.example.com:5432:G2"
-			}
-		}
-		`,
+        {
+            "PIPELINE": {
+                "CONFIGPATH": "/etc/opt/senzing",
+                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "SUPPORTPATH": "/opt/senzing/data"
+            },
+            "SQL": {
+                "BACKEND": "SQL",
+                "CONNECTION": "postgresql://username:password@db.example.com:5432:G2"
+            }
+        }
+        `,
 	}
 
 	actual, err := parser.RedactedJson(ctx)
@@ -251,35 +253,35 @@ func ExampleEngineConfigurationJsonParserImpl_RedactedJson_multiple() {
 	ctx := context.TODO()
 
 	engineConfigurationJson := `
-		{
-			"PIPELINE": {
-				"CONFIGPATH": "/etc/opt/senzing",
-				"LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
-				"RESOURCEPATH": "/opt/senzing/g2/resources",
-				"SUPPORTPATH": "/opt/senzing/data"
-			},
-			"SQL": {
-				"BACKEND": "HYBRID",
-				"CONNECTION": "postgresql://username:password@db-1.example.com:5432:G2"
-			},
-			"C1": {
-				"CLUSTER_SIZE": "1",
-				"DB_1": "postgresql://username:password@db-2.example.com:5432:G2"
-			},
-			"C2": {
-				"CLUSTER_SIZE": "1",
-				"DB_1": "postgresql://username:password@db-3.example.com:5432:G2"
-			},
-			"HYBRID": {
-				"RES_FEAT": "C1",
-				"RES_FEAT_EKEY": "C1",
-				"RES_FEAT_LKEY": "C1",
-				"RES_FEAT_STAT": "C1",
-				"LIB_FEAT": "C2",
-				"LIB_FEAT_HKEY": "C2"
-			}
-		}
-		`
+        {
+            "PIPELINE": {
+                "CONFIGPATH": "/etc/opt/senzing",
+                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "SUPPORTPATH": "/opt/senzing/data"
+            },
+            "SQL": {
+                "BACKEND": "HYBRID",
+                "CONNECTION": "postgresql://username:password@db-1.example.com:5432:G2"
+            },
+            "C1": {
+                "CLUSTER_SIZE": "1",
+                "DB_1": "postgresql://username:password@db-2.example.com:5432:G2"
+            },
+            "C2": {
+                "CLUSTER_SIZE": "1",
+                "DB_1": "postgresql://username:password@db-3.example.com:5432:G2"
+            },
+            "HYBRID": {
+                "RES_FEAT": "C1",
+                "RES_FEAT_EKEY": "C1",
+                "RES_FEAT_LKEY": "C1",
+                "RES_FEAT_STAT": "C1",
+                "LIB_FEAT": "C2",
+                "LIB_FEAT_HKEY": "C2"
+            }
+        }
+        `
 
 	parser, err := New(engineConfigurationJson)
 	if err != nil {

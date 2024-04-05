@@ -1,11 +1,11 @@
-package g2engineconfigurationjson
+package engineconfigurationjson
 
 import (
 	"context"
 	"net/url"
 	"testing"
 
-	"github.com/senzing-garage/go-common/engineconfigurationjsonparser"
+	"github.com/senzing-garage/go-helpers/engineconfigurationjsonparser"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -1,6 +1,6 @@
 //go:build windows
 
-package g2engineconfigurationjson
+package engineconfigurationjson
 
 var testCasesForOsArch = []testCaseMetadata{
 	{

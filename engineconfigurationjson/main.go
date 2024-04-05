@@ -1,24 +1,24 @@
-// The g2engineconfigurationjson package helps configure SENZING_ENGINE_CONFIGURATION_JSON.
-package g2engineconfigurationjson
+// The engineconfigurationjson package helps configure SENZING_ENGINE_CONFIGURATION_JSON.
+package engineconfigurationjson
 
 // ----------------------------------------------------------------------------
 // Types
 // ----------------------------------------------------------------------------
 
-type G2ConfigurationPipeline struct {
+type SzConfigurationPipeline struct {
 	ConfigPath          string `json:"CONFIGPATH"`
 	LicenseStringBase64 string `json:"LICENSESTRINGBASE64,omitempty"`
 	ResourcePath        string `json:"RESOURCEPATH"`
 	SupportPath         string `json:"SUPPORTPATH"`
 }
 
-type G2ConfigurationSql struct {
+type SzConfigurationSql struct {
 	Connection string `json:"CONNECTION"`
 }
 
-type G2Configuration struct {
-	Pipeline G2ConfigurationPipeline `json:"PIPELINE"`
-	Sql      G2ConfigurationSql      `json:"SQL"`
+type SzConfiguration struct {
+	Pipeline SzConfigurationPipeline `json:"PIPELINE"`
+	Sql      SzConfigurationSql      `json:"SQL"`
 }
 
 // ----------------------------------------------------------------------------
