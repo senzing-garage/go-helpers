@@ -1,4 +1,4 @@
-# go-common
+# go-helpers
 
 If you are beginning your journey with
 [Senzing](https://senzing.com/),
@@ -14,18 +14,18 @@ Heck, it may not even be appropriate for your application of Senzing!
 
 ## Synopsis
 
-The Senzing go-common repository has packages containing
+The Senzing go-helpers repository has packages containing
 common interface definitions, data structures, helper functions, and test data
 used by other Senzing Go language packages.
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/senzing-garage/go-common.svg)](https://pkg.go.dev/github.com/senzing-garage/go-common)
-[![Go Report Card](https://goreportcard.com/badge/github.com/senzing-garage/go-common)](https://goreportcard.com/report/github.com/senzing-garage/go-common)
-[![License](https://img.shields.io/badge/License-Apache2-brightgreen.svg)](https://github.com/senzing-garage/go-common/blob/main/LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/senzing-garage/go-helpers.svg)](https://pkg.go.dev/github.com/senzing-garage/go-helpers)
+[![Go Report Card](https://goreportcard.com/badge/github.com/senzing-garage/go-helpers)](https://goreportcard.com/report/github.com/senzing-garage/go-helpers)
+[![License](https://img.shields.io/badge/License-Apache2-brightgreen.svg)](https://github.com/senzing-garage/go-helpers/blob/main/LICENSE)
 
-[![gosec.yaml](https://github.com/senzing-garage/go-common/actions/workflows/gosec.yaml/badge.svg)](https://github.com/senzing-garage/go-common/actions/workflows/gosec.yaml)
-[![go-test-linux.yaml](https://github.com/senzing-garage/go-common/actions/workflows/go-test-linux.yaml/badge.svg)](https://github.com/senzing-garage/go-common/actions/workflows/go-test-linux.yaml)
-[![go-test-darwin.yaml](https://github.com/senzing-garage/go-common/actions/workflows/go-test-darwin.yaml/badge.svg)](https://github.com/senzing-garage/go-common/actions/workflows/go-test-darwin.yaml)
-[![go-test-windows.yaml](https://github.com/senzing-garage/go-common/actions/workflows/go-test-windows.yaml/badge.svg)](https://github.com/senzing-garage/go-common/actions/workflows/go-test-windows.yaml)
+[![gosec.yaml](https://github.com/senzing-garage/go-helpers/actions/workflows/gosec.yaml/badge.svg)](https://github.com/senzing-garage/go-helpers/actions/workflows/gosec.yaml)
+[![go-test-linux.yaml](https://github.com/senzing-garage/go-helpers/actions/workflows/go-test-linux.yaml/badge.svg)](https://github.com/senzing-garage/go-helpers/actions/workflows/go-test-linux.yaml)
+[![go-test-darwin.yaml](https://github.com/senzing-garage/go-helpers/actions/workflows/go-test-darwin.yaml/badge.svg)](https://github.com/senzing-garage/go-helpers/actions/workflows/go-test-darwin.yaml)
+[![go-test-windows.yaml](https://github.com/senzing-garage/go-helpers/actions/workflows/go-test-windows.yaml/badge.svg)](https://github.com/senzing-garage/go-helpers/actions/workflows/go-test-windows.yaml)
 
 ## Overview
 
@@ -45,7 +45,7 @@ The following helpers have been created:
 
 ## References
 
-1. [API documentation](https://pkg.go.dev/github.com/senzing-garage/go-common)
+1. [API documentation](https://pkg.go.dev/github.com/senzing-garage/go-helpers)
 1. [Development](docs/development.md)
 1. [Errors](docs/errors.md)
 1. [Examples](docs/examples.md)

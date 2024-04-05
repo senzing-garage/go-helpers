@@ -1,4 +1,4 @@
-# go-common errors
+# go-helpers errors
 
 ## Error strings
 

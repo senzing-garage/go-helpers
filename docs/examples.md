@@ -1,1 +1,1 @@
-# go-common examples
+# go-helpers examples

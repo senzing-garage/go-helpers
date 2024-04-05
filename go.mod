@@ -3,7 +3,6 @@ module github.com/senzing-garage/go-helpers
 go 1.21
 
 require (
-	github.com/senzing-garage/go-common v0.4.0
 	github.com/senzing-garage/go-logging v1.4.0
 	github.com/stretchr/testify v1.9.0
 )

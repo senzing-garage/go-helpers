@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed in 0.5.0
 
 - Move from "G2" to "Sz" prefix
+- Renamed module to `github.com/senzing-garage/go-helpers`
 
 ## [0.4.0] - 2024-01-02
 
