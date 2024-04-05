@@ -16,7 +16,7 @@ jobs:
       matrix:
         go: ["1.21"]
         os: [windows-latest]
-        senzingapi-version: [production-v4]
+        senzingapi-version: [production-v3]
 
     steps:
       - name: checkout repository
