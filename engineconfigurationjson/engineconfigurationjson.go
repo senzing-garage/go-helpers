@@ -1,7 +1,7 @@
 /*
-Package g2engineconfigurationjson is used to generate the JSON document used to configure a Senzing client.
+Package engineconfigurationjson is used to generate the JSON document used to configure a Senzing client.
 */
-package g2engineconfigurationjson
+package engineconfigurationjson
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/senzing-garage/go-common/engineconfigurationjsonparser"
+	"github.com/senzing-garage/go-helpers/engineconfigurationjsonparser"
 )
 
 // ----------------------------------------------------------------------------

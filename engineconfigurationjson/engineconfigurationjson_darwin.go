@@ -1,11 +1,10 @@
-//go:build windows
+//go:build darwin
 
-package g2engineconfigurationjson
+package engineconfigurationjson
 
 import (
 	"context"
 	"fmt"
-	"os"
 )
 
 // ----------------------------------------------------------------------------
@@ -20,46 +19,50 @@ func mapWithDefault(aMap map[string]string, key string, defaultValue string) str
 	return defaultValue
 }
 
-func buildStruct(attributeMap map[string]string) G2Configuration {
-	var result G2Configuration
+func buildStruct(attributeMap map[string]string) SzConfiguration {
+	var result SzConfiguration
 
 	databaseUrl, ok := attributeMap["databaseUrl"]
 	if !ok {
 		return result
 	}
 
-	// Construct directories based on senzingDirectory.
+	// Determine defaultDirectory.
 
+	defaultDirectory := "/opt/senzing/g2"
 	senzingDirectory, ok := attributeMap["senzingDirectory"]
-	if !ok {
-		senzingDirectory = `C:\Program Files\Senzing\g2`
+	if ok {
+		defaultDirectory = senzingDirectory
 	}
-	configPath := fmt.Sprintf("%s%cetc", senzingDirectory, os.PathSeparator)
-	resourcePath := fmt.Sprintf("%s%cresources", senzingDirectory, os.PathSeparator)
-	supportPath := fmt.Sprintf("%s%cdata", senzingDirectory, os.PathSeparator)
+
+	configPath := fmt.Sprintf("%s/etc", defaultDirectory)
+	resourcePath := fmt.Sprintf("%s/resources", defaultDirectory)
+	supportPath := fmt.Sprintf("%s/data", defaultDirectory)
 
 	// Apply attributeMap.
 
-	result = G2Configuration{
-		Pipeline: G2ConfigurationPipeline{
+	result = SzConfiguration{
+		Pipeline: SzConfigurationPipeline{
 			ConfigPath:   mapWithDefault(attributeMap, "configPath", configPath),
 			ResourcePath: mapWithDefault(attributeMap, "resourcePath", resourcePath),
 			SupportPath:  mapWithDefault(attributeMap, "supportPath", supportPath),
 		},
-		Sql: G2ConfigurationSql{
+		Sql: SzConfigurationSql{
 			Connection: databaseUrl,
 		},
 	}
 
-	licenseStringBase64, inMap := attributeMap["licenseStringBase64"]
-	if inMap {
+	licenseStringBase64, ok := attributeMap["licenseStringBase64"]
+	if ok {
 		result.Pipeline.LicenseStringBase64 = licenseStringBase64
 	}
 
 	return result
 }
 
-func verifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConfigurationJson string) error {
+func verifySenzingEngineConfigurationJson(ctx context.Context, engineConfigurationJson string) error {
+	_ = ctx
+	_ = engineConfigurationJson
 	var err error = nil
 	return err
 }

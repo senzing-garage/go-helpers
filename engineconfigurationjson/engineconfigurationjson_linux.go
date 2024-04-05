@@ -1,6 +1,6 @@
 //go:build linux
 
-package g2engineconfigurationjson
+package engineconfigurationjson
 
 import "context"
 
@@ -8,21 +8,21 @@ import "context"
 // Internal methods
 // ----------------------------------------------------------------------------
 
-func buildStruct(attributeMap map[string]string) G2Configuration {
-	var result G2Configuration
+func buildStruct(attributeMap map[string]string) SzConfiguration {
+	var result SzConfiguration
 
 	databaseUrl, ok := attributeMap["databaseUrl"]
 	if !ok {
 		return result
 	}
 
-	result = G2Configuration{
-		Pipeline: G2ConfigurationPipeline{
+	result = SzConfiguration{
+		Pipeline: SzConfigurationPipeline{
 			ConfigPath:   "/etc/opt/senzing",
 			ResourcePath: "/opt/senzing/g2/resources",
 			SupportPath:  "/opt/senzing/data",
 		},
-		Sql: G2ConfigurationSql{
+		Sql: SzConfigurationSql{
 			Connection: databaseUrl,
 		},
 	}
@@ -35,7 +35,9 @@ func buildStruct(attributeMap map[string]string) G2Configuration {
 	return result
 }
 
-func verifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConfigurationJson string) error {
+func verifySenzingEngineConfigurationJson(ctx context.Context, engineConfigurationJson string) error {
+	_ = engineConfigurationJson
+	_ = ctx
 	var err error = nil
 	return err
 }

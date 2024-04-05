@@ -1,6 +1,6 @@
 //go:build darwin
 
-package g2engineconfigurationjson
+package engineconfigurationjson
 
 var testCasesForOsArch = []testCaseMetadata{
 	{
