@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Changed `engineconfigurationjson` to `settings`
+- Changed `engineconfigurationjsonparser` to `settingsparser`
+
 ## [0.5.1] - 2024-04-19
 
 ### Changed in 0.5.1
