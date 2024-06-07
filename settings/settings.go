@@ -1,5 +1,5 @@
 /*
-Package engineconfigurationjson is used to generate the JSON document used to configure a Senzing client.
+Package settings is used to generate the JSON document used to configure a Senzing client.
 */
 package settings
 
@@ -18,23 +18,23 @@ import (
 // ----------------------------------------------------------------------------
 
 /*
-The BuildSimpleSystemConfigurationJSONUsingEnvVars method is a convenience method
-for invoking BuildSimpleSystemConfigurationJsonUsingMap without any mapped values.
+The BuildSimpleSettingsUsingEnvVars method is a convenience method
+for invoking BuildSimpleSettingsUsingMap without any mapped values.
 In other words, only environment variables will be used.
 
-See BuildSimpleSystemConfigurationJsonUsingMap() for information on the environment variables used.
+See BuildSimpleSettingsUsingMap() for information on the environment variables used.
 
 Output
   - A string containing a JSON document use when calling Senzing's Init(...) methods.
     See the example output.
 */
-func BuildSimpleSystemConfigurationJSONUsingEnvVars() (string, error) {
+func BuildSimpleSettingsUsingEnvVars() (string, error) {
 	attributeMap := map[string]string{}
-	return BuildSimpleSystemConfigurationJSONUsingMap(attributeMap)
+	return BuildSimpleSettingsUsingMap(attributeMap)
 }
 
 /*
-The BuildSimpleSystemConfigurationJSONUsingMap method returns a JSON document for use with Senzing's Init(...) methods.
+The BuildSimpleSettingsUsingMap method returns a JSON document for use with Senzing's Init(...) methods.
 
 If the environment variable SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set,
 the value of SENZING_TOOLS_ENGINE_CONFIGURATION_JSON will be returned unchanged.
@@ -66,7 +66,7 @@ Output
   - A string containing a JSON document use when calling Senzing's Init(...) methods.
     See the example output.
 */
-func BuildSimpleSystemConfigurationJSONUsingMap(attributeMap map[string]string) (string, error) {
+func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error) {
 	var err error
 
 	// If SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set, use it.
@@ -132,23 +132,23 @@ func BuildSimpleSystemConfigurationJSONUsingMap(attributeMap map[string]string) 
 }
 
 /*
-The VerifySenzingEngineConfigurationJSON method inspects the Senzing engine configuration JSON to see if it is misconfigured.
+The VerifySettings method inspects the Senzing engine configuration JSON to see if it is misconfigured.
 
 Errors are documented at https://hub.senzing.com/go-helpers/errors.
 
 Input
   - ctx: A context to control lifecycle.
-  - senzingEngineConfigurationJson: A JSON string. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_tools_engine_configuration_json
+  - settings: A JSON string. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_tools_engine_configuration_json
 */
-func VerifySenzingEngineConfigurationJSON(ctx context.Context, senzingEngineConfigurationJSON string) error {
+func VerifySettings(ctx context.Context, settings string) error {
 	var err error
-	parser := settingsparser.BasicEngineConfigurationJSONParser{
-		EngineConfigurationJSON: senzingEngineConfigurationJSON,
+	parser := settingsparser.BasicSettingsParser{
+		Settings: settings,
 	}
 
 	// Check database URLs.
 
-	databaseURLs, err := parser.GetDatabaseUrls(ctx)
+	databaseURLs, err := parser.GetDatabaseURLs(ctx)
 	if err != nil {
 		return err
 	}
@@ -210,13 +210,13 @@ func VerifySenzingEngineConfigurationJSON(ctx context.Context, senzingEngineConf
 
 	// Os / Arch specific calls
 
-	err = verifySenzingEngineConfigurationJSON(ctx, senzingEngineConfigurationJSON)
+	err = verifySettings(ctx, settings)
 
 	return err
 }
 
 // ----------------------------------------------------------------------------
-// Internal methods
+// Private functions
 // ----------------------------------------------------------------------------
 
 func getOsEnv(variableName string) (string, error) {

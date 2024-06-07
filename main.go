@@ -36,7 +36,7 @@ func main() {
 	// --- Build JSON from environment variables.
 	// ------------------------------------------------------------------------
 
-	iniParams, err := settings.BuildSimpleSystemConfigurationJSONUsingEnvVars()
+	iniParams, err := settings.BuildSimpleSettingsUsingEnvVars()
 	if err != nil {
 		panic(err)
 	}
@@ -46,7 +46,7 @@ func main() {
 	// --- Verify parameters
 	// ------------------------------------------------------------------------
 
-	err = settings.VerifySenzingEngineConfigurationJSON(ctx, iniParams)
+	err = settings.VerifySettings(ctx, iniParams)
 	if err != nil {
 		panic(err)
 	}
@@ -63,7 +63,7 @@ func main() {
 		"supportPath":         "/final/path/to/support",
 	}
 
-	iniParams2, err := settings.BuildSimpleSystemConfigurationJSONUsingMap(attributeMap)
+	iniParams2, err := settings.BuildSimpleSettingsUsingMap(attributeMap)
 	if err != nil {
 		panic(err)
 	}

@@ -1,5 +1,5 @@
 /*
-The engineconfigurationjsonparser package is used to pull information from the _ENGINE_CONFIGURATION_JSON string.
+The settingsparser package is used to pull information from the _ENGINE_CONFIGURATION_JSON string.
 
 Single-database example of a _ENGINE_CONFIGURATION_JSON string:
 

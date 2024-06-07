@@ -63,48 +63,61 @@ var testCases = append(testCasesForMultiPlatform, testCasesForOsArch...)
 // Test Public functions
 // ----------------------------------------------------------------------------
 
-func TestBuildSimpleSystemConfigurationJSONUsingEnvVars(test *testing.T) {
-	_, err := BuildSimpleSystemConfigurationJSONUsingEnvVars()
+func TestBuildSimpleSettingsUsingEnvVars(test *testing.T) {
+	_, err := BuildSimpleSettingsUsingEnvVars()
 	testError(test, err)
 }
 
-func TestBuildSimpleSystemConfigurationJSONUsingMap(test *testing.T) {
+func TestBuildSimpleSettingsUsingMap(test *testing.T) {
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
 			aMap := buildMap(testCase)
-			_, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+			_, err := BuildSimpleSettingsUsingMap(aMap)
 			testError(test, err)
 		})
 	}
 }
 
-func TestBuildSimpleSystemConfigurationJSONUsingMap_using_SENZING_TOOLS_ENGINE_CONFIGURATION_JSON(test *testing.T) {
+func TestBuildSimpleSettingsUsingMap_using_SENZING_TOOLS_ENGINE_CONFIGURATION_JSON(test *testing.T) {
 	expected := "test value"
 	test.Setenv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON", expected)
-	actual, err := BuildSimpleSystemConfigurationJSONUsingMap(map[string]string{})
+	actual, err := BuildSimpleSettingsUsingMap(map[string]string{})
 	require.NoError(test, err)
 	assert.Equal(test, expected, actual)
 }
 
-func TestBuildSimpleSystemConfigurationJSONUsingMap_using_SENZING_ENGINE_CONFIGURATION_JSON(test *testing.T) {
+func TestBuildSimpleSettingsUsingMap_using_SENZING_ENGINE_CONFIGURATION_JSON(test *testing.T) {
 	expected := "test value"
 	test.Setenv("SENZING_ENGINE_CONFIGURATION_JSON", expected)
-	actual, err := BuildSimpleSystemConfigurationJSONUsingMap(map[string]string{})
+	actual, err := BuildSimpleSettingsUsingMap(map[string]string{})
 	require.NoError(test, err)
 	assert.Equal(test, expected, actual)
 }
 
-func TestBuildSimpleSystemConfigurationJSONUsingMap_ParseResult(test *testing.T) {
+func TestBuildSimpleSettingsUsingMap_using_SENZING_TOOLS_LICENSE_STRING_BASE64(test *testing.T) {
+	ctx := context.TODO()
+	expected := "A1B2C3D4"
+	test.Setenv("SENZING_TOOLS_LICENSE_STRING_BASE64", expected)
+	actual, err := BuildSimpleSettingsUsingMap(map[string]string{})
+	require.NoError(test, err)
+	parsedActual, err := settingsparser.New(actual)
+	require.NoError(test, err)
+	licenseStringBase64, err := parsedActual.GetLicenseStringBase64(ctx)
+	require.NoError(test, err)
+	assert.Equal(test, expected, licenseStringBase64)
+}
+
+func TestBuildSimpleSettingsUsingMap_ParseResult(test *testing.T) {
 	ctx := context.TODO()
 	for _, testCase := range testCases {
 		if len(testCase.databaseURLPath) > 0 {
 			test.Run(testCase.name, func(test *testing.T) {
 				aMap := buildMap(testCase)
-				engineConfigurationJSON, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+				settings, err := BuildSimpleSettingsUsingMap(aMap)
 				testError(test, err)
-				parsedEngineConfigurationJSON, err := settingsparser.New(engineConfigurationJSON)
+				parsedSettings, err := settingsparser.New(settings)
 				testError(test, err)
-				databaseUrls, err := parsedEngineConfigurationJSON.GetDatabaseUrls(ctx)
+				databaseUrls, err := parsedSettings.GetDatabaseURLs(ctx)
 				testError(test, err)
 				parsedDatabaseURL, err := url.Parse(databaseUrls[0])
 				testError(test, err)
@@ -114,21 +127,18 @@ func TestBuildSimpleSystemConfigurationJSONUsingMap_ParseResult(test *testing.T)
 	}
 }
 
-func TestVerifySenzingEngineConfigurationJson(test *testing.T) {
+func TestVerifySettings(test *testing.T) {
 	ctx := context.TODO()
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
 			aMap := buildMap(testCase)
-			testJSON, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+			testJSON, err := BuildSimpleSettingsUsingMap(aMap)
 			testError(test, err)
-			err = VerifySenzingEngineConfigurationJSON(ctx, testJSON)
+			err = VerifySettings(ctx, testJSON)
 			testError(test, err)
 		})
 	}
 }
-
-// func TestVerifySenzingEngineConfigurationJson_badDatabaseURL(test *testing.T) {
-// }
 
 // ----------------------------------------------------------------------------
 // Test private functions

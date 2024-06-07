@@ -1,6 +1,6 @@
 //go:build windows
 
-package engineconfigurationjson
+package settings
 
 import (
 	"context"
@@ -23,7 +23,7 @@ func mapWithDefault(aMap map[string]string, key string, defaultValue string) str
 func buildStruct(attributeMap map[string]string) SzConfiguration {
 	var result SzConfiguration
 
-	databaseUrl, ok := attributeMap["databaseUrl"]
+	databaseURL, ok := attributeMap["databaseUrl"]
 	if !ok {
 		return result
 	}
@@ -46,8 +46,8 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 			ResourcePath: mapWithDefault(attributeMap, "resourcePath", resourcePath),
 			SupportPath:  mapWithDefault(attributeMap, "supportPath", supportPath),
 		},
-		Sql: SzConfigurationSql{
-			Connection: databaseUrl,
+		SQL: SzConfigurationSQL{
+			Connection: databaseURL,
 		},
 	}
 
@@ -59,9 +59,9 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 	return result
 }
 
-func verifySenzingEngineConfigurationJson(ctx context.Context, engineConfigurationJson string) error {
+func verifySettings(ctx context.Context, settings string) error {
 	_ = ctx
-	_ = engineConfigurationJson
+	_ = settings
 	var err error = nil
 	return err
 }

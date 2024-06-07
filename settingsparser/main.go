@@ -1,15 +1,19 @@
-// The engineconfigurationjsonparser package helps parse the _ENGINE_CONFIGURATION_JSON.
+// The settingsparser package helps parse the _ENGINE_CONFIGURATION_JSON.
 package settingsparser
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 // ----------------------------------------------------------------------------
 // Types - interface
 // ----------------------------------------------------------------------------
 
-type EngineConfigurationJSONParser interface {
+type SettingsParser interface {
 	GetConfigPath(ctx context.Context) (string, error)
-	GetDatabaseUrls(ctx context.Context) ([]string, error)
+	GetDatabaseURLs(ctx context.Context) ([]string, error)
+	GetLicenseStringBase64(ctx context.Context) (string, error)
 	GetResourcePath(ctx context.Context) (string, error)
 	GetSupportPath(ctx context.Context) (string, error)
 	RedactedJSON(ctx context.Context) (string, error)
@@ -20,9 +24,10 @@ type EngineConfigurationJSONParser interface {
 // ----------------------------------------------------------------------------
 
 type EngineConfigurationPipeline struct {
-	ConfigPath   string `json:"CONFIGPATH"`
-	ResourcePath string `json:"RESOURCEPATH"`
-	SupportPath  string `json:"SUPPORTPATH"`
+	ConfigPath          string `json:"CONFIGPATH"`
+	LicenseStringBase64 string `json:"LICENSESTRINGBASE64"`
+	ResourcePath        string `json:"RESOURCEPATH"`
+	SupportPath         string `json:"SUPPORTPATH"`
 }
 
 type EngineConfigurationSQL struct {
@@ -41,3 +46,18 @@ type EngineConfiguration struct {
 
 // Identfier of the  package found messages having the format "senzing-6401xxxx".
 const ComponentID = 6401
+
+// ----------------------------------------------------------------------------
+// Constructor  methods
+// ----------------------------------------------------------------------------
+
+func New(settings string) (SettingsParser, error) {
+	var err error
+	if !isJSON(settings) {
+		return nil, fmt.Errorf("incorrect JSON syntax in %s", settings)
+	}
+	result := &BasicSettingsParser{
+		Settings: settings,
+	}
+	return result, err
+}

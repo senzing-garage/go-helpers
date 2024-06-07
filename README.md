@@ -37,7 +37,7 @@ The following helpers have been created:
 
 ### Helper functions
 
-- `engineconfigurationjson`:  A package for creating the `SENZING_ENGINE_CONFIGURATION_JSON` Document.
+- `settings`:  A package for creating the `SENZING_ENGINE_CONFIGURATION_JSON` Document.
 
 ### Test data
 

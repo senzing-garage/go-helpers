@@ -1,6 +1,6 @@
 //go:build darwin
 
-package engineconfigurationjson
+package settings
 
 import (
 	"context"
@@ -47,7 +47,7 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 			ResourcePath: mapWithDefault(attributeMap, "resourcePath", resourcePath),
 			SupportPath:  mapWithDefault(attributeMap, "supportPath", supportPath),
 		},
-		Sql: SzConfigurationSql{
+		SQL: SzConfigurationSQL{
 			Connection: databaseUrl,
 		},
 	}
@@ -60,9 +60,9 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 	return result
 }
 
-func verifySenzingEngineConfigurationJson(ctx context.Context, engineConfigurationJson string) error {
+func verifySettings(ctx context.Context, settings string) error {
 	_ = ctx
-	_ = engineConfigurationJson
+	_ = settings
 	var err error = nil
 	return err
 }

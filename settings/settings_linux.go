@@ -35,8 +35,8 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 	return result
 }
 
-func verifySenzingEngineConfigurationJSON(ctx context.Context, engineConfigurationJSON string) error {
-	_ = engineConfigurationJSON
+func verifySettings(ctx context.Context, settings string) error {
+	_ = settings
 	_ = ctx
 	var err error
 	return err

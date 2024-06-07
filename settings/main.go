@@ -1,4 +1,4 @@
-// The engineconfigurationjson package helps configure SENZING_ENGINE_CONFIGURATION_JSON.
+// The settings package helps configure SENZING_ENGINE_CONFIGURATION_JSON.
 package settings
 
 // ----------------------------------------------------------------------------

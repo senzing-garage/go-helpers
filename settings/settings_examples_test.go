@@ -10,11 +10,11 @@ import (
 // Examples for godoc documentation
 // ----------------------------------------------------------------------------
 
-func ExampleBuildSimpleSystemConfigurationJSONUsingMap() {
+func ExampleBuildSimpleSettingsUsingMap() {
 	aMap := map[string]string{
 		"databaseUrl": "postgresql://username:password@hostname:5432/G2",
 	}
-	result, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -22,11 +22,11 @@ func ExampleBuildSimpleSystemConfigurationJSONUsingMap() {
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}
 }
 
-func ExampleBuildSimpleSystemConfigurationJSONUsingMap_db2() {
+func ExampleBuildSimpleSettingsUsingMap_db2() {
 	aMap := map[string]string{
 		"databaseUrl": "db2://username:password@hostname:50000/G2",
 	}
-	result, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -34,11 +34,11 @@ func ExampleBuildSimpleSystemConfigurationJSONUsingMap_db2() {
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"db2://username:password@G2"}}
 }
 
-func ExampleBuildSimpleSystemConfigurationJSONUsingMap_db2WithSchema() {
+func ExampleBuildSimpleSettingsUsingMap_db2WithSchema() {
 	aMap := map[string]string{
 		"databaseUrl": "db2://username:password@hostname:50000/G2/?schema=schemaname",
 	}
-	result, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -46,11 +46,11 @@ func ExampleBuildSimpleSystemConfigurationJSONUsingMap_db2WithSchema() {
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"db2://username:password@G2/?schema=schemaname"}}
 }
 
-func ExampleBuildSimpleSystemConfigurationJSONUsingMap_oci() {
+func ExampleBuildSimpleSettingsUsingMap_oci() {
 	aMap := map[string]string{
 		"databaseUrl": "oci://username:password@hostname:1521/G2",
 	}
-	result, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -58,11 +58,11 @@ func ExampleBuildSimpleSystemConfigurationJSONUsingMap_oci() {
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"oci://username:password@G2"}}
 }
 
-func ExampleBuildSimpleSystemConfigurationJSONUsingMap_mssql() {
+func ExampleBuildSimpleSettingsUsingMap_mssql() {
 	aMap := map[string]string{
 		"databaseUrl": "mssql://username:password@hostname:1433/G2",
 	}
-	result, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -70,11 +70,11 @@ func ExampleBuildSimpleSystemConfigurationJSONUsingMap_mssql() {
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"mssql://username:password@G2"}}
 }
 
-func ExampleBuildSimpleSystemConfigurationJSONUsingMap_mysql() {
+func ExampleBuildSimpleSettingsUsingMap_mysql() {
 	aMap := map[string]string{
 		"databaseUrl": "mysql://username:password@hostname:3306/G2",
 	}
-	result, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -82,11 +82,11 @@ func ExampleBuildSimpleSystemConfigurationJSONUsingMap_mysql() {
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"mysql://username:password@hostname:3306/?schema=G2"}}
 }
 
-func ExampleBuildSimpleSystemConfigurationJSONUsingMap_postgresql() {
+func ExampleBuildSimpleSettingsUsingMap_postgresql() {
 	aMap := map[string]string{
 		"databaseUrl": "postgresql://username:password@hostname:5432/G2",
 	}
-	result, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -94,22 +94,22 @@ func ExampleBuildSimpleSystemConfigurationJSONUsingMap_postgresql() {
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}
 }
 
-func ExampleBuildSimpleSystemConfigurationJSONUsingMap_postgresqlWithSchema() {
+func ExampleBuildSimpleSettingsUsingMap_postgresqlWithSchema() {
 	aMap := map[string]string{
 		"databaseUrl": "postgresql://username:password@hostname:5432/G2/?schema=schemaname",
 	}
-	result, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/?schema=schemaname"}}
 }
-func ExampleBuildSimpleSystemConfigurationJSONUsingMap_sqlite() {
+func ExampleBuildSimpleSettingsUsingMap_sqlite() {
 	aMap := map[string]string{
 		"databaseUrl": "sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db",
 	}
-	result, err := BuildSimpleSystemConfigurationJSONUsingMap(aMap)
+	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
