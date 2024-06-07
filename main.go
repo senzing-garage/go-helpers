@@ -8,8 +8,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/senzing-garage/go-helpers/engineconfigurationjson"
 	"github.com/senzing-garage/go-helpers/jsonutil"
+	"github.com/senzing-garage/go-helpers/settings"
 )
 
 func main() {
@@ -36,7 +36,7 @@ func main() {
 	// --- Build JSON from environment variables.
 	// ------------------------------------------------------------------------
 
-	iniParams, err := engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingEnvVars()
+	iniParams, err := settings.BuildSimpleSystemConfigurationJSONUsingEnvVars()
 	if err != nil {
 		panic(err)
 	}
@@ -46,7 +46,7 @@ func main() {
 	// --- Verify parameters
 	// ------------------------------------------------------------------------
 
-	err = engineconfigurationjson.VerifySenzingEngineConfigurationJson(ctx, iniParams)
+	err = settings.VerifySenzingEngineConfigurationJSON(ctx, iniParams)
 	if err != nil {
 		panic(err)
 	}
@@ -63,7 +63,7 @@ func main() {
 		"supportPath":         "/final/path/to/support",
 	}
 
-	iniParams2, err := engineconfigurationjson.BuildSimpleSystemConfigurationJsonUsingMap(attributeMap)
+	iniParams2, err := settings.BuildSimpleSystemConfigurationJSONUsingMap(attributeMap)
 	if err != nil {
 		panic(err)
 	}

@@ -1,7 +1,7 @@
 /*
 Package engineconfigurationjsonparser is used to generate the JSON document used to configure a Senzing client.
 */
-package engineconfigurationjsonparser
+package settingsparser
 
 import (
 	"context"
@@ -16,9 +16,9 @@ import (
 // Types
 // ----------------------------------------------------------------------------
 
-// EngineConfigurationJsonParserImpl is the default implementation of the EngineConfigurationJsonParser interface.
-type EngineConfigurationJsonParserImpl struct {
-	EngineConfigurationJson string
+// BasicEngineConfigurationJSONParser is the default implementation of the EngineConfigurationJsonParser interface.
+type BasicEngineConfigurationJSONParser struct {
+	EngineConfigurationJSON string
 }
 
 // ----------------------------------------------------------------------------
@@ -34,7 +34,7 @@ func contains(haystack []string, needle string) bool {
 	return false
 }
 
-func isJson(unknownString string) bool {
+func isJSON(unknownString string) bool {
 	unknownStringUnescaped, err := strconv.Unquote(unknownString)
 	if err != nil {
 		unknownStringUnescaped = unknownString
@@ -43,32 +43,32 @@ func isJson(unknownString string) bool {
 	return json.Unmarshal([]byte(unknownStringUnescaped), &jsonString) == nil
 }
 
-func redactUrl(aUrl string) (string, error) {
-	parsedUrl, err := url.Parse(aUrl)
+func redactURL(aURL string) (string, error) {
+	parsedURL, err := url.Parse(aURL)
 	if err != nil {
-		if strings.HasPrefix(aUrl, "postgresql") {
-			index := strings.LastIndex(aUrl, ":")
-			aUrl := aUrl[:index] + "/" + aUrl[index+1:]
-			parsedUrl, err = url.Parse(aUrl)
+		if strings.HasPrefix(aURL, "postgresql") {
+			index := strings.LastIndex(aURL, ":")
+			aURL := aURL[:index] + "/" + aURL[index+1:]
+			parsedURL, err = url.Parse(aURL)
 		}
 		if err != nil {
 			return "", err
 		}
 	}
-	return parsedUrl.Redacted(), nil
+	return parsedURL.Redacted(), nil
 }
 
 // ----------------------------------------------------------------------------
 // Constructor  methods
 // ----------------------------------------------------------------------------
 
-func New(engineConfigurationJson string) (EngineConfigurationJsonParser, error) {
-	var err error = nil
-	if !isJson(engineConfigurationJson) {
-		return nil, fmt.Errorf("incorrect JSON syntax in %s", engineConfigurationJson)
+func New(engineConfigurationJSON string) (EngineConfigurationJSONParser, error) {
+	var err error
+	if !isJSON(engineConfigurationJSON) {
+		return nil, fmt.Errorf("incorrect JSON syntax in %s", engineConfigurationJSON)
 	}
-	result := &EngineConfigurationJsonParserImpl{
-		EngineConfigurationJson: engineConfigurationJson,
+	result := &BasicEngineConfigurationJSONParser{
+		EngineConfigurationJSON: engineConfigurationJSON,
 	}
 	return result, err
 }
@@ -86,10 +86,11 @@ Input
 Output
   - A string containing the value of a PIPELINE.CONFIGPATH.
 */
-func (parser *EngineConfigurationJsonParserImpl) GetConfigPath(ctx context.Context) (string, error) {
+func (parser *BasicEngineConfigurationJSONParser) GetConfigPath(ctx context.Context) (string, error) {
+	_ = ctx
 	engineConfiguration := &EngineConfiguration{}
 
-	err := json.Unmarshal([]byte(parser.EngineConfigurationJson), &engineConfiguration)
+	err := json.Unmarshal([]byte(parser.EngineConfigurationJSON), &engineConfiguration)
 	if err != nil {
 		return "", err
 	}
@@ -105,23 +106,24 @@ Input
 Output
   - A string containing the value of a PIPELINE.CONFIGPATH.
 */
-func (parser *EngineConfigurationJsonParserImpl) GetDatabaseUrls(ctx context.Context) ([]string, error) {
+func (parser *BasicEngineConfigurationJSONParser) GetDatabaseUrls(ctx context.Context) ([]string, error) {
+	_ = ctx
 	var result []string
 
 	engineConfiguration := &EngineConfiguration{}
-	err := json.Unmarshal([]byte(parser.EngineConfigurationJson), &engineConfiguration)
+	err := json.Unmarshal([]byte(parser.EngineConfigurationJSON), &engineConfiguration)
 	if err != nil {
 		return result, err
 	}
-	result = append(result, engineConfiguration.Sql.Connection)
+	result = append(result, engineConfiguration.SQL.Connection)
 
 	// Handle multi-database case.
 
-	backend := engineConfiguration.Sql.Backend
+	backend := engineConfiguration.SQL.Backend
 	if len(backend) > 0 && backend != "SQL" {
 		var dictionary map[string]interface{}
-		var databaseJsonKeys []string
-		err = json.Unmarshal([]byte(parser.EngineConfigurationJson), &dictionary)
+		var databaseJSONKeys []string
+		err = json.Unmarshal([]byte(parser.EngineConfigurationJSON), &dictionary)
 		if err != nil {
 			return result, err
 		}
@@ -131,16 +133,16 @@ func (parser *EngineConfigurationJsonParserImpl) GetDatabaseUrls(ctx context.Con
 		backendMap := dictionary[backend]
 		for _, value := range backendMap.(map[string]interface{}) {
 			valueString := value.(string)
-			if !contains(databaseJsonKeys, valueString) {
-				databaseJsonKeys = append(databaseJsonKeys, valueString)
+			if !contains(databaseJSONKeys, valueString) {
+				databaseJSONKeys = append(databaseJSONKeys, valueString)
 			}
 		}
 
 		// Add each database.
 
-		for _, databaseJsonKey := range databaseJsonKeys {
-			databaseJson := dictionary[databaseJsonKey].(map[string]interface{})
-			databaseName := databaseJson["DB_1"].(string)
+		for _, databaseJSONKey := range databaseJSONKeys {
+			databaseJSON := dictionary[databaseJSONKey].(map[string]interface{})
+			databaseName := databaseJSON["DB_1"].(string)
 			if !contains(result, databaseName) {
 				result = append(result, databaseName)
 			}
@@ -161,9 +163,10 @@ Input
 Output
   - A string containing the value of a PIPELINE.RESOURCEPATH.
 */
-func (parser *EngineConfigurationJsonParserImpl) GetResourcePath(ctx context.Context) (string, error) {
+func (parser *BasicEngineConfigurationJSONParser) GetResourcePath(ctx context.Context) (string, error) {
+	_ = ctx
 	engineConfiguration := &EngineConfiguration{}
-	err := json.Unmarshal([]byte(parser.EngineConfigurationJson), &engineConfiguration)
+	err := json.Unmarshal([]byte(parser.EngineConfigurationJSON), &engineConfiguration)
 	if err != nil {
 		return "", err
 	}
@@ -179,9 +182,10 @@ Input
 Output
   - A string containing the value of a PIPELINE.SUPPORTPATH.
 */
-func (parser *EngineConfigurationJsonParserImpl) GetSupportPath(ctx context.Context) (string, error) {
+func (parser *BasicEngineConfigurationJSONParser) GetSupportPath(ctx context.Context) (string, error) {
+	_ = ctx
 	engineConfiguration := &EngineConfiguration{}
-	err := json.Unmarshal([]byte(parser.EngineConfigurationJson), &engineConfiguration)
+	err := json.Unmarshal([]byte(parser.EngineConfigurationJSON), &engineConfiguration)
 	if err != nil {
 		return "", err
 	}
@@ -189,7 +193,7 @@ func (parser *EngineConfigurationJsonParserImpl) GetSupportPath(ctx context.Cont
 }
 
 /*
-The RedactedJson method returns the JSON string with passwords redacted.
+The RedactedJSON method returns the JSON string with passwords redacted.
 
 Input
   - ctx: A context to control lifecycle.
@@ -197,8 +201,8 @@ Input
 Output
   - The Senzing engine configuration JSON string with database URLs having redacted passwords.
 */
-func (parser *EngineConfigurationJsonParserImpl) RedactedJson(ctx context.Context) (string, error) {
-	result := parser.EngineConfigurationJson
+func (parser *BasicEngineConfigurationJSONParser) RedactedJSON(ctx context.Context) (string, error) {
+	result := parser.EngineConfigurationJSON
 
 	// Get list of database URLs in the Senzing engine configuration json.
 
@@ -209,10 +213,10 @@ func (parser *EngineConfigurationJsonParserImpl) RedactedJson(ctx context.Contex
 
 	// For each database URL in the string, replace it with a redacted database URL.
 
-	for _, databaseUrl := range databaseUrls {
-		redactedUrl, err := redactUrl(databaseUrl)
+	for _, databaseURL := range databaseUrls {
+		redactedURL, err := redactURL(databaseURL)
 		if err == nil {
-			result = strings.Replace(result, databaseUrl, redactedUrl, -1)
+			result = strings.ReplaceAll(result, databaseURL, redactedURL)
 		}
 	}
 

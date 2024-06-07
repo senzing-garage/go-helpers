@@ -15,7 +15,7 @@ Input
 Output
   - true if the text is JSON, otherwise false
 */
-func IsJson(unknownText string) bool {
+func IsJSON(unknownText string) bool {
 	var jsonString json.RawMessage
 	return json.Unmarshal([]byte(unknownText), &jsonString) == nil
 }
@@ -35,12 +35,13 @@ Output
 func Flatten(jsonText string, err error) string {
 	if err != nil {
 		errorMap := map[string]any{}
-
 		errorMap["text"] = jsonText
 		errorMap["error"] = err.Error()
-
-		errorJson, _ := json.Marshal(errorMap)
-		return string(errorJson)
+		errorJSON, err := json.Marshal(errorMap)
+		if err != nil {
+			panic(err)
+		}
+		return string(errorJSON)
 	}
 	return jsonText
 }
@@ -57,10 +58,10 @@ Output
   - An error if a failure occurred in interpretting/normalizing the specified text.
 */
 func Normalize(jsonText string) (string, error) {
-	var parsedJson *any = nil
+	var parsedJSON *any
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err := json.Unmarshal([]byte(jsonText), &parsedJson)
+	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
 
 	// check for an unmarshalling error
 	if err != nil {
@@ -68,14 +69,14 @@ func Normalize(jsonText string) (string, error) {
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
-	if parsedJson == nil {
+	if parsedJSON == nil {
 		return "null", nil
 	}
 
 	// marshall the parsed object back to text (bytes) and return the text and potential error
-	normalizedJson, err := json.Marshal(*parsedJson)
+	normalizedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(normalizedJson), err
+	return string(normalizedJSON), err
 }
 
 /*
@@ -91,10 +92,10 @@ Output
   - An error if a failure occurred in interpretting/normalizing the specified text.
 */
 func NormalizeAndSort(jsonText string) (string, error) {
-	var parsedJson *any = nil
+	var parsedJSON *any
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err := json.Unmarshal([]byte(jsonText), &parsedJson)
+	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
 
 	// check for an unmarshalling error
 	if err != nil {
@@ -102,25 +103,25 @@ func NormalizeAndSort(jsonText string) (string, error) {
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
-	if parsedJson == nil {
+	if parsedJSON == nil {
 		return "null", nil
 	}
 
 	// sort the parsed JSON value
-	sortValue(*parsedJson)
+	sortValue(*parsedJSON)
 
 	// marshall the parsed object back to text (bytes) and return the text and potential error
-	normalizedJson, err := json.Marshal(*parsedJson)
+	normalizedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(normalizedJson), err
+	return string(normalizedJSON), err
 }
 
 func sortValue(jsonValue any) {
-	switch typedJson := jsonValue.(type) {
+	switch typedJSON := jsonValue.(type) {
 	case map[string]any:
-		sortObject(typedJson)
+		sortObject(typedJSON)
 	case []any:
-		sortArray(typedJson)
+		sortArray(typedJSON)
 	default:
 		// do nothing for JSON values that are not objects or arrays
 		// these values are already "sorted"
@@ -182,10 +183,10 @@ func Strip(jsonText string, removeProps ...string) (string, error) {
 		stripMap[jsonProp] = nil
 	}
 
-	var parsedJson *any = nil
+	var parsedJSON *any
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err := json.Unmarshal([]byte(jsonText), &parsedJson)
+	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
 
 	// check for an unmarshalling error
 	if err != nil {
@@ -193,25 +194,25 @@ func Strip(jsonText string, removeProps ...string) (string, error) {
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
-	if parsedJson == nil {
+	if parsedJSON == nil {
 		return "null", nil
 	}
 
 	// sort the parsed JSON value
-	stripFieldsFromValue(*parsedJson, stripMap)
+	stripFieldsFromValue(*parsedJSON, stripMap)
 
 	// marshall the parsed object back to text (bytes) and return the text and potential error
-	modifiedJson, err := json.Marshal(*parsedJson)
+	modifiedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(modifiedJson), err
+	return string(modifiedJSON), err
 }
 
 func stripFieldsFromValue(jsonValue any, stripMap map[string]any) {
-	switch typedJson := jsonValue.(type) {
+	switch typedJSON := jsonValue.(type) {
 	case map[string]any:
-		stripFieldsFromObject(typedJson, stripMap)
+		stripFieldsFromObject(typedJSON, stripMap)
 	case []any:
-		stripFieldsFromArray(typedJson, stripMap)
+		stripFieldsFromArray(typedJSON, stripMap)
 	default:
 		// do nothing for JSON values that are not objects or arrays
 		// these values are already "sorted"
@@ -283,10 +284,10 @@ Output
     redacted JSON.
 */
 func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
-	var parsedJson *any = nil
+	var parsedJSON *any
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err := json.Unmarshal([]byte(jsonText), &parsedJson)
+	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
 
 	// check for an unmarshalling error
 	if err != nil {
@@ -294,26 +295,26 @@ func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
-	if parsedJson == nil {
+	if parsedJSON == nil {
 		return "null", nil
 	}
 
 	// sort the parsed JSON value
-	redactValue(*parsedJson, redactMap)
+	redactValue(*parsedJSON, redactMap)
 
 	// marshall the parsed object back to text (bytes) and return the text and potential error
-	redactedJson, err := json.Marshal(*parsedJson)
+	redactedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(redactedJson), err
+	return string(redactedJSON), err
 
 }
 
 func redactValue(jsonValue any, redactMap map[string]any) {
-	switch typedJson := jsonValue.(type) {
+	switch typedJSON := jsonValue.(type) {
 	case map[string]any:
-		redactObject(typedJson, redactMap)
+		redactObject(typedJSON, redactMap)
 	case []any:
-		redactArray(typedJson, redactMap)
+		redactArray(typedJSON, redactMap)
 	default:
 		// do nothing for JSON values that are not objects or arrays
 		// these values are already "sorted"

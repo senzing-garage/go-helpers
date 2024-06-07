@@ -1,4 +1,4 @@
-package engineconfigurationjsonparser
+package settingsparser
 
 import (
 	"context"
@@ -9,23 +9,23 @@ import (
 )
 
 var (
-	engineConfigurationJsonParserSingleton *EngineConfigurationJsonParserImpl
+	engineConfigurationJSONParserSingleton *BasicEngineConfigurationJSONParser
 )
 
 // ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getTestObject(ctx context.Context, test *testing.T) *EngineConfigurationJsonParserImpl {
+func getTestObject(ctx context.Context, test *testing.T) *BasicEngineConfigurationJSONParser {
 	_ = test
 	return getParser(ctx)
 }
 
-func getParser(ctx context.Context) *EngineConfigurationJsonParserImpl {
+func getParser(ctx context.Context) *BasicEngineConfigurationJSONParser {
 	_ = ctx
-	if engineConfigurationJsonParserSingleton == nil {
-		engineConfigurationJsonParserSingleton = &EngineConfigurationJsonParserImpl{
-			EngineConfigurationJson: `
+	if engineConfigurationJSONParserSingleton == nil {
+		engineConfigurationJSONParserSingleton = &BasicEngineConfigurationJSONParser{
+			EngineConfigurationJSON: `
             {
                 "PIPELINE": {
                     "CONFIGPATH": "/etc/opt/senzing",
@@ -40,7 +40,7 @@ func getParser(ctx context.Context) *EngineConfigurationJsonParserImpl {
             `,
 		}
 	}
-	return engineConfigurationJsonParserSingleton
+	return engineConfigurationJSONParserSingleton
 }
 
 func testError(test *testing.T, err error) {
@@ -63,8 +63,8 @@ func TestEngineConfigurationJsonParserImpl_GetConfigPath(test *testing.T) {
 
 func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls(test *testing.T) {
 	ctx := context.TODO()
-	parser := &EngineConfigurationJsonParserImpl{
-		EngineConfigurationJson: `
+	parser := &BasicEngineConfigurationJSONParser{
+		EngineConfigurationJSON: `
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
@@ -86,8 +86,8 @@ func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls(test *testing.T) {
 
 func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls_Multi(test *testing.T) {
 	ctx := context.TODO()
-	parser := &EngineConfigurationJsonParserImpl{
-		EngineConfigurationJson: `
+	parser := &BasicEngineConfigurationJSONParser{
+		EngineConfigurationJSON: `
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
@@ -120,7 +120,7 @@ func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls_Multi(test *testing.T
 	}
 	actual, err := parser.GetDatabaseUrls(ctx)
 	testError(test, err)
-	assert.Equal(test, 3, len(actual))
+	assert.Len(test, actual, 3)
 	assert.True(test, contains(actual, "postgresql://username:password@db-1.example.com:5432:G2"))
 	assert.True(test, contains(actual, "postgresql://username:password@db-2.example.com:5432:G2"))
 	assert.True(test, contains(actual, "postgresql://username:password@db-3.example.com:5432:G2"))
@@ -129,7 +129,7 @@ func TestEngineConfigurationJsonParserImpl_GetDatabaseUrls_Multi(test *testing.T
 func TestEngineConfigurationJsonParserImpl_New(test *testing.T) {
 	ctx := context.TODO()
 
-	enginConfigurationJson := `
+	enginConfigurationJSON := `
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
@@ -160,11 +160,11 @@ func TestEngineConfigurationJsonParserImpl_New(test *testing.T) {
         }
         `
 
-	parser, err := New(enginConfigurationJson)
+	parser, err := New(enginConfigurationJSON)
 	testError(test, err)
 	actual, err := parser.GetDatabaseUrls(ctx)
 	testError(test, err)
-	assert.Equal(test, 3, len(actual))
+	assert.Len(test, actual, 3)
 	assert.True(test, contains(actual, "postgresql://username:password@db-1.example.com:5432:G2"))
 	assert.True(test, contains(actual, "postgresql://username:password@db-2.example.com:5432:G2"))
 	assert.True(test, contains(actual, "postgresql://username:password@db-3.example.com:5432:G2"))
@@ -174,7 +174,7 @@ func TestEngineConfigurationJsonParserImpl_New(test *testing.T) {
 // Examples for godoc documentation
 // ----------------------------------------------------------------------------
 
-func ExampleEngineConfigurationJsonParserImpl_GetConfigPath() {
+func ExampleBasicEngineConfigurationJSONParser_GetConfigPath() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
@@ -186,7 +186,7 @@ func ExampleEngineConfigurationJsonParserImpl_GetConfigPath() {
 	// Output: /etc/opt/senzing
 }
 
-func ExampleEngineConfigurationJsonParserImpl_GetDatabaseUrls() {
+func ExampleBasicEngineConfigurationJSONParser_GetDatabaseUrls() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
@@ -198,7 +198,7 @@ func ExampleEngineConfigurationJsonParserImpl_GetDatabaseUrls() {
 	// Output: [postgresql://username:password@db.example.com:5432:G2]
 }
 
-func ExampleEngineConfigurationJsonParserImpl_GetResourcePath() {
+func ExampleBasicEngineConfigurationJSONParser_GetResourcePath() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
@@ -210,7 +210,7 @@ func ExampleEngineConfigurationJsonParserImpl_GetResourcePath() {
 	// Output: /opt/senzing/g2/resources
 }
 
-func ExampleEngineConfigurationJsonParserImpl_GetSupportPath() {
+func ExampleBasicEngineConfigurationJSONParser_GetSupportPath() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/engineconfigurationjsonparser/engineconfigurationjsonparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
@@ -222,10 +222,10 @@ func ExampleEngineConfigurationJsonParserImpl_GetSupportPath() {
 	// Output: /opt/senzing/data
 }
 
-func ExampleEngineConfigurationJsonParserImpl_RedactedJson_single() {
+func ExampleBasicEngineConfigurationJSONParser_RedactedJSON_single() {
 	ctx := context.TODO()
-	parser := &EngineConfigurationJsonParserImpl{
-		EngineConfigurationJson: `
+	parser := &BasicEngineConfigurationJSONParser{
+		EngineConfigurationJSON: `
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
@@ -241,7 +241,7 @@ func ExampleEngineConfigurationJsonParserImpl_RedactedJson_single() {
         `,
 	}
 
-	actual, err := parser.RedactedJson(ctx)
+	actual, err := parser.RedactedJSON(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -249,10 +249,10 @@ func ExampleEngineConfigurationJsonParserImpl_RedactedJson_single() {
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","LICENSESTRINGBASE64":"${SENZING_LICENSE_BASE64_ENCODED}","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"BACKEND":"SQL","CONNECTION":"postgresql://username:xxxxx@db.example.com:5432/G2"}}
 }
 
-func ExampleEngineConfigurationJsonParserImpl_RedactedJson_multiple() {
+func ExampleBasicEngineConfigurationJSONParser_RedactedJSON_multiple() {
 	ctx := context.TODO()
 
-	engineConfigurationJson := `
+	engineConfigurationJSON := `
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
@@ -283,12 +283,12 @@ func ExampleEngineConfigurationJsonParserImpl_RedactedJson_multiple() {
         }
         `
 
-	parser, err := New(engineConfigurationJson)
+	parser, err := New(engineConfigurationJSON)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	actual, err := parser.RedactedJson(ctx)
+	actual, err := parser.RedactedJSON(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}

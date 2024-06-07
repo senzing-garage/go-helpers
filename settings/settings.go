@@ -1,7 +1,7 @@
 /*
 Package engineconfigurationjson is used to generate the JSON document used to configure a Senzing client.
 */
-package engineconfigurationjson
+package settings
 
 import (
 	"context"
@@ -10,97 +10,15 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/senzing-garage/go-helpers/engineconfigurationjsonparser"
+	"github.com/senzing-garage/go-helpers/settingsparser"
 )
 
 // ----------------------------------------------------------------------------
-// Internal methods
-// ----------------------------------------------------------------------------
-
-func getOsEnv(variableName string) (string, error) {
-	var err error = nil
-	result, isSet := os.LookupEnv(variableName)
-	if !isSet {
-		err = fmt.Errorf("environment variable not set: %s", variableName)
-	}
-	return result, err
-}
-
-func buildSpecificDatabaseUrl(databaseUrl string) (string, error) {
-	result := ""
-	parsedUrl, err := url.Parse(databaseUrl)
-	if err != nil {
-		return "", err
-	}
-
-	switch parsedUrl.Scheme {
-	case "db2":
-		result = fmt.Sprintf(
-			"%s://%s@%s",
-			parsedUrl.Scheme,
-			parsedUrl.User,
-			string(parsedUrl.Path[1:]),
-		)
-		if len(parsedUrl.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedUrl.RawQuery)
-		}
-	case "mssql":
-		result = fmt.Sprintf(
-			"%s://%s@%s",
-			parsedUrl.Scheme,
-			parsedUrl.User,
-			string(parsedUrl.Path[1:]),
-		)
-	case "mysql":
-		result = fmt.Sprintf(
-			"%s://%s@%s/?schema=%s%s",
-			parsedUrl.Scheme,
-			parsedUrl.User,
-			parsedUrl.Host,
-			string(parsedUrl.Path[1:]),
-			parsedUrl.RawQuery,
-		)
-	case "oci":
-		result = fmt.Sprintf(
-			"%s://%s@%s",
-			parsedUrl.Scheme,
-			parsedUrl.User,
-			string(parsedUrl.Path[1:]),
-		)
-	case "postgresql":
-		result = fmt.Sprintf(
-			"%s://%s@%s:%s",
-			parsedUrl.Scheme,
-			parsedUrl.User,
-			parsedUrl.Host,
-			string(parsedUrl.Path[1:]),
-		)
-		if len(parsedUrl.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedUrl.RawQuery)
-		} else {
-			result = fmt.Sprintf("%s/", result)
-		}
-	case "sqlite3":
-		result = fmt.Sprintf(
-			"%s://%s@%s/%s",
-			parsedUrl.Scheme,
-			parsedUrl.User,
-			parsedUrl.Host,
-			string(parsedUrl.Path[1:]),
-		)
-	default:
-		result = ""
-	}
-
-	return result, err
-}
-
-// ----------------------------------------------------------------------------
-// Interface methods
+// Public functions
 // ----------------------------------------------------------------------------
 
 /*
-The BuildSimpleSystemConfigurationJsonUsingEnvVars method is a convenience method
+The BuildSimpleSystemConfigurationJSONUsingEnvVars method is a convenience method
 for invoking BuildSimpleSystemConfigurationJsonUsingMap without any mapped values.
 In other words, only environment variables will be used.
 
@@ -110,13 +28,13 @@ Output
   - A string containing a JSON document use when calling Senzing's Init(...) methods.
     See the example output.
 */
-func BuildSimpleSystemConfigurationJsonUsingEnvVars() (string, error) {
+func BuildSimpleSystemConfigurationJSONUsingEnvVars() (string, error) {
 	attributeMap := map[string]string{}
-	return BuildSimpleSystemConfigurationJsonUsingMap(attributeMap)
+	return BuildSimpleSystemConfigurationJSONUsingMap(attributeMap)
 }
 
 /*
-The BuildSimpleSystemConfigurationJsonUsingMap method returns a JSON document for use with Senzing's Init(...) methods.
+The BuildSimpleSystemConfigurationJSONUsingMap method returns a JSON document for use with Senzing's Init(...) methods.
 
 If the environment variable SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set,
 the value of SENZING_TOOLS_ENGINE_CONFIGURATION_JSON will be returned unchanged.
@@ -148,38 +66,38 @@ Output
   - A string containing a JSON document use when calling Senzing's Init(...) methods.
     See the example output.
 */
-func BuildSimpleSystemConfigurationJsonUsingMap(attributeMap map[string]string) (string, error) {
-	var err error = nil
+func BuildSimpleSystemConfigurationJSONUsingMap(attributeMap map[string]string) (string, error) {
+	var err error
 
 	// If SENZING_TOOLS_ENGINE_CONFIGURATION_JSON is set, use it.
 
-	senzingEngineConfigurationJson, isSet := os.LookupEnv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON")
+	senzingEngineConfigurationJSON, isSet := os.LookupEnv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON")
 	if isSet {
-		return senzingEngineConfigurationJson, err
+		return senzingEngineConfigurationJSON, err
 	}
 
 	// If SENZING_ENGINE_CONFIGURATION_JSON is set, use it.
 	// This is a legacy environment variable and won't be documented.
 
-	senzingEngineConfigurationJson, isSet = os.LookupEnv("SENZING_ENGINE_CONFIGURATION_JSON")
+	senzingEngineConfigurationJSON, isSet = os.LookupEnv("SENZING_ENGINE_CONFIGURATION_JSON")
 	if isSet {
-		return senzingEngineConfigurationJson, err
+		return senzingEngineConfigurationJSON, err
 	}
 
 	// Add database URL.
 
-	senzingDatabaseUrl, inMap := attributeMap["databaseUrl"]
+	senzingDatabaseURL, inMap := attributeMap["databaseUrl"]
 	if !inMap {
-		senzingDatabaseUrl, err = getOsEnv("SENZING_TOOLS_DATABASE_URL")
+		senzingDatabaseURL, err = getOsEnv("SENZING_TOOLS_DATABASE_URL")
 		if err != nil {
 			return "", err
 		}
 	}
-	specificDatabaseUrl, err := buildSpecificDatabaseUrl(senzingDatabaseUrl)
+	specificDatabaseURL, err := buildSpecificDatabaseURL(senzingDatabaseURL)
 	if err != nil {
 		return "", err
 	}
-	attributeMap["databaseUrl"] = specificDatabaseUrl
+	attributeMap["databaseUrl"] = specificDatabaseURL
 
 	// Add Environment Variables to the map, if not already specified in the map.
 
@@ -209,12 +127,12 @@ func BuildSimpleSystemConfigurationJsonUsingMap(attributeMap map[string]string) 
 
 	// Transform structure to JSON.
 
-	resultBytes, _ := json.Marshal(resultStruct)
+	resultBytes, err := json.Marshal(resultStruct)
 	return string(resultBytes), err
 }
 
 /*
-The VerifySenzingEngineConfigurationJson method inspects the Senzing engine configuration JSON to see if it is misconfigured.
+The VerifySenzingEngineConfigurationJSON method inspects the Senzing engine configuration JSON to see if it is misconfigured.
 
 Errors are documented at https://hub.senzing.com/go-helpers/errors.
 
@@ -222,19 +140,19 @@ Input
   - ctx: A context to control lifecycle.
   - senzingEngineConfigurationJson: A JSON string. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_tools_engine_configuration_json
 */
-func VerifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConfigurationJson string) error {
-	var err error = nil
-	parser := engineconfigurationjsonparser.EngineConfigurationJsonParserImpl{
-		EngineConfigurationJson: senzingEngineConfigurationJson,
+func VerifySenzingEngineConfigurationJSON(ctx context.Context, senzingEngineConfigurationJSON string) error {
+	var err error
+	parser := settingsparser.BasicEngineConfigurationJSONParser{
+		EngineConfigurationJSON: senzingEngineConfigurationJSON,
 	}
 
 	// Check database URLs.
 
-	databaseUrls, err := parser.GetDatabaseUrls(ctx)
+	databaseURLs, err := parser.GetDatabaseUrls(ctx)
 	if err != nil {
 		return err
 	}
-	for _, value := range databaseUrls {
+	for _, value := range databaseURLs {
 		if len(value) == 0 {
 			return fmt.Errorf("SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://hub.senzing.com/go-helpers/errors")
 		}
@@ -292,7 +210,88 @@ func VerifySenzingEngineConfigurationJson(ctx context.Context, senzingEngineConf
 
 	// Os / Arch specific calls
 
-	err = verifySenzingEngineConfigurationJson(ctx, senzingEngineConfigurationJson)
+	err = verifySenzingEngineConfigurationJSON(ctx, senzingEngineConfigurationJSON)
 
 	return err
+}
+
+// ----------------------------------------------------------------------------
+// Internal methods
+// ----------------------------------------------------------------------------
+
+func getOsEnv(variableName string) (string, error) {
+	var err error
+	result, isSet := os.LookupEnv(variableName)
+	if !isSet {
+		err = fmt.Errorf("environment variable not set: %s", variableName)
+	}
+	return result, err
+}
+
+func buildSpecificDatabaseURL(databaseURL string) (string, error) {
+	result := ""
+	parsedURL, err := url.Parse(databaseURL)
+	if err != nil {
+		return "", err
+	}
+	switch parsedURL.Scheme {
+	case "db2":
+		result = fmt.Sprintf(
+			"%s://%s@%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			string(parsedURL.Path[1:]),
+		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.RawQuery)
+		}
+	case "mssql":
+		result = fmt.Sprintf(
+			"%s://%s@%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			string(parsedURL.Path[1:]),
+		)
+	case "mysql":
+		result = fmt.Sprintf(
+			"%s://%s@%s/?schema=%s%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			string(parsedURL.Path[1:]),
+			parsedURL.RawQuery,
+		)
+	case "oci":
+		result = fmt.Sprintf(
+			"%s://%s@%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			string(parsedURL.Path[1:]),
+		)
+	case "postgresql":
+		result = fmt.Sprintf(
+			"%s://%s@%s:%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			string(parsedURL.Path[1:]),
+		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.RawQuery)
+		} else {
+			result = fmt.Sprintf("%s/", result)
+		}
+	case "sqlite3":
+		result = fmt.Sprintf(
+			"%s://%s@%s/%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			string(parsedURL.Path[1:]),
+		)
+	default:
+		result = ""
+		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
+	}
+	return result, err
 }

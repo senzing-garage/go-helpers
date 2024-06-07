@@ -1,5 +1,5 @@
 // The engineconfigurationjsonparser package helps parse the _ENGINE_CONFIGURATION_JSON.
-package engineconfigurationjsonparser
+package settingsparser
 
 import "context"
 
@@ -7,12 +7,12 @@ import "context"
 // Types - interface
 // ----------------------------------------------------------------------------
 
-type EngineConfigurationJsonParser interface {
+type EngineConfigurationJSONParser interface {
 	GetConfigPath(ctx context.Context) (string, error)
 	GetDatabaseUrls(ctx context.Context) ([]string, error)
 	GetResourcePath(ctx context.Context) (string, error)
 	GetSupportPath(ctx context.Context) (string, error)
-	RedactedJson(ctx context.Context) (string, error)
+	RedactedJSON(ctx context.Context) (string, error)
 }
 
 // ----------------------------------------------------------------------------
@@ -25,14 +25,14 @@ type EngineConfigurationPipeline struct {
 	SupportPath  string `json:"SUPPORTPATH"`
 }
 
-type EngineConfigurationSql struct {
+type EngineConfigurationSQL struct {
 	Backend    string `json:"BACKEND"`
 	Connection string `json:"CONNECTION"`
 }
 
 type EngineConfiguration struct {
 	Pipeline EngineConfigurationPipeline `json:"PIPELINE"`
-	Sql      EngineConfigurationSql      `json:"SQL"`
+	SQL      EngineConfigurationSQL      `json:"SQL"`
 }
 
 // ----------------------------------------------------------------------------
@@ -40,4 +40,4 @@ type EngineConfiguration struct {
 // ----------------------------------------------------------------------------
 
 // Identfier of the  package found messages having the format "senzing-6401xxxx".
-const ProductId = 6401
+const ComponentID = 6401
