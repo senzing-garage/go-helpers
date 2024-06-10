@@ -1,5 +1,5 @@
-// The engineconfigurationjson package helps configure SENZING_ENGINE_CONFIGURATION_JSON.
-package engineconfigurationjson
+// The settings package helps configure SENZING_ENGINE_CONFIGURATION_JSON.
+package settings
 
 // ----------------------------------------------------------------------------
 // Types
@@ -12,13 +12,13 @@ type SzConfigurationPipeline struct {
 	SupportPath         string `json:"SUPPORTPATH"`
 }
 
-type SzConfigurationSql struct {
+type SzConfigurationSQL struct {
 	Connection string `json:"CONNECTION"`
 }
 
 type SzConfiguration struct {
 	Pipeline SzConfigurationPipeline `json:"PIPELINE"`
-	Sql      SzConfigurationSql      `json:"SQL"`
+	SQL      SzConfigurationSQL      `json:"SQL"`
 }
 
 // ----------------------------------------------------------------------------
@@ -26,4 +26,4 @@ type SzConfiguration struct {
 // ----------------------------------------------------------------------------
 
 // Identfier of the  package found messages having the format "senzing-6402xxxx".
-const ProductId = 6402
+const ComponentID = 6402

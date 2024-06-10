@@ -42,12 +42,12 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 
 	// check if the destination file is a directory and if so, append the source file name
 	stat, err = os.Stat(destinationPath)
-	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+	switch {
+	case err != nil && !errors.Is(err, fs.ErrNotExist):
 		// we got an error and the error was not due to the path not existing
 		return "", 0, fmt.Errorf("failed to stat destination path (%v): %v",
 			destinationPath, err.Error())
-
-	} else if err != nil {
+	case err != nil:
 		// we have a non-existent file path -- check that its parent directory exists
 		dir := filepath.Dir(destinationPath)
 		dirStat, err := os.Stat(dir)
@@ -60,8 +60,7 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 			return "", 0, fmt.Errorf("directory (%v) for destination path (%v) is not a directory",
 				dir, destinationPath)
 		}
-
-	} else if stat.Mode().IsDir() {
+	case stat.Mode().IsDir():
 		// the destination is a directory so append the file name
 		destinationPath = filepath.Join(destinationPath, filepath.Base(sourceFile))
 
@@ -74,10 +73,10 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 					"directory and overwrite is not allowed: %v", destinationPath)
 			}
 		}
-
-	} else if !overwrite {
+	case !overwrite:
 		return "", 0, fmt.Errorf("destination file already exists and overwrite is not allowed: %v",
 			destinationPath)
+
 	}
 
 	// open the source file

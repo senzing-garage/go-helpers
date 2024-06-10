@@ -1,6 +1,6 @@
 //go:build linux
 
-package engineconfigurationjson
+package settings
 
 import "context"
 
@@ -11,7 +11,7 @@ import "context"
 func buildStruct(attributeMap map[string]string) SzConfiguration {
 	var result SzConfiguration
 
-	databaseUrl, ok := attributeMap["databaseUrl"]
+	databaseURL, ok := attributeMap["databaseUrl"]
 	if !ok {
 		return result
 	}
@@ -22,8 +22,8 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 			ResourcePath: "/opt/senzing/g2/resources",
 			SupportPath:  "/opt/senzing/data",
 		},
-		Sql: SzConfigurationSql{
-			Connection: databaseUrl,
+		SQL: SzConfigurationSQL{
+			Connection: databaseURL,
 		},
 	}
 
@@ -35,9 +35,9 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 	return result
 }
 
-func verifySenzingEngineConfigurationJson(ctx context.Context, engineConfigurationJson string) error {
-	_ = engineConfigurationJson
+func verifySettings(ctx context.Context, settings string) error {
+	_ = settings
 	_ = ctx
-	var err error = nil
+	var err error
 	return err
 }

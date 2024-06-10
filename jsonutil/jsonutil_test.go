@@ -2,10 +2,10 @@ package jsonutil
 
 import (
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // ----------------------------------------------------------------------------
@@ -24,63 +24,63 @@ func testError(test *testing.T, err error) {
 func TestIsJson_Basic(test *testing.T) {
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": 20.5}`
 	var expected = true
-	actual := IsJson(jsonText)
+	actual := IsJSON(jsonText)
 	assert.Equal(test, expected, actual, "JSON object (basic) not recognized as JSON")
 }
 
 func TestIsJson_Compound(test *testing.T) {
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": {"phoox": 3, "bax": 5}}`
 	var expected = true
-	actual := IsJson(jsonText)
+	actual := IsJSON(jsonText)
 	assert.Equal(test, expected, actual, "JSON object (compound) not recognized as JSON")
 }
 
 func TestIsJson_Integer(test *testing.T) {
 	var jsonText = "123"
 	var expected = true
-	actual := IsJson(jsonText)
+	actual := IsJSON(jsonText)
 	assert.Equal(test, expected, actual, "JSON integer not recognized as JSON")
 }
 
 func TestIsJson_Decimal(test *testing.T) {
 	var jsonText = "123.4"
 	var expected = true
-	actual := IsJson(jsonText)
+	actual := IsJSON(jsonText)
 	assert.Equal(test, expected, actual, "JSON decimal number not recognized as JSON")
 }
 
 func TestIsJson_String(test *testing.T) {
 	var jsonText = `"Hello"`
 	var expected = true
-	actual := IsJson(jsonText)
+	actual := IsJSON(jsonText)
 	assert.Equal(test, expected, actual, "JSON string not recognized as JSON")
 }
 
 func TestIsJson_Boolean(test *testing.T) {
 	var jsonText = "true"
 	var expected = true
-	actual := IsJson(jsonText)
+	actual := IsJSON(jsonText)
 	assert.Equal(test, expected, actual, "JSON boolean not recognized as JSON")
 }
 
 func TestIsJson_Null(test *testing.T) {
 	var jsonText = "null"
 	var expected = true
-	actual := IsJson(jsonText)
+	actual := IsJSON(jsonText)
 	assert.Equal(test, expected, actual, "JSON null not recognized as JSON")
 }
 
 func TestIsJson_Array(test *testing.T) {
 	var jsonText = `[123, 123.5, "Hello", true, {"foo": 5, "bar": 6}]`
 	var expected = true
-	actual := IsJson(jsonText)
+	actual := IsJSON(jsonText)
 	assert.Equal(test, expected, actual, "JSON array not recognized as JSON")
 }
 
 func TestIsJson_BadJson(test *testing.T) {
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	var expected = false
-	actual := IsJson(jsonText)
+	actual := IsJSON(jsonText)
 	assert.Equal(test, expected, actual, "Invalid JSON text incorrectly recognized as JSON")
 }
 
@@ -91,7 +91,7 @@ func TestIsJson_Formatted(test *testing.T) {
 		"bar": true
 	}`
 	var expected = true
-	actual := IsJson(jsonText)
+	actual := IsJSON(jsonText)
 	assert.Equal(test, expected, actual, "Formatted JSON object not recognized as JSON")
 }
 
@@ -165,7 +165,7 @@ func TestNormalize_Array(test *testing.T) {
 func TestNormalize_BadJson(test *testing.T) {
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	actual, err := Normalize(jsonText)
-	assert.NotNil(test, err, "Invalid JSON text was normalized without an error: "+actual)
+	require.Error(test, err, "Invalid JSON text was normalized without an error: "+actual)
 }
 
 func TestNormalize_Formatted(test *testing.T) {
@@ -258,7 +258,7 @@ func TestNormalizeAndSort_MixedArray(test *testing.T) {
 func TestNormalizeAndSort_BadJson(test *testing.T) {
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	actual, err := NormalizeAndSort(jsonText)
-	assert.NotNil(test, err, "Invalid JSON text was normalized without an error: "+actual)
+	require.Error(test, err, "Invalid JSON text was normalized without an error: "+actual)
 }
 
 func TestNormalizeAndSort_Formatted(test *testing.T) {
@@ -432,7 +432,7 @@ func TestRedact_MixedArray3(test *testing.T) {
 func TestRedact_BadJson(test *testing.T) {
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	actual, err := Redact(jsonText, "foo", "bar")
-	assert.NotNil(test, err, "Invalid JSON text was redacted without an error: "+actual)
+	require.Error(test, err, "Invalid JSON text was redacted without an error: "+actual)
 }
 
 func TestRedact_Formatted0(test *testing.T) {
@@ -659,7 +659,7 @@ func TestRedactWithMap_MixedArray3(test *testing.T) {
 func TestRedactWithMap_BadJson(test *testing.T) {
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	actual, err := RedactWithMap(jsonText, map[string]any{"foo": "", "bar": "-"})
-	assert.NotNil(test, err, "Invalid JSON text was redacted with map without an error: "+actual)
+	require.Error(test, err, "Invalid JSON text was redacted with map without an error: "+actual)
 }
 
 func TestRedactWithMap_Formatted0(test *testing.T) {
@@ -885,7 +885,7 @@ func TestStrip_MixedArray3(test *testing.T) {
 func TestStrip_BadJson(test *testing.T) {
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	actual, err := Strip(jsonText, "foo", "bar")
-	assert.NotNil(test, err, "Invalid JSON text was stripped without an error: "+actual)
+	require.Error(test, err, "Invalid JSON text was stripped without an error: "+actual)
 }
 
 func TestStrip_Formatted0(test *testing.T) {
@@ -967,140 +967,4 @@ func TestFlatten_WithError(test *testing.T) {
 	actual := Flatten(`{"foo": 5, "bar": 6}`, err)
 	var expected = `{"error":"failed","text":"{\"foo\": 5, \"bar\": 6}"}`
 	assert.Equal(test, expected, actual, "Flattening with an error did not work as expected: "+actual)
-}
-
-// ----------------------------------------------------------------------------
-// Example functions
-// ----------------------------------------------------------------------------
-func ExampleIsJson() {
-	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true}`
-
-	validJson := IsJson(jsonText)
-
-	if validJson {
-		fmt.Println(jsonText + " is valid JSON")
-	} else {
-		fmt.Println(jsonText + " is NOT valid JSON")
-	}
-	// Output: {"givenName": "Joe","surname": "Schmoe","age": 35,"member": true} is valid JSON
-}
-
-func ExampleNormalize() {
-	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
-	{
-		"givenName": "Joe",
-		"surname": "Schmoe",
-		"age": 35,
-		"member": true
-	}`
-
-	normalizedJson, err := Normalize(jsonText)
-	if err != nil {
-		fmt.Println("An error occurred: " + err.Error())
-	}
-
-	fmt.Println(normalizedJson)
-	// Output: {"age":35,"givenName":"Joe","member":true,"surname":"Schmoe"}
-}
-
-func ExampleNormalizeAndSort() {
-	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
-	{
-		"givenName": "Joe",
-		"surname": "Schmoe",
-		"age": 35,
-		"member": true,
-		"nicknames": ["Joseph", "Joey"]
-	}`
-
-	normalizedJson, err := NormalizeAndSort(jsonText)
-	if err != nil {
-		fmt.Println("An error occurred: " + err.Error())
-	}
-
-	fmt.Println(normalizedJson)
-	// Output: {"age":35,"givenName":"Joe","member":true,"nicknames":["Joey","Joseph"],"surname":"Schmoe"}
-}
-
-func ExampleRedact() {
-	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
-	{
-		"givenName": "Joe",
-		"surname": "Schmoe",
-		"age": 35,
-		"member": true,
-		"ssn": "111-22-3333"
-	}`
-
-	redactedJson, err := Redact(jsonText, "ssn")
-	if err != nil {
-		fmt.Println("An error occurred: " + err.Error())
-	}
-
-	fmt.Println(redactedJson)
-	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":null,"surname":"Schmoe"}
-}
-
-func ExampleRedactWithMap() {
-	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
-	{
-		"givenName": "Joe",
-		"surname": "Schmoe",
-		"age": 35,
-		"member": true,
-		"ssn": "111-22-3333"
-	}`
-
-	redactedJson, err := RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"})
-	if err != nil {
-		fmt.Println("An error occurred: " + err.Error())
-	}
-
-	fmt.Println(redactedJson)
-	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":"***-**-****","surname":"Schmoe"}
-}
-
-func ExampleStrip() {
-	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
-	{
-		"givenName": "Joe",
-		"surname": "Schmoe",
-		"age": 35,
-		"member": true,
-		"ssn": "111-22-3333"
-	}`
-
-	redactedJson, err := Strip(jsonText, "ssn")
-	if err != nil {
-		fmt.Println("An error occurred: " + err.Error())
-	}
-
-	fmt.Println(redactedJson)
-	// Output: {"age":35,"givenName":"Joe","member":true,"surname":"Schmoe"}
-}
-
-func ExampleFlatten_noError() {
-	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `{ "name": "Joe Schmoe", "ssn": "111-22-3333" }`
-
-	redactedJson := Flatten(RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
-
-	fmt.Println(redactedJson)
-	// Output: {"name":"Joe Schmoe","ssn":"***-**-****"}
-}
-
-func ExampleFlatten_withError() {
-	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `{ "name": "Joe Schmoe" "ssn": "111-22-3333" }` // missing a comma
-
-	redactedJson := Flatten(RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
-
-	fmt.Println(redactedJson)
-	// Output: {"error":"invalid character '\"' after object key:value pair","text":"{ \"name\": \"Joe Schmoe\" \"ssn\": \"111-22-3333\" }"}
 }

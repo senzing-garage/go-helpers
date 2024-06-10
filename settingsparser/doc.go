@@ -1,5 +1,5 @@
 /*
-The engineconfigurationjsonparser package is used to pull information from the _ENGINE_CONFIGURATION_JSON string.
+The settingsparser package is used to pull information from the _ENGINE_CONFIGURATION_JSON string.
 
 Single-database example of a _ENGINE_CONFIGURATION_JSON string:
 
@@ -56,4 +56,4 @@ A user could specify alternative names such as MULTI, DB1, and DB2.
 - https://senzing.zendesk.com/hc/en-us/articles/360038774134-G2Engine-Configuration-and-the-Senzing-API
 - https://senzing.zendesk.com/hc/en-us/articles/360010599254-Scaling-Out-Your-Database-With-Clustering
 */
-package engineconfigurationjsonparser
+package settingsparser

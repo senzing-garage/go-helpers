@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // ----------------------------------------------------------------------------
@@ -60,7 +61,9 @@ func createTextFileN(path string, byteCount int64) (int64, error) {
 		return 0, fmt.Errorf("failed to create file (%v): %v", path, err.Error())
 	}
 	defer source.Close()
-	var index, writeCount int64 = 0, 0
+	var index int64
+	var writeCount int64
+
 	for index = 0; index < byteCount; index++ {
 		count, err := source.WriteString("A")
 		if err != nil {
@@ -263,7 +266,7 @@ func TestCopyFile_NoOverwrite(test *testing.T) {
 
 	sourceFile, _ := sourceFilePath1()
 	_, _, err = CopyFile(sourceFile, destinationFile, false)
-	assert.NotEqual(test, nil, err, "Expected an error when attempting to overwrite file with CopyFile()")
+	require.Error(test, err, "Expected an error when attempting to overwrite file with CopyFile()")
 
 	stat, err := os.Stat(destinationFile)
 	testError(test, err)
@@ -341,7 +344,7 @@ func TestCopyFile_ToDirectoryNoOverwrite(test *testing.T) {
 	testError(test, err)
 
 	_, _, err = CopyFile(sourceFile, destinationDir, false)
-	assert.NotEqual(test, nil, err, "Expected an error when attempting to overwrite file with CopyFile() to directory")
+	require.Error(test, err, "Expected an error when attempting to overwrite file with CopyFile() to directory")
 
 	stat, err := os.Stat(destinationFile)
 	testError(test, err)
@@ -358,9 +361,8 @@ func TestCopyFile_FromDirectory(test *testing.T) {
 	sourceDir := sourceDirectoryPath()
 	destinationDir := destinationDirectoryPath()
 	destinationFile := filepath.Join(destinationDir, "directory_copy")
-
 	_, _, err := CopyFile(sourceDir, destinationFile, true)
-	assert.NotEqual(test, nil, err, "Did not get expected error when trying to copy a directory")
+	require.Error(test, err, "Did not get expected error when trying to copy a directory")
 }
 
 func TestCopyFile_SourceNotFound(test *testing.T) {
@@ -368,9 +370,8 @@ func TestCopyFile_SourceNotFound(test *testing.T) {
 	sourceFile := filepath.Join(sourceDir, "does_not_exist.txt")
 	destinationDir := destinationDirectoryPath()
 	destinationFile := filepath.Join(destinationDir, "will_not_exist.txt")
-
 	_, _, err := CopyFile(sourceFile, destinationFile, true)
-	assert.NotEqual(test, nil, err, "Did not get expected error when trying to copy a non-existent file")
+	require.Error(test, err, "Did not get expected error when trying to copy a non-existent file")
 }
 
 func TestCopyFile_DestinationNotFound(test *testing.T) {
@@ -378,9 +379,8 @@ func TestCopyFile_DestinationNotFound(test *testing.T) {
 	destinationDir := destinationDirectoryPath()
 	badSubDirectory := filepath.Join(destinationDir, "does_not_exist")
 	destinationFile := filepath.Join(badSubDirectory, "will_not_exist.txt")
-
 	_, _, err := CopyFile(sourceFile, destinationFile, true)
-	assert.NotEqual(test, nil, err, "Did not get expected error when trying to copy a bad destination path")
+	require.Error(test, err, "Did not get expected error when trying to copy a bad destination path")
 }
 
 // ----------------------------------------------------------------------------
@@ -389,7 +389,10 @@ func TestCopyFile_DestinationNotFound(test *testing.T) {
 func ExampleCopyFile() {
 	// create a file that we will copy (usually this already exists)
 	sourceFilePath := filepath.Join(os.TempDir(), "source-file.txt")
-	os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0666)
+	err := os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0600)
+	if err != nil {
+		fmt.Print(err)
+	}
 
 	// define the target path to copy the file to
 	targetFilePath := filepath.Join(os.TempDir(), "target-file.txt")
@@ -408,7 +411,10 @@ func ExampleCopyFile() {
 func ExampleCopyFile_toDirectory() {
 	// create a file that we will copy (usually this already exists)
 	sourceFilePath := filepath.Join(os.TempDir(), "source-file.txt")
-	os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0666)
+	err := os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0600)
+	if err != nil {
+		fmt.Print(err)
+	}
 
 	// define the target path to copy the file to
 	targetDirectory, _ := os.MkdirTemp("", "target-directory-*")
