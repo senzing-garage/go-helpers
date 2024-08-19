@@ -19,7 +19,7 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 	result = SzConfiguration{
 		Pipeline: SzConfigurationPipeline{
 			ConfigPath:   "/etc/opt/senzing",
-			ResourcePath: "/opt/senzing/g2/resources",
+			ResourcePath: "/opt/senzing/er/resources",
 			SupportPath:  "/opt/senzing/data",
 		},
 		SQL: SzConfigurationSQL{

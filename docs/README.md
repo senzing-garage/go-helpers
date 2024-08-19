@@ -1,5 +1,8 @@
-# template-repository
+# go-helpers
 
-Placeholder for [GitHub pages](https://pages.github.com/).
+Placeholder for [GitHub pages].
 
-See [https://senzing.github.io/template-repository](https://senzing.github.io/template-repository).
+See [GitHub page].
+
+[GitHub page]: https://garage.senzing.com/go-helpers
+[GitHub pages]: https://pages.github.com/
