@@ -52,8 +52,7 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 		dir := filepath.Dir(destinationPath)
 		dirStat, err := os.Stat(dir)
 		if err != nil {
-			errorMessage := "failed to stat directory (" + dir + ") for destination path (" + destinationPath + "): " + err.Error()
-			return "", 0, fmt.Errorf(errorMessage)
+			return "", 0, fmt.Errorf("failed to stat directory (%s) for destination path (%s): %s", dir, destinationPath, err.Error())
 		}
 		if !dirStat.Mode().IsDir() {
 			return "", 0, fmt.Errorf("directory (%v) for destination path (%v) is not a directory",
