@@ -1,4 +1,4 @@
-# template-go development
+# go-helpers development
 
 The following instructions are useful during development.
 
@@ -33,7 +33,7 @@ Since the Senzing library is a prerequisite, it must be installed first.
 
     ```console
     export GIT_ACCOUNT=senzing-garage
-    export GIT_REPOSITORY=template-go
+    export GIT_REPOSITORY=go-helpers
     export GIT_ACCOUNT_DIR=~/${GIT_ACCOUNT}.git
     export GIT_REPOSITORY_DIR="${GIT_ACCOUNT_DIR}/${GIT_REPOSITORY}"
 
@@ -100,21 +100,21 @@ Since the Senzing library is a prerequisite, it must be installed first.
     1. Linux
 
         ```console
-        ${GIT_REPOSITORY_DIR}/target/linux-amd64/template-go
+        ${GIT_REPOSITORY_DIR}/target/linux-amd64/go-helpers
 
         ```
 
     1. macOS
 
         ```console
-        ${GIT_REPOSITORY_DIR}/target/darwin-amd64/template-go
+        ${GIT_REPOSITORY_DIR}/target/darwin-amd64/go-helpers
 
         ```
 
     1. Windows
 
         ```console
-        ${GIT_REPOSITORY_DIR}/target/windows-amd64/template-go
+        ${GIT_REPOSITORY_DIR}/target/windows-amd64/go-helpers
 
         ```
 
@@ -199,7 +199,7 @@ Example:
    Example:
 
     ```console
-    docker run --rm senzing/template-go
+    docker run --rm senzing/go-helpers
 
     ```
 
@@ -235,20 +235,20 @@ Example:
 
 ### Test DEB package on Ubuntu
 
-1. Determine if `template-go` is installed.
+1. Determine if `go-helpers` is installed.
    Example:
 
     ```console
-    apt list --installed | grep template-go
+    apt list --installed | grep go-helpers
 
     ```
 
-1. :pencil2: Install `template-go`.
+1. :pencil2: Install `go-helpers`.
    Example:
 
     ```console
     cd ${GIT_REPOSITORY_DIR}/target
-    sudo apt install ./template-go-0.0.0.deb
+    sudo apt install ./go-helpers-0.0.0.deb
 
     ```
 
@@ -256,15 +256,15 @@ Example:
    Example:
 
     ```console
-    template-go
+    go-helpers
 
     ```
 
-1. Remove `template-go` from system.
+1. Remove `go-helpers` from system.
    Example:
 
     ```console
-    sudo apt-get remove template-go
+    sudo apt-get remove go-helpers
 
     ```
 
@@ -273,10 +273,10 @@ Example:
 [clone-repository]: https://github.com/senzing-garage/knowledge-base/blob/main/HOWTO/clone-repository.md
 [docker]: https://github.com/senzing-garage/knowledge-base/blob/main/WHATIS/docker.md
 [git]: https://github.com/senzing-garage/knowledge-base/blob/main/WHATIS/git.md
-[Go Reference Badge]: https://pkg.go.dev/badge/github.com/senzing-garage/template-go.svg
-[Go Reference]: https://pkg.go.dev/github.com/senzing-garage/template-go
+[Go Reference Badge]: https://pkg.go.dev/badge/github.com/senzing-garage/go-helpers.svg
+[Go Reference]: https://pkg.go.dev/github.com/senzing-garage/go-helpers
 [go]: https://github.com/senzing-garage/knowledge-base/blob/main/WHATIS/go.md
 [How to Install Senzing for Go Development]: https://github.com/senzing-garage/knowledge-base/blob/main/HOWTO/install-senzing-for-go-development.md
-[localhost:6060]: http://localhost:6060/pkg/github.com/senzing-garage/template-go/
+[localhost:6060]: http://localhost:6060/pkg/github.com/senzing-garage/go-helpers/
 [make]: https://github.com/senzing-garage/knowledge-base/blob/main/WHATIS/make.md
 [testcoverage.yaml]: ../.github/coverage/testcoverage.yaml
