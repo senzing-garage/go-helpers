@@ -1,4 +1,4 @@
 /*
-The normalizejson package is used to normalize JSON for canonical JSON results
+Package jsonutil contains functions for manipulating JSON.
 */
 package jsonutil

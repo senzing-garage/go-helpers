@@ -1,5 +1,5 @@
 /*
-The settingsparser package is used to pull information from the _ENGINE_CONFIGURATION_JSON string.
+Package settingsparser is used to pull information from the Senzing engine settings string.
 
 Single-database example of a _ENGINE_CONFIGURATION_JSON string:
 

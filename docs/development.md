@@ -183,62 +183,6 @@ Example:
 
     ```
 
-## Package
-
-### Package RPM and DEB files
-
-1. Use make target to run a docker images that builds RPM and DEB files.
-   Example:
-
-    ```console
-    cd ${GIT_REPOSITORY_DIR}
-    make package
-
-    ```
-
-1. The results will be in the `${GIT_REPOSITORY_DIR}/target` directory.
-   Example:
-
-    ```console
-    tree ${GIT_REPOSITORY_DIR}/target
-
-    ```
-
-### Test DEB package on Ubuntu
-
-1. Determine if `go-helpers` is installed.
-   Example:
-
-    ```console
-    apt list --installed | grep go-helpers
-
-    ```
-
-1. :pencil2: Install `go-helpers`.
-   Example:
-
-    ```console
-    cd ${GIT_REPOSITORY_DIR}/target
-    sudo apt install ./go-helpers-0.0.0.deb
-
-    ```
-
-1. Run command.
-   Example:
-
-    ```console
-    go-helpers
-
-    ```
-
-1. Remove `go-helpers` from system.
-   Example:
-
-    ```console
-    sudo apt-get remove go-helpers
-
-    ```
-
 ## References
 
 [clone-repository]: https://github.com/senzing-garage/knowledge-base/blob/main/HOWTO/clone-repository.md

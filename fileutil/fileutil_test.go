@@ -13,149 +13,9 @@ import (
 )
 
 // ----------------------------------------------------------------------------
-// Internal functions
-// ----------------------------------------------------------------------------
-func testError(test *testing.T, err error) {
-	if err != nil {
-		assert.FailNow(test, err.Error())
-	}
-}
-
-func baseDirectoryPath() string {
-	return filepath.FromSlash("../target/test/fileutil")
-}
-
-func sourceDirectoryPath() string {
-	return filepath.Join(baseDirectoryPath(), "source")
-}
-
-func destinationDirectoryPath() string {
-	return filepath.Join(baseDirectoryPath(), "destination")
-}
-
-func sourceFilePath1() (path string, fileSize int64) {
-	return filepath.Join(sourceDirectoryPath(), "Five_Byte_File.txt"), 5
-}
-
-func sourceFilePath2() (path string, fileSize int64) {
-	return filepath.Join(sourceDirectoryPath(), "Ten_Byte_File.txt"), 10
-}
-
-func createTextFile(path string, text string) (int64, error) {
-	source, err := os.Create(filepath.Clean(path))
-	if err != nil {
-		return 0, fmt.Errorf("failed to create file (%v): %v", path, err.Error())
-	}
-	defer source.Close()
-	byteCount, err := source.WriteString(text)
-	if err != nil {
-		return 0, fmt.Errorf("failed to write content (%v) to file (%v): %v",
-			text, path, err.Error())
-	}
-	return int64(byteCount), err
-}
-
-func createTextFileN(path string, byteCount int64) (int64, error) {
-	source, err := os.Create(filepath.Clean(path))
-	if err != nil {
-		return 0, fmt.Errorf("failed to create file (%v): %v", path, err.Error())
-	}
-	defer source.Close()
-	var index int64
-	var writeCount int64
-
-	for index = 0; index < byteCount; index++ {
-		count, err := source.WriteString("A")
-		if err != nil {
-			return 0, fmt.Errorf("failed to write letter (%v) to file (%v): %v",
-				index, path, err.Error())
-		}
-		writeCount += int64(count)
-	}
-	if writeCount != byteCount {
-		return int64(writeCount), fmt.Errorf("wrote wrong number of bytes (%v) to file (%v)",
-			writeCount, path)
-	}
-	return int64(byteCount), err
-}
-
-// ----------------------------------------------------------------------------
-// Test harness
-// ----------------------------------------------------------------------------
-func TestMain(m *testing.M) {
-	err := setup()
-	if err != nil {
-		fmt.Print(err)
-		os.Exit(1)
-	}
-	code := m.Run()
-	err = teardown()
-	if err != nil {
-		fmt.Print(err)
-	}
-	os.Exit(code)
-}
-
-func setup() error {
-	baseDir := baseDirectoryPath()
-
-	// remove any previously existing test directory
-	err := os.RemoveAll(baseDir)
-	if err != nil {
-		return fmt.Errorf("failed to delete old test targets in %v: %v",
-			baseDir, err.Error())
-	}
-
-	// define the source and destination directories
-	sourceDir := sourceDirectoryPath()
-	destinationDir := destinationDirectoryPath()
-
-	// make the source directory and any required parents
-	err = os.MkdirAll(sourceDir, 0770)
-	if err != nil {
-		return fmt.Errorf("failed to create source directory (%v): %v",
-			sourceDir, err.Error())
-	}
-
-	// make the destinaton directory and any required parents
-	err = os.MkdirAll(destinationDir, 0770)
-	if err != nil {
-		return fmt.Errorf("failed to create destination directory (%v): %v",
-			destinationDir, err.Error())
-	}
-
-	// define paths to
-	sourcePath1, fileSize1 := sourceFilePath1()
-	sourcePath2, fileSize2 := sourceFilePath2()
-
-	_, err = createTextFileN(sourcePath1, fileSize1)
-	if err != nil {
-		return err
-	}
-	_, err = createTextFileN(sourcePath2, fileSize2)
-	if err != nil {
-		return err
-	}
-
-	return err
-}
-
-func teardown() error {
-	baseDir := baseDirectoryPath()
-
-	// remove any previously existing test directory
-	err := os.RemoveAll(baseDir)
-	if err != nil {
-		return fmt.Errorf("failed to delete old test targets in %v: %v",
-			baseDir, err.Error())
-	}
-
-	return err
-}
-
-// ----------------------------------------------------------------------------
 // Test CopyFile() function
 // ----------------------------------------------------------------------------
+
 func TestCopyFile_Basic1(test *testing.T) {
 	destinationDir := destinationDirectoryPath()
 	destinationFile := filepath.Join(destinationDir, "basic_file_1.txt")
@@ -384,48 +244,144 @@ func TestCopyFile_DestinationNotFound(test *testing.T) {
 }
 
 // ----------------------------------------------------------------------------
-// Test CopyFile() function
+// Internal functions
 // ----------------------------------------------------------------------------
-func ExampleCopyFile() {
-	// create a file that we will copy (usually this already exists)
-	sourceFilePath := filepath.Join(os.TempDir(), "source-file.txt")
-	err := os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0600)
+
+func testError(test *testing.T, err error) {
 	if err != nil {
-		fmt.Print(err)
+		assert.FailNow(test, err.Error())
 	}
-
-	// define the target path to copy the file to
-	targetFilePath := filepath.Join(os.TempDir(), "target-file.txt")
-
-	// copy the file
-	createdFile, byteCount, err := CopyFile(sourceFilePath, targetFilePath, true)
-	if err != nil {
-		fmt.Println(err.Error())
-	} else {
-		fmt.Printf("Copied %v bytes to %v.\n", byteCount, filepath.Base(createdFile))
-	}
-
-	// Output: Copied 13 bytes to target-file.txt.
 }
 
-func ExampleCopyFile_toDirectory() {
-	// create a file that we will copy (usually this already exists)
-	sourceFilePath := filepath.Join(os.TempDir(), "source-file.txt")
-	err := os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0600)
+func baseDirectoryPath() string {
+	return filepath.FromSlash("../target/test/fileutil")
+}
+
+func sourceDirectoryPath() string {
+	return filepath.Join(baseDirectoryPath(), "source")
+}
+
+func destinationDirectoryPath() string {
+	return filepath.Join(baseDirectoryPath(), "destination")
+}
+
+func sourceFilePath1() (path string, fileSize int64) {
+	return filepath.Join(sourceDirectoryPath(), "Five_Byte_File.txt"), 5
+}
+
+func sourceFilePath2() (path string, fileSize int64) {
+	return filepath.Join(sourceDirectoryPath(), "Ten_Byte_File.txt"), 10
+}
+
+func createTextFile(path string, text string) (int64, error) {
+	source, err := os.Create(filepath.Clean(path))
+	if err != nil {
+		return 0, fmt.Errorf("failed to create file (%v): %v", path, err.Error())
+	}
+	defer source.Close()
+	byteCount, err := source.WriteString(text)
+	if err != nil {
+		return 0, fmt.Errorf("failed to write content (%v) to file (%v): %v",
+			text, path, err.Error())
+	}
+	return int64(byteCount), err
+}
+
+func createTextFileN(path string, byteCount int64) (int64, error) {
+	source, err := os.Create(filepath.Clean(path))
+	if err != nil {
+		return 0, fmt.Errorf("failed to create file (%v): %v", path, err.Error())
+	}
+	defer source.Close()
+	var index int64
+	var writeCount int64
+
+	for index = 0; index < byteCount; index++ {
+		count, err := source.WriteString("A")
+		if err != nil {
+			return 0, fmt.Errorf("failed to write letter (%v) to file (%v): %v",
+				index, path, err.Error())
+		}
+		writeCount += int64(count)
+	}
+	if writeCount != byteCount {
+		return int64(writeCount), fmt.Errorf("wrote wrong number of bytes (%v) to file (%v)",
+			writeCount, path)
+	}
+	return int64(byteCount), err
+}
+
+// ----------------------------------------------------------------------------
+// Test harness
+// ----------------------------------------------------------------------------
+
+func TestMain(m *testing.M) {
+	err := setup()
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
+	code := m.Run()
+	err = teardown()
 	if err != nil {
 		fmt.Print(err)
 	}
+	os.Exit(code)
+}
 
-	// define the target path to copy the file to
-	targetDirectory, _ := os.MkdirTemp("", "target-directory-*")
+func setup() error {
+	baseDir := baseDirectoryPath()
 
-	// copy the file
-	createdFile, byteCount, err := CopyFile(sourceFilePath, targetDirectory, true)
+	// remove any previously existing test directory
+	err := os.RemoveAll(baseDir)
 	if err != nil {
-		fmt.Println(err.Error())
-	} else {
-		fmt.Printf("Copied %v bytes to %v.\n", byteCount, filepath.Base(createdFile))
+		return fmt.Errorf("failed to delete old test targets in %v: %v",
+			baseDir, err.Error())
 	}
 
-	// Output: Copied 13 bytes to source-file.txt.
+	// define the source and destination directories
+	sourceDir := sourceDirectoryPath()
+	destinationDir := destinationDirectoryPath()
+
+	// make the source directory and any required parents
+	err = os.MkdirAll(sourceDir, 0770)
+	if err != nil {
+		return fmt.Errorf("failed to create source directory (%v): %v",
+			sourceDir, err.Error())
+	}
+
+	// make the destinaton directory and any required parents
+	err = os.MkdirAll(destinationDir, 0770)
+	if err != nil {
+		return fmt.Errorf("failed to create destination directory (%v): %v",
+			destinationDir, err.Error())
+	}
+
+	// define paths to
+	sourcePath1, fileSize1 := sourceFilePath1()
+	sourcePath2, fileSize2 := sourceFilePath2()
+
+	_, err = createTextFileN(sourcePath1, fileSize1)
+	if err != nil {
+		return err
+	}
+	_, err = createTextFileN(sourcePath2, fileSize2)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func teardown() error {
+	baseDir := baseDirectoryPath()
+
+	// remove any previously existing test directory
+	err := os.RemoveAll(baseDir)
+	if err != nil {
+		return fmt.Errorf("failed to delete old test targets in %v: %v",
+			baseDir, err.Error())
+	}
+
+	return err
 }
