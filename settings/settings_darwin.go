@@ -29,7 +29,7 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 
 	// Determine defaultDirectory.
 
-	defaultDirectory := "/opt/senzing/g2"
+	defaultDirectory := "/opt/senzing/er"
 	senzingDirectory, ok := attributeMap["senzingDirectory"]
 	if ok {
 		defaultDirectory = senzingDirectory

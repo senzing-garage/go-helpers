@@ -32,7 +32,7 @@ func TestSettingsParser_GetDatabaseURLs(test *testing.T) {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
                 "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
-                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
             "SQL": {
@@ -55,7 +55,7 @@ func TestSettingsParser_GetDatabaseURLs_Multi(test *testing.T) {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
                 "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
-                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
             "SQL": {
@@ -96,7 +96,7 @@ func TestSettingsParser_New(test *testing.T) {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
                 "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
-                "RESOURCEPATH": "/opt/senzing/g2/resources",
+                "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
             "SQL": {
@@ -156,7 +156,7 @@ func getParser(ctx context.Context) SettingsParser {
                 "PIPELINE": {
                     "CONFIGPATH": "/etc/opt/senzing",
                     "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
-                    "RESOURCEPATH": "/opt/senzing/g2/resources",
+                    "RESOURCEPATH": "/opt/senzing/er/resources",
                     "SUPPORTPATH": "/opt/senzing/data"
                 },
                 "SQL": {

@@ -32,7 +32,7 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 
 	senzingDirectory, ok := attributeMap["senzingDirectory"]
 	if !ok {
-		senzingDirectory = `C:\Program Files\Senzing\g2`
+		senzingDirectory = `C:\Program Files\Senzing\er`
 	}
 	configPath := fmt.Sprintf("%s%cetc", senzingDirectory, os.PathSeparator)
 	resourcePath := fmt.Sprintf("%s%cresources", senzingDirectory, os.PathSeparator)

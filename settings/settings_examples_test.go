@@ -19,7 +19,7 @@ func ExampleBuildSimpleSettingsUsingMap() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}
 }
 
 func ExampleBuildSimpleSettingsUsingMap_db2() {
@@ -31,7 +31,7 @@ func ExampleBuildSimpleSettingsUsingMap_db2() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"db2://username:password@G2"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"db2://username:password@G2"}}
 }
 
 func ExampleBuildSimpleSettingsUsingMap_db2WithSchema() {
@@ -43,7 +43,7 @@ func ExampleBuildSimpleSettingsUsingMap_db2WithSchema() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"db2://username:password@G2/?schema=schemaname"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"db2://username:password@G2/?schema=schemaname"}}
 }
 
 func ExampleBuildSimpleSettingsUsingMap_oci() {
@@ -55,7 +55,7 @@ func ExampleBuildSimpleSettingsUsingMap_oci() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"oci://username:password@G2"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"oci://username:password@G2"}}
 }
 
 func ExampleBuildSimpleSettingsUsingMap_mssql() {
@@ -67,7 +67,7 @@ func ExampleBuildSimpleSettingsUsingMap_mssql() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"mssql://username:password@G2"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"mssql://username:password@G2"}}
 }
 
 func ExampleBuildSimpleSettingsUsingMap_mysql() {
@@ -79,7 +79,7 @@ func ExampleBuildSimpleSettingsUsingMap_mysql() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"mysql://username:password@hostname:3306/?schema=G2"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"mysql://username:password@hostname:3306/?schema=G2"}}
 }
 
 func ExampleBuildSimpleSettingsUsingMap_postgresql() {
@@ -91,7 +91,7 @@ func ExampleBuildSimpleSettingsUsingMap_postgresql() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}
 }
 
 func ExampleBuildSimpleSettingsUsingMap_postgresqlWithSchema() {
@@ -103,7 +103,7 @@ func ExampleBuildSimpleSettingsUsingMap_postgresqlWithSchema() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/?schema=schemaname"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/?schema=schemaname"}}
 }
 func ExampleBuildSimpleSettingsUsingMap_sqlite() {
 	aMap := map[string]string{
@@ -114,5 +114,5 @@ func ExampleBuildSimpleSettingsUsingMap_sqlite() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/g2/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db"}}
 }
