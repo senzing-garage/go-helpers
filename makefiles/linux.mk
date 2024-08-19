@@ -34,6 +34,12 @@ coverage-osarch-specific:
 	@xdg-open $(MAKEFILE_DIRECTORY)/coverage.html
 
 
+.PHONY: documentation-osarch-specific
+documentation-osarch-specific:
+	@godoc &
+	@xdg-open http://localhost:6060
+
+
 .PHONY: hello-world-osarch-specific
 hello-world-osarch-specific:
 	$(info Hello World, from linux.)

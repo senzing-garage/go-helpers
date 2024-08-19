@@ -33,6 +33,12 @@ coverage-osarch-specific:
 	@open file://$(MAKEFILE_DIRECTORY)/coverage.html
 
 
+.PHONY: documentation-osarch-specific
+documentation-osarch-specific:
+	@godoc &
+	@open http://localhost:6060
+
+
 .PHONY: hello-world-osarch-specific
 hello-world-osarch-specific:
 	$(info Hello World, from darwin.)

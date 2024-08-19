@@ -33,6 +33,12 @@ coverage-osarch-specific:
 	@explorer file://$(MAKEFILE_DIRECTORY)/coverage.html
 
 
+.PHONY: documentation-osarch-specific
+documentation-osarch-specific:
+	@start /b godoc
+	@explorer http://localhost:6060
+
+
 .PHONY: hello-world-osarch-specific
 hello-world-osarch-specific:
 	$(info Hello World, from windows.)
