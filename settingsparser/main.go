@@ -44,7 +44,7 @@ type EngineConfiguration struct {
 // Constants
 // ----------------------------------------------------------------------------
 
-// Identfier of the  package found messages having the format "senzing-6401xxxx".
+// Identfier of the  package found messages having the format "SZSDK6401xxxx".
 const ComponentID = 6401
 
 // ----------------------------------------------------------------------------

@@ -89,6 +89,29 @@ func TestSettingsParser_GetDatabaseURLs_Multi(test *testing.T) {
 	assert.True(test, contains(actual, "postgresql://username:password@db-3.example.com:5432:G2"))
 }
 
+func TestSettingsParser_GetLicenseStringBase64(test *testing.T) {
+	ctx := context.TODO()
+	parser := &BasicSettingsParser{
+		Settings: `
+        {
+            "PIPELINE": {
+                "CONFIGPATH": "/etc/opt/senzing",
+                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "RESOURCEPATH": "/opt/senzing/er/resources",
+                "SUPPORTPATH": "/opt/senzing/data"
+            },
+            "SQL": {
+                "BACKEND": "SQL",
+                "CONNECTION": "postgresql://username:password@db.example.com:5432:G2"
+            }
+        }
+        `,
+	}
+	actual, err := parser.GetLicenseStringBase64(ctx)
+	testError(test, err)
+	assert.Equal(test, "${SENZING_LICENSE_BASE64_ENCODED}", actual)
+}
+
 func TestSettingsParser_New(test *testing.T) {
 	ctx := context.TODO()
 	settings := `

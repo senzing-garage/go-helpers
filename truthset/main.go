@@ -6,7 +6,7 @@ import "github.com/senzing-garage/go-helpers/record"
 // Constants
 // ----------------------------------------------------------------------------
 
-// Identfier of the  package found messages having the format "senzing-6404xxxx".
+// Identfier of the  package found messages having the format "SZSDK6404xxxx".
 const ComponentID = 6404
 
 // ----------------------------------------------------------------------------

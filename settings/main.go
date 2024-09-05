@@ -25,5 +25,5 @@ type SzConfiguration struct {
 // Constants
 // ----------------------------------------------------------------------------
 
-// Identfier of the  package found messages having the format "senzing-6402xxxx".
+// Identfier of the  package found messages having the format "SZSDK6402xxxx".
 const ComponentID = 6402
