@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning].
 
 ### Changed in 0.6.1
 
--
+- Update documentation
+- Refactor to [Go template]
 
 ## [0.6.0] - 2024-08-19
 
@@ -214,3 +215,4 @@ and this project adheres to [Semantic Versioning].
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [markdownlint]: https://dlaa.me/markdownlint/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
+[Go template]: https://github.com/senzing-garage/template-go
