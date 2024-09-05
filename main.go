@@ -5,7 +5,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/senzing-garage/go-helpers/jsonutil"
@@ -13,14 +12,13 @@ import (
 )
 
 func main() {
+
 	if len(os.Args) > 2 && os.Args[1] == "-j" {
 		args := os.Args[2:]
 
 		for _, jsonText := range args {
 			normalized, err := jsonutil.Normalize(jsonText)
-			if err != nil {
-				log.Fatal(err)
-			}
+			failOnError(err)
 			normSorted, _ := jsonutil.NormalizeAndSort(jsonText)
 			fmt.Println("- - - - - - - - - - - - - - - - - - - - ")
 			fmt.Println(normalized)
@@ -37,9 +35,7 @@ func main() {
 	// ------------------------------------------------------------------------
 
 	iniParams, err := settings.BuildSimpleSettingsUsingEnvVars()
-	if err != nil {
-		panic(err)
-	}
+	failOnError(err)
 	fmt.Println(iniParams)
 
 	// ------------------------------------------------------------------------
@@ -47,9 +43,7 @@ func main() {
 	// ------------------------------------------------------------------------
 
 	err = settings.VerifySettings(ctx, iniParams)
-	if err != nil {
-		panic(err)
-	}
+	failOnError(err)
 
 	// ------------------------------------------------------------------------
 	// --- Build JSON from map of key/values.
@@ -64,9 +58,17 @@ func main() {
 	}
 
 	iniParams2, err := settings.BuildSimpleSettingsUsingMap(attributeMap)
-	if err != nil {
-		panic(err)
-	}
+	failOnError(err)
 	fmt.Println(iniParams2)
 
+}
+
+// ----------------------------------------------------------------------------
+// Internal methods
+// ----------------------------------------------------------------------------
+
+func failOnError(err error) {
+	if err != nil {
+		panic(err.Error())
+	}
 }

@@ -10,6 +10,9 @@ import (
 // Variables
 // ----------------------------------------------------------------------------
 
+/*
+A very long record.
+*/
 var FixtureRecords = map[string]record.Record{
 	"65536-periods": {
 		DataSource: "TEST",

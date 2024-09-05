@@ -8,7 +8,7 @@ import (
 // Constants
 // ----------------------------------------------------------------------------
 
-// Identifier of this package for the error string "senzing-6403xxxx".
+// Identifier of this package for the error string "SZSDK6403xxxx".
 const ComponentID = 6403
 
 // ----------------------------------------------------------------------------

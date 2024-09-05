@@ -48,14 +48,14 @@ the precedence used in calculating the values of the returned JSON are:
 
 The keys and corresponding environment variables are:
 
-	Key						Environment variable
-	---------------------  	----------------------------------
-	configPath          	SENZING_TOOLS_CONFIG_PATH
-	databaseUrl 			SENZING_TOOLS_DATABASE_URL
-	licenseStringBase64 	SENZING_TOOLS_LICENSE_STRING_BASE64
-	resourcePath        	SENZING_TOOLS_RESOURCE_PATH
-	senzingDirectory    	SENZING_TOOLS_SENZING_DIRECTORY
-	supportPath         	SENZING_TOOLS_SUPPORT_PATH
+	Key                     Environment variable
+	---------------------   ----------------------------------
+	configPath              SENZING_TOOLS_CONFIG_PATH
+	databaseUrl             SENZING_TOOLS_DATABASE_URL
+	licenseStringBase64     SENZING_TOOLS_LICENSE_STRING_BASE64
+	resourcePath            SENZING_TOOLS_RESOURCE_PATH
+	senzingDirectory        SENZING_TOOLS_SENZING_DIRECTORY
+	supportPath             SENZING_TOOLS_SUPPORT_PATH
 
 Input
   - attributeMap: A mapping of a keys to desired values.

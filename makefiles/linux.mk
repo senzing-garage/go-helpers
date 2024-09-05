@@ -34,8 +34,14 @@ coverage-osarch-specific:
 	@xdg-open $(MAKEFILE_DIRECTORY)/coverage.html
 
 
+.PHONY: dependencies-for-development-osarch-specific
+dependencies-for-development-osarch-specific: 
+	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.58.1
+
+
 .PHONY: documentation-osarch-specific
 documentation-osarch-specific:
+	@pkill godoc || true
 	@godoc &
 	@xdg-open http://localhost:6060
 
@@ -52,7 +58,7 @@ run-osarch-specific:
 
 .PHONY: setup-osarch-specific
 setup-osarch-specific:
-	@echo "No setup required."
+	$(info No setup required.)
 
 
 .PHONY: test-osarch-specific

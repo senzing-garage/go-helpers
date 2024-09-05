@@ -35,6 +35,7 @@ coverage-osarch-specific:
 
 .PHONY: documentation-osarch-specific
 documentation-osarch-specific:
+	@taskkill /f /t/im godoc
 	@start /b godoc
 	@explorer http://localhost:6060
 
@@ -51,7 +52,7 @@ run-osarch-specific:
 
 .PHONY: setup-osarch-specific
 setup-osarch-specific:
-	@echo "No setup required."
+	$info No setup required.)
 
 
 .PHONY: test-osarch-specific

@@ -53,7 +53,10 @@ A user could specify alternative names such as MULTI, DB1, and DB2.
 
 # Documentation
 
-- https://senzing.zendesk.com/hc/en-us/articles/360038774134-G2Engine-Configuration-and-the-Senzing-API
-- https://senzing.zendesk.com/hc/en-us/articles/360010599254-Scaling-Out-Your-Database-With-Clustering
+  - [G2Engine Configuration and the Senzing API]
+  - [Scaling Out Your Database With Clustering]
+
+[G2Engine Configuration and the Senzing API]: https://senzing.zendesk.com/hc/en-us/articles/360038774134-G2Engine-Configuration-and-the-Senzing-API
+[Scaling Out Your Database With Clustering]: https://senzing.zendesk.com/hc/en-us/articles/360010599254-Scaling-Out-Your-Database-With-Clustering
 */
 package settingsparser
