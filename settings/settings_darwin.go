@@ -22,7 +22,7 @@ func mapWithDefault(aMap map[string]string, key string, defaultValue string) str
 func buildStruct(attributeMap map[string]string) SzConfiguration {
 	var result SzConfiguration
 
-	databaseUrl, ok := attributeMap["databaseUrl"]
+	databaseURL, ok := attributeMap["databaseUrl"]
 	if !ok {
 		return result
 	}
@@ -48,7 +48,7 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 			SupportPath:  mapWithDefault(attributeMap, "supportPath", supportPath),
 		},
 		SQL: SzConfigurationSQL{
-			Connection: databaseUrl,
+			Connection: databaseURL,
 		},
 	}
 
@@ -63,6 +63,6 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 func verifySettings(ctx context.Context, settings string) error {
 	_ = ctx
 	_ = settings
-	var err error = nil
+	var err error
 	return err
 }

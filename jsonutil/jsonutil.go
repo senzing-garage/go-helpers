@@ -116,6 +116,11 @@ func NormalizeAndSort(jsonText string) (string, error) {
 	return string(normalizedJSON), err
 }
 
+func PrettyPrint(jsonText string) string {
+	return ""
+
+}
+
 func sortValue(jsonValue any) {
 	switch typedJSON := jsonValue.(type) {
 	case map[string]any:
