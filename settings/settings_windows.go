@@ -23,7 +23,7 @@ func mapWithDefault(aMap map[string]string, key string, defaultValue string) str
 func buildStruct(attributeMap map[string]string) SzConfiguration {
 	var result SzConfiguration
 
-	databaseURL, ok := attributeMap["databaseUrl"]
+	databaseURL, ok := attributeMap["databaseURL"]
 	if !ok {
 		return result
 	}

@@ -12,7 +12,7 @@ import (
 
 func ExampleBuildSimpleSettingsUsingMap() {
 	aMap := map[string]string{
-		"databaseUrl": "postgresql://username:password@hostname:5432/G2",
+		"databaseURL": "postgresql://username:password@hostname:5432/G2",
 	}
 	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
@@ -24,7 +24,7 @@ func ExampleBuildSimpleSettingsUsingMap() {
 
 func ExampleBuildSimpleSettingsUsingMap_db2() {
 	aMap := map[string]string{
-		"databaseUrl": "db2://username:password@hostname:50000/G2",
+		"databaseURL": "db2://username:password@hostname:50000/G2",
 	}
 	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
@@ -36,7 +36,7 @@ func ExampleBuildSimpleSettingsUsingMap_db2() {
 
 func ExampleBuildSimpleSettingsUsingMap_db2WithSchema() {
 	aMap := map[string]string{
-		"databaseUrl": "db2://username:password@hostname:50000/G2/?schema=schemaname",
+		"databaseURL": "db2://username:password@hostname:50000/G2/?schema=schemaname",
 	}
 	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
@@ -48,7 +48,7 @@ func ExampleBuildSimpleSettingsUsingMap_db2WithSchema() {
 
 func ExampleBuildSimpleSettingsUsingMap_oci() {
 	aMap := map[string]string{
-		"databaseUrl": "oci://username:password@hostname:1521/G2",
+		"databaseURL": "oci://username:password@hostname:1521/G2",
 	}
 	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
@@ -60,7 +60,7 @@ func ExampleBuildSimpleSettingsUsingMap_oci() {
 
 func ExampleBuildSimpleSettingsUsingMap_mssql() {
 	aMap := map[string]string{
-		"databaseUrl": "mssql://username:password@hostname:1433/G2",
+		"databaseURL": "mssql://username:password@hostname:1433/G2",
 	}
 	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
@@ -72,7 +72,7 @@ func ExampleBuildSimpleSettingsUsingMap_mssql() {
 
 func ExampleBuildSimpleSettingsUsingMap_mysql() {
 	aMap := map[string]string{
-		"databaseUrl": "mysql://username:password@hostname:3306/G2",
+		"databaseURL": "mysql://username:password@hostname:3306/G2",
 	}
 	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
@@ -84,7 +84,7 @@ func ExampleBuildSimpleSettingsUsingMap_mysql() {
 
 func ExampleBuildSimpleSettingsUsingMap_postgresql() {
 	aMap := map[string]string{
-		"databaseUrl": "postgresql://username:password@hostname:5432/G2",
+		"databaseURL": "postgresql://username:password@hostname:5432/G2",
 	}
 	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
@@ -96,7 +96,7 @@ func ExampleBuildSimpleSettingsUsingMap_postgresql() {
 
 func ExampleBuildSimpleSettingsUsingMap_postgresqlWithSchema() {
 	aMap := map[string]string{
-		"databaseUrl": "postgresql://username:password@hostname:5432/G2/?schema=schemaname",
+		"databaseURL": "postgresql://username:password@hostname:5432/G2/?schema=schemaname",
 	}
 	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
@@ -107,7 +107,7 @@ func ExampleBuildSimpleSettingsUsingMap_postgresqlWithSchema() {
 }
 func ExampleBuildSimpleSettingsUsingMap_sqlite() {
 	aMap := map[string]string{
-		"databaseUrl": "sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db",
+		"databaseURL": "sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db",
 	}
 	result, err := BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
