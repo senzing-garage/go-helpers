@@ -289,6 +289,9 @@ func buildSpecificDatabaseURL(databaseURL string) (string, error) {
 			parsedURL.Host,
 			string(parsedURL.Path[1:]),
 		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.RawQuery)
+		}
 	default:
 		result = ""
 		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
