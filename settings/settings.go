@@ -51,7 +51,7 @@ The keys and corresponding environment variables are:
 	Key                     Environment variable
 	---------------------   ----------------------------------
 	configPath              SENZING_TOOLS_CONFIG_PATH
-	databaseUrl             SENZING_TOOLS_DATABASE_URL
+	databaseURL             SENZING_TOOLS_DATABASE_URL
 	licenseStringBase64     SENZING_TOOLS_LICENSE_STRING_BASE64
 	resourcePath            SENZING_TOOLS_RESOURCE_PATH
 	senzingDirectory        SENZING_TOOLS_SENZING_DIRECTORY
@@ -86,7 +86,7 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	// Add database URL.
 
-	senzingDatabaseURL, inMap := attributeMap["databaseUrl"]
+	senzingDatabaseURL, inMap := attributeMap["databaseURL"]
 	if !inMap {
 		senzingDatabaseURL, err = getOsEnv("SENZING_TOOLS_DATABASE_URL")
 		if err != nil {
@@ -97,7 +97,7 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 	if err != nil {
 		return "", err
 	}
-	attributeMap["databaseUrl"] = specificDatabaseURL
+	attributeMap["databaseURL"] = specificDatabaseURL
 
 	// Add Environment Variables to the map, if not already specified in the map.
 
@@ -289,6 +289,9 @@ func buildSpecificDatabaseURL(databaseURL string) (string, error) {
 			parsedURL.Host,
 			string(parsedURL.Path[1:]),
 		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.RawQuery)
+		}
 	default:
 		result = ""
 		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
