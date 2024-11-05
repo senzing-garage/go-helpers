@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], [markdownlint],
 and this project adheres to [Semantic Versioning].
 
+## [0.6.2] - 2024-11-04
+
+### Changed in 0.6.2
+
+- Changed `DatabaseUrl` to `DatabaseURL`
+
 ## [0.6.1] - 2024-09-05
 
 ### Changed in 0.6.1

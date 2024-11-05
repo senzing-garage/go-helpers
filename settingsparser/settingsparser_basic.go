@@ -170,14 +170,14 @@ func (parser *BasicSettingsParser) RedactedJSON(ctx context.Context) (string, er
 
 	// Get list of database URLs in the Senzing engine configuration json.
 
-	databaseUrls, err := parser.GetDatabaseURLs(ctx)
+	databaseURLs, err := parser.GetDatabaseURLs(ctx)
 	if err != nil {
 		return "", err
 	}
 
 	// For each database URL in the string, replace it with a redacted database URL.
 
-	for _, databaseURL := range databaseUrls {
+	for _, databaseURL := range databaseURLs {
 		redactedURL, err := redactURL(databaseURL)
 		if err == nil {
 			result = strings.ReplaceAll(result, databaseURL, redactedURL)

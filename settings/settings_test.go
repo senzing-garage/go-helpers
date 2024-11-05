@@ -117,9 +117,9 @@ func TestBuildSimpleSettingsUsingMap_ParseResult(test *testing.T) {
 				testError(test, err)
 				parsedSettings, err := settingsparser.New(settings)
 				testError(test, err)
-				databaseUrls, err := parsedSettings.GetDatabaseURLs(ctx)
+				databaseURLs, err := parsedSettings.GetDatabaseURLs(ctx)
 				testError(test, err)
-				parsedDatabaseURL, err := url.Parse(databaseUrls[0])
+				parsedDatabaseURL, err := url.Parse(databaseURLs[0])
 				testError(test, err)
 				assert.Equal(test, testCase.databaseURLPath, parsedDatabaseURL.Path)
 			})
@@ -178,7 +178,7 @@ func buildMap(testCase testCaseMetadata) map[string]string {
 		result["configPath"] = testCase.configPath
 	}
 	if len(testCase.databaseURL) > 0 {
-		result["databaseUrl"] = testCase.databaseURL
+		result["databaseURL"] = testCase.databaseURL
 	}
 	if len(testCase.licenseStringBase64) > 0 {
 		result["licenseStringBase64"] = testCase.licenseStringBase64
