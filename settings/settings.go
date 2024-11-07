@@ -129,15 +129,15 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	// Transform structure to JSON.
 
-	buffer := &bytes.Buffer{}
-	jsonEncoder := json.NewEncoder(buffer)
+	resultBuffer := &bytes.Buffer{}
+	jsonEncoder := json.NewEncoder(resultBuffer)
 	jsonEncoder.SetEscapeHTML(false)
 	err = jsonEncoder.Encode(resultStruct)
 	if err != nil {
 		return "", err
 	}
 
-	return buffer.String(), err
+	return resultBuffer.String(), err
 }
 
 /*
@@ -252,7 +252,7 @@ func buildSpecificDatabaseURL(databaseURL string) (string, error) {
 			string(parsedURL.Path[1:]),
 		)
 		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.RawQuery)
+			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
 		}
 	case "mssql":
 		result = fmt.Sprintf(
