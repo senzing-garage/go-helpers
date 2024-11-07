@@ -318,13 +318,13 @@ func createTextFileN(path string, byteCount int64) (int64, error) {
 func TestMain(m *testing.M) {
 	err := setup()
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 	code := m.Run()
 	err = teardown()
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 	}
 	os.Exit(code)
 }
