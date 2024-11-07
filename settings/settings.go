@@ -4,6 +4,7 @@ Package settings is used to generate the JSON document used to configure a Senzi
 package settings
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -97,6 +98,7 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 	if err != nil {
 		return "", err
 	}
+
 	attributeMap["databaseURL"] = specificDatabaseURL
 
 	// Add Environment Variables to the map, if not already specified in the map.
@@ -127,8 +129,15 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	// Transform structure to JSON.
 
-	resultBytes, err := json.Marshal(resultStruct)
-	return string(resultBytes), err
+	buffer := &bytes.Buffer{}
+	jsonEncoder := json.NewEncoder(buffer)
+	jsonEncoder.SetEscapeHTML(false)
+	err = jsonEncoder.Encode(resultStruct)
+	if err != nil {
+		return "", err
+	}
+
+	return buffer.String(), err
 }
 
 /*
@@ -277,7 +286,7 @@ func buildSpecificDatabaseURL(databaseURL string) (string, error) {
 			string(parsedURL.Path[1:]),
 		)
 		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.RawQuery)
+			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
 		} else {
 			result = fmt.Sprintf("%s/", result)
 		}
@@ -290,7 +299,7 @@ func buildSpecificDatabaseURL(databaseURL string) (string, error) {
 			string(parsedURL.Path[1:]),
 		)
 		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.RawQuery)
+			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
 		}
 	default:
 		result = ""
