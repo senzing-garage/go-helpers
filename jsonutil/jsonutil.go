@@ -117,7 +117,7 @@ func NormalizeAndSort(jsonText string) (string, error) {
 }
 
 func PrettyPrint(jsonText string) string {
-	return ""
+	return jsonText
 
 }
 

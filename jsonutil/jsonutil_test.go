@@ -275,6 +275,22 @@ func TestNormalizeAndSort_Formatted(test *testing.T) {
 }
 
 // ----------------------------------------------------------------------------
+// Test PrettyPrint function
+// ----------------------------------------------------------------------------
+
+func TestPrettyPrint_x(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
+	}`
+	var expected = `{"bar":true,"foo":123,"phoo":[{"a":1,"b":5},{"a":1,"c":[0,8,9]},{"a":2,"c":4}]}`
+	actual := PrettyPrint(jsonText)
+	assert.Equal(test, expected, actual, "JSON object (formatted) not normalized as expected")
+}
+
+// ----------------------------------------------------------------------------
 // Test RedactJson function
 // ----------------------------------------------------------------------------
 func TestRedact_Basic0(test *testing.T) {
