@@ -2,6 +2,7 @@ package jsonutil
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -278,6 +279,19 @@ func TestNormalizeAndSort_Formatted(test *testing.T) {
 // Test PrettyPrint function
 // ----------------------------------------------------------------------------
 
+func TestPrettyPrint_AllLines(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
+	}`
+	var expected = `{"bar":true,"foo":123,"phoo":[{"a":1,"b":5},{"a":1,"c":[0,8,9]},{"a":2,"c":4}]}`
+	actual := PrettyPrint(jsonText, 0)
+	fmt.Println(actual)
+	assert.Equal(test, expected, actual, "JSON object (formatted) not normalized as expected")
+}
+
 func TestPrettyPrint_x(test *testing.T) {
 	var jsonText = `
 	{
@@ -286,7 +300,8 @@ func TestPrettyPrint_x(test *testing.T) {
 		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
 	}`
 	var expected = `{"bar":true,"foo":123,"phoo":[{"a":1,"b":5},{"a":1,"c":[0,8,9]},{"a":2,"c":4}]}`
-	actual := PrettyPrint(jsonText)
+	actual := PrettyPrint(jsonText, 6, "bar")
+	fmt.Println(actual)
 	assert.Equal(test, expected, actual, "JSON object (formatted) not normalized as expected")
 }
 

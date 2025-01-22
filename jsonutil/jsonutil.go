@@ -1,6 +1,7 @@
 package jsonutil
 
 import (
+	"bytes"
 	"encoding/json"
 	"sort"
 	"strings"
@@ -116,9 +117,42 @@ func NormalizeAndSort(jsonText string) (string, error) {
 	return string(normalizedJSON), err
 }
 
-func PrettyPrint(jsonText string) string {
-	return jsonText
+func PrettyPrint(jsonText string, lines int, stripKeys ...string) string {
+	var result string
 
+	normalizedAndSortedJSON, err := NormalizeAndSort(jsonText)
+	if err != nil {
+		return jsonText
+	}
+
+	strippedJSON, err := Strip(normalizedAndSortedJSON, stripKeys...)
+	if err != nil {
+		return jsonText
+	}
+
+	var compactJSON bytes.Buffer
+	err = json.Compact(&compactJSON, []byte(strippedJSON))
+	if err != nil {
+		return jsonText
+	}
+
+	var indentedJSON bytes.Buffer
+	err = json.Indent(&indentedJSON, compactJSON.Bytes(), "", "")
+	if err != nil {
+		return jsonText
+	}
+
+	indentedSlices := strings.Split(indentedJSON.String(), "\n")
+	var resultSlices []string
+	for _, resultSlice := range indentedSlices {
+		resultSlices = append(resultSlices, strings.Replace(resultSlice, ": ", ":", 1))
+	}
+	if lines <= 0 {
+		result = strings.Join(resultSlices, "")
+	} else {
+		result = strings.Join(resultSlices[0:lines], "") + " ..."
+	}
+	return result
 }
 
 func sortValue(jsonValue any) {
