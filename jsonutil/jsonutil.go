@@ -150,7 +150,7 @@ func PrettyPrint(jsonText string, lines int, stripKeys ...string) string {
 	if lines <= 0 {
 		result = strings.Join(resultSlices, "")
 	} else {
-		result = strings.Join(resultSlices[0:lines], "") + " ..."
+		result = strings.Join(resultSlices[0:lines], "") + "..."
 	}
 	return result
 }
