@@ -22,6 +22,7 @@ BUILD_VERSION := $(shell git describe --always --tags --abbrev=0 --dirty  | sed 
 DOCKER_CONTAINER_NAME := $(PROGRAM_NAME)
 DOCKER_IMAGE_NAME := senzing/$(PROGRAM_NAME)
 DOCKER_BUILD_IMAGE_NAME := $(DOCKER_IMAGE_NAME)-build
+DOCKER_SUT_IMAGE_NAME := $(PROGRAM_NAME)_sut
 GIT_REMOTE_URL := $(shell git config --get remote.origin.url)
 GIT_REPOSITORY_NAME := $(shell basename `git rev-parse --show-toplevel`)
 GIT_VERSION := $(shell git describe --always --tags --long --dirty | sed -e 's/\-0//' -e 's/\-g.......//')
@@ -38,6 +39,7 @@ GO_ARCH = $(word 2, $(GO_OSARCH))
 # Can be overridden with "export"
 # Example: "export LD_LIBRARY_PATH=/path/to/my/senzing/er/lib"
 
+DOCKER_IMAGE_TAG ?= $(GIT_REPOSITORY_NAME):$(GIT_VERSION)
 GOBIN ?= $(shell go env GOPATH)/bin
 LD_LIBRARY_PATH ?= /opt/senzing/er/lib
 

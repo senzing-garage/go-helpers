@@ -63,6 +63,6 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 func verifySettings(ctx context.Context, settings string) error {
 	_ = ctx
 	_ = settings
-	var err error = nil
+	var err error
 	return err
 }

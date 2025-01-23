@@ -8,6 +8,22 @@ import (
 // Example functions
 // ----------------------------------------------------------------------------
 
+func ExampleFlatten_noError() {
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
+	var jsonText = `{ "name": "Joe Schmoe", "ssn": "111-22-3333" }`
+	redactedJSON := Flatten(RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
+	fmt.Println(redactedJSON)
+	// Output: {"name":"Joe Schmoe","ssn":"***-**-****"}
+}
+
+func ExampleFlatten_withError() {
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
+	var jsonText = `{ "name": "Joe Schmoe" "ssn": "111-22-3333" }` // missing a comma
+	redactedJSON := Flatten(RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
+	fmt.Println(redactedJSON)
+	// Output: {"error":"invalid character '\"' after object key:value pair","text":"{ \"name\": \"Joe Schmoe\" \"ssn\": \"111-22-3333\" }"}
+}
+
 func ExampleIsJSON() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true}`
@@ -109,18 +125,16 @@ func ExampleStrip() {
 	// Output: {"age":35,"givenName":"Joe","member":true,"surname":"Schmoe"}
 }
 
-func ExampleFlatten_noError() {
+func ExampleTruncate() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `{ "name": "Joe Schmoe", "ssn": "111-22-3333" }`
-	redactedJSON := Flatten(RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
-	fmt.Println(redactedJSON)
-	// Output: {"name":"Joe Schmoe","ssn":"***-**-****"}
-}
-
-func ExampleFlatten_withError() {
-	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `{ "name": "Joe Schmoe" "ssn": "111-22-3333" }` // missing a comma
-	redactedJSON := Flatten(RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
-	fmt.Println(redactedJSON)
-	// Output: {"error":"invalid character '\"' after object key:value pair","text":"{ \"name\": \"Joe Schmoe\" \"ssn\": \"111-22-3333\" }"}
+	var jsonText = `
+	{
+		"givenName": "Joe",
+		"surname": "Schmoe",
+		"age": 35,
+		"member": true,
+		"ssn": "111-22-3333"
+	}`
+	fmt.Println(Truncate(jsonText, 5, "age"))
+	// Output: {"givenName":"Joe","member":true,"ssn":"111-22-3333","surname":"Schmoe"...
 }
