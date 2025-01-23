@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], [markdownlint],
 and this project adheres to [Semantic Versioning].
 
+## [0.6.4] - 2025-01-23
+
+### Added in 0.6.4
+
+- `jsonutil.Truncate()`
+
 ## [0.6.3] - 2024-11-07
 
 ### Changed in 0.6.3

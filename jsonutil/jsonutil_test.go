@@ -2,7 +2,6 @@ package jsonutil
 
 import (
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -20,8 +19,26 @@ func testError(test *testing.T, err error) {
 }
 
 // ----------------------------------------------------------------------------
+// Test Flatten function
+// ----------------------------------------------------------------------------
+
+func TestFlatten_NoError(test *testing.T) {
+	actual := Flatten(`{"foo": 5, "bar": 6}`, nil)
+	var expected = `{"foo": 5, "bar": 6}`
+	assert.Equal(test, expected, actual, "Flattening without an error did not work as expected: "+actual)
+}
+
+func TestFlatten_WithError(test *testing.T) {
+	err := errors.New("failed")
+	actual := Flatten(`{"foo": 5, "bar": 6}`, err)
+	var expected = `{"error":"failed","text":"{\"foo\": 5, \"bar\": 6}"}`
+	assert.Equal(test, expected, actual, "Flattening with an error did not work as expected: "+actual)
+}
+
+// ----------------------------------------------------------------------------
 // Test IsJson function
 // ----------------------------------------------------------------------------
+
 func TestIsJson_Basic(test *testing.T) {
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": 20.5}`
 	var expected = true
@@ -99,6 +116,7 @@ func TestIsJson_Formatted(test *testing.T) {
 // ----------------------------------------------------------------------------
 // Test NormalizeJson function
 // ----------------------------------------------------------------------------
+
 func TestNormalize_Basic(test *testing.T) {
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
@@ -184,6 +202,7 @@ func TestNormalize_Formatted(test *testing.T) {
 // ----------------------------------------------------------------------------
 // Test NormalizeAndSortJson function
 // ----------------------------------------------------------------------------
+
 func TestNormalizeAndSort_Basic(test *testing.T) {
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
@@ -276,38 +295,9 @@ func TestNormalizeAndSort_Formatted(test *testing.T) {
 }
 
 // ----------------------------------------------------------------------------
-// Test PrettyPrint function
-// ----------------------------------------------------------------------------
-
-func TestPrettyPrint_AllLines(test *testing.T) {
-	var jsonText = `
-	{
-		"foo": 123,
-		"bar": true,
-		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
-	}`
-	var expected = `{"bar":true,"foo":123,"phoo":[{"a":1,"b":5},{"a":1,"c":[0,8,9]},{"a":2,"c":4}]}`
-	actual := PrettyPrint(jsonText, 0)
-	fmt.Println(actual)
-	assert.Equal(test, expected, actual, "JSON object (formatted) not normalized as expected")
-}
-
-func TestPrettyPrint_x(test *testing.T) {
-	var jsonText = `
-	{
-		"foo": 123,
-		"bar": true,
-		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
-	}`
-	var expected = `{"bar":true,"foo":123,"phoo":[{"a":1,"b":5},{"a":1,"c":[0,8,9]},{"a":2,"c":4}]}`
-	actual := PrettyPrint(jsonText, 6, "bar")
-	fmt.Println(actual)
-	assert.Equal(test, expected, actual, "JSON object (formatted) not normalized as expected")
-}
-
-// ----------------------------------------------------------------------------
 // Test RedactJson function
 // ----------------------------------------------------------------------------
+
 func TestRedact_Basic0(test *testing.T) {
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
@@ -534,6 +524,7 @@ func TestRedact_Formatted4(test *testing.T) {
 // ----------------------------------------------------------------------------
 // Test RedactWithMap function
 // ----------------------------------------------------------------------------
+
 func TestRedactWithMap_Basic0(test *testing.T) {
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
@@ -759,8 +750,9 @@ func TestRedactWithMap_Formatted4(test *testing.T) {
 }
 
 // ----------------------------------------------------------------------------
-// Test RemoveJson function
+// Test Strip function
 // ----------------------------------------------------------------------------
+
 func TestStrip_Basic0(test *testing.T) {
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
@@ -985,17 +977,53 @@ func TestStrip_Formatted4(test *testing.T) {
 }
 
 // ----------------------------------------------------------------------------
-// Test Flatten function
+// Test Truncate function
 // ----------------------------------------------------------------------------
-func TestFlatten_NoError(test *testing.T) {
-	actual := Flatten(`{"foo": 5, "bar": 6}`, nil)
-	var expected = `{"foo": 5, "bar": 6}`
-	assert.Equal(test, expected, actual, "Flattening without an error did not work as expected: "+actual)
+
+func TestTruncate_AllLines(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
+	}`
+	var expected = `{"bar":true,"foo":123,"phoo":[{"a":1,"b":5},{"a":1,"c":[0,8,9]},{"a":2,"c":4}]}`
+	actual := Truncate(jsonText, 0)
+	assert.Equal(test, expected, actual)
 }
 
-func TestFlatten_WithError(test *testing.T) {
-	err := errors.New("failed")
-	actual := Flatten(`{"foo": 5, "bar": 6}`, err)
-	var expected = `{"error":"failed","text":"{\"foo\": 5, \"bar\": 6}"}`
-	assert.Equal(test, expected, actual, "Flattening with an error did not work as expected: "+actual)
+func TestTruncate_3_lines(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
+	}`
+	var expected = `{"foo":123}`
+	actual := Truncate(jsonText, 3, "bar", "phoo")
+	assert.Equal(test, expected, actual)
+}
+
+func TestTruncate_6_lines(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}]
+	}`
+	var expected = `{"foo":123,"phoo":[{"a":1,"b":5...`
+	actual := Truncate(jsonText, 6, "bar")
+	assert.Equal(test, expected, actual)
+}
+
+func TestTruncate_bad_JSON(test *testing.T) {
+	var jsonText = `
+	{
+		"foo": 123,
+		"bar": true,
+		"phoo": [ {"c": 4, "a": 2}, {"a": 1, "c": [9, 0, 8]}, {"a": 1, "b": 5}
+	}`
+	var expected = jsonText
+	actual := Truncate(jsonText, 3, "bar", "phoo")
+	assert.Equal(test, expected, actual)
 }
