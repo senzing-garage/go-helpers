@@ -295,6 +295,66 @@ func TestNormalizeAndSort_Formatted(test *testing.T) {
 }
 
 // ----------------------------------------------------------------------------
+// Test PrettyPrint function
+// ----------------------------------------------------------------------------
+
+func TestPrettyPrint(test *testing.T) {
+	var jsonText = `{"bar":true,"foo":123,"phoo":[{"a":1,"b":5},{"a":1,"c":[0,8,9]},{"a":2,"c":4}]}`
+	var expected = `{
+	"bar": true,
+	"foo": 123,
+	"phoo": [
+		{
+			"a": 1,
+			"b": 5
+		},
+		{
+			"a": 1,
+			"c": [
+				0,
+				8,
+				9
+			]
+		},
+		{
+			"a": 2,
+			"c": 4
+		}
+	]
+}`
+	actual := PrettyPrint(jsonText, "	")
+	assert.Equal(test, expected, actual, "JSON object (formatted) not pretty printed as expected")
+}
+
+func TestPrettyPrint_UsingSpaces(test *testing.T) {
+	var jsonText = `{"bar":true,"foo":123,"phoo":[{"a":1,"b":5},{"a":1,"c":[0,8,9]},{"a":2,"c":4}]}`
+	var expected = `{
+    "bar": true,
+    "foo": 123,
+    "phoo": [
+        {
+            "a": 1,
+            "b": 5
+        },
+        {
+            "a": 1,
+            "c": [
+                0,
+                8,
+                9
+            ]
+        },
+        {
+            "a": 2,
+            "c": 4
+        }
+    ]
+}`
+	actual := PrettyPrint(jsonText, "    ")
+	assert.Equal(test, expected, actual, "JSON object (formatted) not pretty printed as expected")
+}
+
+// ----------------------------------------------------------------------------
 // Test RedactJson function
 // ----------------------------------------------------------------------------
 

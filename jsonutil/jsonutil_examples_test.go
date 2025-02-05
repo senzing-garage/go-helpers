@@ -71,6 +71,20 @@ func ExampleNormalizeAndSort() {
 	// Output: {"age":35,"givenName":"Joe","member":true,"nicknames":["Joey","Joseph"],"surname":"Schmoe"}
 }
 
+func ExamplePrettyPrint() {
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
+	var jsonText = `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true,"ssn": "111-22-3333"}`
+	fmt.Println(PrettyPrint(jsonText, "    "))
+	// Output:
+	// {
+	//     "givenName": "Joe",
+	//     "surname": "Schmoe",
+	//     "age": 35,
+	//     "member": true,
+	//     "ssn": "111-22-3333"
+	// }
+}
+
 func ExampleRedact() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `
