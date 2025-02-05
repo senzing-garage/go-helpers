@@ -121,6 +121,24 @@ func NormalizeAndSort(jsonText string) (string, error) {
 }
 
 /*
+PrettyPrint creates a multi-line, indented string representation of the submitted JSON.
+
+Input
+  - jsonText: The JSON text to be "prettied".
+  - padding: Indentation padding.
+
+Output
+  - PrettyPrinted JSON.
+*/
+func PrettyPrint(jsonText string, padding string) string {
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, []byte(jsonText), "", padding); err != nil {
+		panic(err)
+	}
+	return prettyJSON.String()
+}
+
+/*
 Given JSON text, this will unmarshal it and recursively descend JSON arrays and JSON objects
 to redact the values for any JSON key/value pairs whose keys match those specified
 for redaction.  The values will be replaced with JSON null values and the JSON will be marshalled
