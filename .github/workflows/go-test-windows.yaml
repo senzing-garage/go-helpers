@@ -42,6 +42,15 @@ jobs:
         with:
           senzingsdk-repository-path: ${{ secrets.SENZING_WIN_BETA_REPOSITORY }}
 
+      - name: Echo 1
+        run: echo "$Env:USERPROFILE"
+
+      - name: Echo 2
+        run: echo "$env:USERPROFILE"
+
+      - name: Echo 3
+        run: echo "${{ env.USERPROFILE }}"
+
       - name: Add to "Path" environment variable
         run: |
           # shellcheck disable=SC2028
