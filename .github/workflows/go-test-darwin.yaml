@@ -14,9 +14,9 @@ jobs:
     name: "Go test with Senzing: ${{ matrix.senzingsdk-version }}; OS: ${{ matrix.os }}; Go: ${{ matrix.go }}"
     runs-on: ${{ matrix.os }}
     env:
-      SENZING_PATH: "${{ env.HOME }}/senzing"
-      DYLD_LIBRARY_PATH: "${{ env.SENZING_PATH }}/er/lib:${{ env.SENZING_PATH }}/er/lib/macos"
-      LD_LIBRARY_PATH: "${{ env.SENZING_PATH }}/er/lib:${{ env.SENZING_PATH }}/er/lib/macos"
+      SENZING_PATH: "$env.HOME/senzing"
+      DYLD_LIBRARY_PATH: "$env.SENZING_PATH/er/lib:$env.SENZING_PATH/er/lib/macos"
+      LD_LIBRARY_PATH: "$env.SENZING_PATH/er/lib:$env.SENZING_PATH/er/lib/macos"
     strategy:
       matrix:
         go: ["1.21"]
