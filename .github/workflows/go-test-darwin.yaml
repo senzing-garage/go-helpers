@@ -48,6 +48,15 @@ jobs:
       - name: Copy test database files
         run: mkdir -p /tmp/sqlite && cp testdata/sqlite/G2C.db /tmp/sqlite/
 
+      - name: ls /Users/runner
+        run: ls /Users/runner
+
+      - name: ls /Users/runner/senzing
+        run: ls /Users/runner/senzing
+
+      - name: ls /Users/runner/senzing/data
+        run: ls /Users/runner/senzing/data
+
       - name: Run go test
         run: go test -exec /Users/runner/work/go-helpers/go-helpers/bin/macos_exec_dyld.sh -json -v -p 1 -coverprofile=./cover.out -covermode=atomic -coverpkg=./... ./...  2>&1 | tee /tmp/gotest.log | gotestfmt
 

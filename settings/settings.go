@@ -150,7 +150,7 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 /*
 The VerifySettings method inspects the Senzing engine configuration JSON to see if it is misconfigured.
 
-Errors are documented at https://hub.senzing.com/go-helpers/errors.
+Errors are documented at https://garage.senzing.com/go-helpers/errors.
 
 Input
   - ctx: A context to control lifecycle.
@@ -170,7 +170,7 @@ func VerifySettings(ctx context.Context, settings string) error {
 	}
 	for _, value := range databaseURLs {
 		if len(value) == 0 {
-			return fmt.Errorf("SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://hub.senzing.com/go-helpers/errors")
+			return fmt.Errorf("SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://garage.senzing.com/go-helpers/errors")
 		}
 	}
 
@@ -187,7 +187,7 @@ func VerifySettings(ctx context.Context, settings string) error {
 	for _, configFile := range configFiles {
 		targetFile := fmt.Sprintf("%s/%s", configPath, configFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("CONFIGPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-helpers/errors", targetFile)
+			return fmt.Errorf("CONFIGPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors", targetFile)
 		}
 	}
 
@@ -203,7 +203,7 @@ func VerifySettings(ctx context.Context, settings string) error {
 	for _, resourceFile := range resourceFiles {
 		targetFile := fmt.Sprintf("%s/%s", resourcePath, resourceFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("RESOURCEPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-helpers/errors", targetFile)
+			return fmt.Errorf("RESOURCEPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors", targetFile)
 		}
 	}
 
@@ -220,7 +220,7 @@ func VerifySettings(ctx context.Context, settings string) error {
 	for _, resourceFile := range supportFiles {
 		targetFile := fmt.Sprintf("%s/%s", supportPath, resourceFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("SUPPORTPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-helpers/errors", targetFile)
+			return fmt.Errorf("SUPPORTPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors", targetFile)
 		}
 	}
 
