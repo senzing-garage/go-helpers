@@ -13,8 +13,6 @@ jobs:
   go-test-windows:
     name: "Go test with Senzing: ${{ matrix.senzingsdk-version }}; OS: ${{ matrix.os }}; Go: ${{ matrix.go }}"
     runs-on: ${{ matrix.os }}
-    env:
-      SENZING_PATH: $env:USERPROFILE\senzing
     strategy:
       matrix:
         go: ["1.21"]
@@ -62,8 +60,16 @@ jobs:
       - name: Copy test database files
         run: mkdir "C:\Temp\sqlite" && copy testdata/sqlite/G2C.db "C:\Temp\sqlite\G2C.db"
 
-      - name: Run go test
+      - name: Run go test without SENZING_PATH environment variable
         run: |
+          set
+          go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
+          cp cover cover.out
+
+      - name: Run go test with SENZING_PATH environment variable
+        run: |
+          set SENZING_PATH=$Env:USERPROFILE\Senzing
+          set
           go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
           cp cover cover.out
 
