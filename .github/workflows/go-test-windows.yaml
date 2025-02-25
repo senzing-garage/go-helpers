@@ -40,14 +40,9 @@ jobs:
         with:
           senzingsdk-repository-path: ${{ secrets.SENZING_WIN_BETA_REPOSITORY }}
 
-      - name: Echo 1
-        run: echo "$Env:USERPROFILE"
-
-      - name: Echo 2
-        run: echo "$env:USERPROFILE"
-
-      - name: Echo 3
-        run: echo "${{ env.USERPROFILE }}"
+      - name: Dir
+        run: |
+          dir "$Env:USERPROFILE"
 
       - name: Add to "Path" environment variable
         run: |
@@ -62,14 +57,12 @@ jobs:
 
       - name: Run go test without SENZING_PATH environment variable
         run: |
-          "Get-ChildItem Env:"
           go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
           cp cover cover.out
 
       - name: Run go test with SENZING_PATH environment variable
         run: |
-          SENZING_PATH="$Env:USERPROFILE\Senzing"
-          "Get-ChildItem Env:"
+          echo ("SENZING_PATH=" + $env:USERPROFILE + "\Senzing") >> $env:GITHUB_ENV
           go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
           cp cover cover.out
 
