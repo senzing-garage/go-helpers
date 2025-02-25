@@ -13,10 +13,6 @@ jobs:
   go-test-darwin:
     name: "Go test with Senzing: ${{ matrix.senzingsdk-version }}; OS: ${{ matrix.os }}; Go: ${{ matrix.go }}"
     runs-on: ${{ matrix.os }}
-    env:
-      SENZING_PATH: /Users/runner/senzing
-      DYLD_LIBRARY_PATH: "/Users/runner/senzing/er/lib:/Users/runner/senzing/er/lib/macos"
-      LD_LIBRARY_PATH: "/Users/runner/senzing/er/lib:/Users/runner/senzing/er/lib/macos"
     strategy:
       matrix:
         go: ["1.21"]
@@ -44,36 +40,25 @@ jobs:
         with:
           senzingsdk-repository-path: ${{ secrets.SENZING_OSX_BETA_REPOSITORY }}
 
-      - name: Echo environment variables 1
-        run: |
-          echo "SENZING_PATH ${SENZING_PATH}"
-          echo "DYLD_LIBRARY_PATH ${DYLD_LIBRARY_PATH}"
-          echo "LD_LIBRARY_PATH ${LD_LIBRARY_PATH}"
-
-      - name: Export variables
-        run: |
-          export SENZING_PATH="${HOME}/senzing"
-          export DYLD_LIBRARY_PATH="${SENZING_PATH}/er/lib:${SENZING_PATH}/er/lib/macos"
-          export LD_LIBRARY_PATH="${SENZING_PATH}/er/lib:${SENZING_PATH}/er/lib/macos"
-          echo "HOME ${HOME}"
-          echo "SENZING_PATH ${SENZING_PATH}"
-          echo "DYLD_LIBRARY_PATH ${DYLD_LIBRARY_PATH}"
-          echo "LD_LIBRARY_PATH ${LD_LIBRARY_PATH}"
-
-      - name: Echo environment variables 2
-        run: |
-          echo "SENZING_PATH ${SENZING_PATH}"
-          echo "DYLD_LIBRARY_PATH ${DYLD_LIBRARY_PATH}"
-          echo "LD_LIBRARY_PATH ${LD_LIBRARY_PATH}"
-
       - name: Copy /etc files
-        run: sudo mkdir -p "${SENZING_PATH}/er/etc" && sudo cp testdata/senzing-license/g2.lic "${SENZING_PATH}/er/etc/g2.lic"
+        run: |
+          sudo mkdir -p "${HOME}/senzing/er/etc" && sudo cp testdata/senzing-license/g2.lic "$${HOME}/senzing/er/etc/g2.lic"
 
       - name: Copy test database files
         run: mkdir -p /tmp/sqlite && cp testdata/sqlite/G2C.db /tmp/sqlite/
 
-      - name: Run go test
-        run: go test -exec "${GITHUB_WORKSPACE}/bin/macos_exec_dyld.sh" -json -v -p 1 -coverprofile=./cover.out -covermode=atomic -coverpkg=./... ./...  2>&1 | tee /tmp/gotest.log | gotestfmt
+      - name: Run go test without environment variables
+        run: |
+          export DYLD_LIBRARY_PATH="${HOME}/senzing/er/lib:${HOME}/senzing/er/lib/macos"
+          export LD_LIBRARY_PATH="${HOME}/senzing/er/lib:${HOME}/senzing/er/lib/macos"
+          go test -exec "${GITHUB_WORKSPACE}/bin/macos_exec_dyld.sh" -json -v -p 1 -coverprofile=./cover.out -covermode=atomic -coverpkg=./... ./...  2>&1 | tee /tmp/gotest.log | gotestfmt
+
+      - name: Run go test with environment variables
+        run: |
+          export SENZING_PATH="${HOME}/senzing"
+          export DYLD_LIBRARY_PATH="${SENZING_PATH}/er/lib:${SENZING_PATH}/er/lib/macos"
+          export LD_LIBRARY_PATH="${SENZING_PATH}/er/lib:${SENZING_PATH}/er/lib/macos"
+          go test -exec "${GITHUB_WORKSPACE}/bin/macos_exec_dyld.sh" -json -v -p 1 -coverprofile=./cover.out -covermode=atomic -coverpkg=./... ./...  2>&1 | tee /tmp/gotest.log | gotestfmt
 
       - name: Store coverage file
         uses: actions/upload-artifact@v4
