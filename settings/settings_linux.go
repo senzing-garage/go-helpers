@@ -11,58 +11,31 @@ import (
 // Internal methods
 // ----------------------------------------------------------------------------
 
-func mapWithDefault(aMap map[string]string, key string, defaultValue string) string {
-	result, ok := aMap[key]
-	if ok {
-		return result
-	}
-	return defaultValue
+func getConfigPath(senzingDirectory string) string {
+	_ = senzingDirectory
+	return "/etc/opt/senzing"
 }
 
-func buildStruct(attributeMap map[string]string) SzConfiguration {
-	var result SzConfiguration
+func getResourcePath(senzingDirectory string) string {
+	return fmt.Sprintf("%s/er/resources", senzingDirectory)
+}
 
-	databaseURL, ok := attributeMap["databaseURL"]
-	if !ok {
-		return result
-	}
-
-	// Determine defaultDirectory.
-
-	senzingDirectory := "/opt/senzing"
+func getSenzingDirectory(attributeMap map[string]string) string {
+	result := "/opt/senzing"
 	senzingPath, ok := attributeMap["senzingPath"]
 	if ok {
-		senzingDirectory = senzingPath
+		result = senzingPath
 	}
-
-	configPath := "/etc/opt/senzing"
-	resourcePath := fmt.Sprintf("%s/er/resources", senzingDirectory)
-	supportPath := fmt.Sprintf("%s/data", senzingDirectory)
-
-	// Apply attributeMap.
-
-	result = SzConfiguration{
-		Pipeline: SzConfigurationPipeline{
-			ConfigPath:   mapWithDefault(attributeMap, "configPath", configPath),
-			ResourcePath: mapWithDefault(attributeMap, "resourcePath", resourcePath),
-			SupportPath:  mapWithDefault(attributeMap, "supportPath", supportPath),
-		},
-		SQL: SzConfigurationSQL{
-			Connection: databaseURL,
-		},
-	}
-
-	licenseStringBase64, ok := attributeMap["licenseStringBase64"]
-	if ok {
-		result.Pipeline.LicenseStringBase64 = licenseStringBase64
-	}
-
 	return result
 }
 
+func getSupportPath(senzingDirectory string) string {
+	return fmt.Sprintf("%s/data", senzingDirectory)
+}
+
 func verifySettings(ctx context.Context, settings string) error {
-	_ = settings
 	_ = ctx
+	_ = settings
 	var err error
 	return err
 }

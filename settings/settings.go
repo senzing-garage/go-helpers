@@ -235,15 +235,6 @@ func VerifySettings(ctx context.Context, settings string) error {
 // Private functions
 // ----------------------------------------------------------------------------
 
-func getOsEnv(variableName string) (string, error) {
-	var err error
-	result, isSet := os.LookupEnv(variableName)
-	if !isSet {
-		err = fmt.Errorf("environment variable not set: %s", variableName)
-	}
-	return result, err
-}
-
 func buildSpecificDatabaseURL(databaseURL string) (string, error) {
 	result := ""
 	parsedURL, err := url.Parse(databaseURL)
@@ -313,4 +304,52 @@ func buildSpecificDatabaseURL(databaseURL string) (string, error) {
 		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
 	}
 	return result, err
+}
+
+func buildStruct(attributeMap map[string]string) SzConfiguration {
+	var result SzConfiguration
+
+	databaseURL, ok := attributeMap["databaseURL"]
+	if !ok {
+		return result
+	}
+
+	senzingDirectory := getSenzingDirectory(attributeMap)
+
+	// Apply attributeMap.
+
+	result = SzConfiguration{
+		Pipeline: SzConfigurationPipeline{
+			ConfigPath:   mapWithDefault(attributeMap, "configPath", getConfigPath(senzingDirectory)),
+			ResourcePath: mapWithDefault(attributeMap, "resourcePath", getResourcePath(senzingDirectory)),
+			SupportPath:  mapWithDefault(attributeMap, "supportPath", getSupportPath(senzingDirectory)),
+		},
+		SQL: SzConfigurationSQL{
+			Connection: databaseURL,
+		},
+	}
+
+	licenseStringBase64, ok := attributeMap["licenseStringBase64"]
+	if ok {
+		result.Pipeline.LicenseStringBase64 = licenseStringBase64
+	}
+
+	return result
+}
+
+func getOsEnv(variableName string) (string, error) {
+	var err error
+	result, isSet := os.LookupEnv(variableName)
+	if !isSet {
+		err = fmt.Errorf("environment variable not set: %s", variableName)
+	}
+	return result, err
+}
+
+func mapWithDefault(aMap map[string]string, key string, defaultValue string) string {
+	result, ok := aMap[key]
+	if ok {
+		return result
+	}
+	return defaultValue
 }
