@@ -13,6 +13,8 @@ jobs:
   go-test-windows:
     name: "Go test with Senzing: ${{ matrix.senzingsdk-version }}; OS: ${{ matrix.os }}; Go: ${{ matrix.go }}"
     runs-on: ${{ matrix.os }}
+    env:
+      SENZING_PATH: $Env:USERPROFILE\Senzing
     strategy:
       matrix:
         go: ["1.21"]
@@ -41,10 +43,12 @@ jobs:
           senzingsdk-repository-path: ${{ secrets.SENZING_WIN_BETA_REPOSITORY }}
 
       - name: Add to "Path" environment variable
-        run: printf "C:\Program Files\Senzing\er\lib" | Out-File -FilePath "$env:GITHUB_PATH" -Encoding utf8 -Append
+        run: |
+          # shellcheck disable=SC2028
+          echo "${SENZING_PATH}\er\lib" >> "$env:GITHUB_PATH"
 
       - name: Copy /etc files
-        run: copy testdata/senzing-license/g2.lic "C:\Program Files\Senzing\er\etc\g2.lic"
+        run: copy testdata/senzing-license/g2.lic "${SENZING_PATH}\er\etc\g2.lic"
 
       - name: Copy test database files
         run: mkdir "C:\Temp\sqlite" && copy testdata/sqlite/G2C.db "C:\Temp\sqlite\G2C.db"

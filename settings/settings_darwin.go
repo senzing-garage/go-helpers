@@ -42,7 +42,7 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 
 	configPath := fmt.Sprintf("%s/er/etc", senzingDirectory)
 	resourcePath := fmt.Sprintf("%s/er/resources", senzingDirectory)
-	supportPath := fmt.Sprintf("%s/data", senzingDirectory)
+	supportPath := fmt.Sprintf("%s/er/data", senzingDirectory)
 
 	// Apply attributeMap.
 
