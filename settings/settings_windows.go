@@ -28,14 +28,24 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 		return result
 	}
 
+	// Determine defaultDirectory.
+
+	senzingDirectory := `C:\Program Files\senzing\er`
+	homeDrive, isHomeDriveSet := os.LookupEnv("HOMEDRIVE")
+	homeDir, isHomeDirSet := os.LookupEnv("HOMEDIR")
+	if isHomeDriveSet && isHomeDirSet {
+		senzingDirectory = fmt.Sprintf("%s%s/senzing", homeDrive, homeDir)
+	}
+
+	senzingPath, ok := attributeMap["senzingPath"]
+	if ok {
+		senzingDirectory = senzingPath
+	}
+
 	// Construct directories based on senzingDirectory.
 
-	senzingDirectory, ok := attributeMap["senzingDirectory"]
-	if !ok {
-		senzingDirectory = `C:\Program Files\Senzing\er`
-	}
-	configPath := fmt.Sprintf("%s%cetc", senzingDirectory, os.PathSeparator)
-	resourcePath := fmt.Sprintf("%s%cresources", senzingDirectory, os.PathSeparator)
+	configPath := fmt.Sprintf("%s%cer%cetc", senzingDirectory, os.PathSeparator, os.PathSeparator)
+	resourcePath := fmt.Sprintf("%s%cer%cresources", senzingDirectory, os.PathSeparator, os.PathSeparator)
 	supportPath := fmt.Sprintf("%s%cdata", senzingDirectory, os.PathSeparator)
 
 	// Apply attributeMap.

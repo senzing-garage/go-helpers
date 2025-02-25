@@ -85,6 +85,13 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 		return senzingEngineConfigurationJSON, err
 	}
 
+	// If SENZING_PATH is set, use it.
+
+	senzingPath, isSet := os.LookupEnv("SENZING_PATH")
+	if isSet {
+		attributeMap["senzingPath"] = senzingPath
+	}
+
 	// Add database URL.
 
 	senzingDatabaseURL, inMap := attributeMap["databaseURL"]

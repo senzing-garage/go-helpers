@@ -5,6 +5,7 @@ package settings
 import (
 	"context"
 	"fmt"
+	"os"
 )
 
 // ----------------------------------------------------------------------------
@@ -29,15 +30,19 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 
 	// Determine defaultDirectory.
 
-	defaultDirectory := "/opt/senzing/er"
-	senzingDirectory, ok := attributeMap["senzingDirectory"]
+	senzingDirectory := "/opt/senzing"
+	home, isSet := os.LookupEnv("HOME")
+	if isSet {
+		senzingDirectory = fmt.Sprintf("%s/senzing", home)
+	}
+	senzingPath, ok := attributeMap["senzingPath"]
 	if ok {
-		defaultDirectory = senzingDirectory
+		senzingDirectory = senzingPath
 	}
 
-	configPath := fmt.Sprintf("%s/etc", defaultDirectory)
-	resourcePath := fmt.Sprintf("%s/resources", defaultDirectory)
-	supportPath := fmt.Sprintf("%s/data", defaultDirectory)
+	configPath := fmt.Sprintf("%s/er/etc", senzingDirectory)
+	resourcePath := fmt.Sprintf("%s/er/resources", senzingDirectory)
+	supportPath := fmt.Sprintf("%s/data", senzingDirectory)
 
 	// Apply attributeMap.
 
