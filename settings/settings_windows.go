@@ -28,10 +28,10 @@ func getSenzingDirectory(attributeMap map[string]string) string {
 
 	homePath, isHomeDirSet := os.LookupEnv("HOMEPATH")
 
-	fmt.Printf(">>>>>> HOMEPATH: %s\n", homeDrive)
+	fmt.Printf(">>>>>> HOMEPATH: %s\n", homePath)
 
 	if isHomeDriveSet && isHomeDirSet {
-		result = fmt.Sprintf("%s%s/senzing", homeDrive, homePath)
+		result = fmt.Sprintf("%s%s\Senzing", homeDrive, homePath)
 	}
 	senzingPath, ok := attributeMap["senzingPath"]
 	if ok {
@@ -41,7 +41,7 @@ func getSenzingDirectory(attributeMap map[string]string) string {
 }
 
 func getSupportPath(senzingDirectory string) string {
-	return fmt.Sprintf("%s%cer%cdata", senzingDirectory, os.PathSeparator, os.PathListSeparator)
+	return fmt.Sprintf("%s%cer%cdata", senzingDirectory, os.PathSeparator, os.PathSeparator)
 }
 
 func verifySettings(ctx context.Context, settings string) error {
