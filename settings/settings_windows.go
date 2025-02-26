@@ -23,19 +23,12 @@ func getResourcePath(senzingDirectory string) string {
 func getSenzingDirectory(attributeMap map[string]string) string {
 	result := `C:\Program Files\senzing\er`
 	homeDrive, isHomeDriveSet := os.LookupEnv("HOMEDRIVE")
-
-	fmt.Printf(">>>>>> HOMEDRIVE: %s\n", homeDrive)
-
 	homePath, isHomeDirSet := os.LookupEnv("HOMEPATH")
-
-	fmt.Printf(">>>>>> HOMEPATH: %s\n", homePath)
-
 	if isHomeDriveSet && isHomeDirSet {
 		result = fmt.Sprintf("%s%s\\Senzing", homeDrive, homePath)
 	}
 	senzingPath, ok := attributeMap["senzingPath"]
 	if ok {
-		fmt.Printf(">>>>>> Using SENZING_PATH: %s\n", senzingPath)
 		result = senzingPath
 	}
 	return result

@@ -90,10 +90,7 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	senzingPath, isSet := os.LookupEnv("SENZING_PATH")
 	if isSet {
-		fmt.Printf(">>>>>> Found SENZING_PATH: %s\n", senzingPath)
 		attributeMap["senzingPath"] = senzingPath
-	} else {
-		fmt.Println(">>>>>> Did not find SENZING_PATH")
 	}
 
 	// Add database URL.
@@ -317,9 +314,7 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 	if !ok {
 		return result
 	}
-
 	senzingDirectory := getSenzingDirectory(attributeMap)
-	fmt.Printf(">>>>>> senzingDirectory: %s\n", senzingDirectory)
 
 	// Apply attributeMap.
 

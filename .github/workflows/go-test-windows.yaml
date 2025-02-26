@@ -52,9 +52,7 @@ jobs:
         run: mkdir "C:\Temp\sqlite" && copy testdata/sqlite/G2C.db "C:\Temp\sqlite\G2C.db"
 
       - name: Run go test without SENZING_PATH environment variable set
-        run: |
-          go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
-          cp cover cover.out
+        run: go test -json -v -p 1 ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
 
       - name: Set environment variable
         run: |
