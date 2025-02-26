@@ -45,7 +45,9 @@ jobs:
       #     dir "$Env:USERPROFILE"
 
       - name: Add to "Path" environment variable
-        run: echo "$Env:USERPROFILE\Senzing\er\lib" >> "$env:GITHUB_PATH"
+        run: |
+          # shellcheck disable=SC2028
+          echo "$Env:USERPROFILE\Senzing\er\lib" >> $env:GITHUB_PATH
 
       - name: Copy /etc files
         run: copy testdata/senzing-license/g2.lic "$Env:USERPROFILE\Senzing\er\etc\g2.lic"
@@ -71,6 +73,7 @@ jobs:
 
       - name: Run go test with SENZING_PATH environment variable set
         run: |
+          # shellcheck disable=SC2086
           echo "SENZING_PATH=$env:USERPROFILE\Senzing" | Out-File -FilePath $env:GITHUB_ENV -Append
           go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
           cp cover cover.out
