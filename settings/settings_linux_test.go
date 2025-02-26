@@ -14,3 +14,7 @@ var testCasesForOsArch = []testCaseMetadata{
 		databaseURLPath: "/var/opt/senzing/sqlite/G2C.db",
 	},
 }
+
+func getSenzingPath() string {
+	return "/opt/senzing"
+}

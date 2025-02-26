@@ -149,6 +149,20 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 }
 
 /*
+The GetSenzingPath method returns the path to the Senzing binaries.
+If set, This is the value of the SENZING_PATH environment variable.
+If not set, it is a default value.
+
+Output
+  - A string containing the path to the Senzing binaries.
+*/
+func GetSenzingPath() string {
+	attributeMap := map[string]string{}
+	result := getSenzingDirectory(attributeMap)
+	return result
+}
+
+/*
 The VerifySettings method inspects the Senzing engine configuration JSON to see if it is misconfigured.
 
 Errors are documented at https://garage.senzing.com/go-helpers/errors.
