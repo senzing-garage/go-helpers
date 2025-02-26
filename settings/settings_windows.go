@@ -31,10 +31,11 @@ func getSenzingDirectory(attributeMap map[string]string) string {
 	fmt.Printf(">>>>>> HOMEPATH: %s\n", homePath)
 
 	if isHomeDriveSet && isHomeDirSet {
-		result = fmt.Sprintf("%s%s\Senzing", homeDrive, homePath)
+		result = fmt.Sprintf("%s%s\\Senzing", homeDrive, homePath)
 	}
 	senzingPath, ok := attributeMap["senzingPath"]
 	if ok {
+		fmt.Printf(">>>>>> Using SENZING_PATH: %s\n", senzingPath)
 		result = senzingPath
 	}
 	return result

@@ -56,6 +56,7 @@ The keys and corresponding environment variables are:
 	licenseStringBase64     SENZING_TOOLS_LICENSE_STRING_BASE64
 	resourcePath            SENZING_TOOLS_RESOURCE_PATH
 	senzingDirectory        SENZING_TOOLS_SENZING_DIRECTORY
+	senzingPath             SENZING_PATH
 	supportPath             SENZING_TOOLS_SUPPORT_PATH
 
 Input
