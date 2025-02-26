@@ -43,24 +43,13 @@ jobs:
       - name: Add to "Path" environment variable
         run: |
           # shellcheck disable=SC2028
-          echo $Env:USERPROFILE\Senzing\er\lib >> $env:GITHUB_PATH
+          echo "$Env:USERPROFILE\Senzing\er\lib" >> $env:GITHUB_PATH
 
       - name: Copy /etc files
         run: copy testdata/senzing-license/g2.lic "$Env:USERPROFILE\Senzing\er\etc\g2.lic"
 
       - name: Copy test database files
         run: mkdir "C:\Temp\sqlite" && copy testdata/sqlite/G2C.db "C:\Temp\sqlite\G2C.db"
-
-      # - name: Environment variables 1
-      #   run: env
-
-      # - name:
-      #     Set environment variable
-      #     # shellcheck disable=SC2086
-      #   run: echo "SENZING_PATH=$env:USERPROFILE\Senzing" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      # - name: Environment variables 2
-      #   run: env
 
       - name: Run go test without SENZING_PATH environment variable set
         run: |
@@ -71,9 +60,6 @@ jobs:
         run: |
           # shellcheck disable=SC2086
           echo "SENZING_PATH=$env:USERPROFILE\Senzing" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      - name: Environment variables
-        run: env
 
       - name: Run go test with SENZING_PATH environment variable set
         run: |
