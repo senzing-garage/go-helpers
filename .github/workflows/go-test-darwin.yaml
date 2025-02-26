@@ -3,6 +3,7 @@ name: Go test darwin
 on: [pull_request, workflow_dispatch]
 
 env:
+  CGO_LDFLAGS: "-Wl,-no_warn_duplicate_libraries"
   SENZING_LOG_LEVEL: TRACE
   SENZING_TOOLS_DATABASE_URL: sqlite3://na:na@nowhere/tmp/sqlite/G2C.db
 
@@ -41,8 +42,7 @@ jobs:
           senzingsdk-repository-path: ${{ secrets.SENZING_OSX_BETA_REPOSITORY }}
 
       - name: Copy /etc files
-        run: |
-          sudo mkdir -p "${HOME}/senzing/er/etc" && sudo cp testdata/senzing-license/g2.lic "${HOME}/senzing/er/etc/g2.lic"
+        run: sudo mkdir -p "${HOME}/senzing/er/etc" && sudo cp testdata/senzing-license/g2.lic "${HOME}/senzing/er/etc/g2.lic"
 
       - name: Copy test database files
         run: mkdir -p /tmp/sqlite && cp testdata/sqlite/G2C.db /tmp/sqlite/
@@ -51,7 +51,7 @@ jobs:
         run: |
           export DYLD_LIBRARY_PATH="${HOME}/senzing/er/lib:${HOME}/senzing/er/lib/macos"
           export LD_LIBRARY_PATH="${HOME}/senzing/er/lib:${HOME}/senzing/er/lib/macos"
-          go test -exec "${GITHUB_WORKSPACE}/bin/macos_exec_dyld.sh" -json -v -p 1 -coverprofile=./cover.out -covermode=atomic -coverpkg=./... ./...  2>&1 | tee /tmp/gotest.log | gotestfmt
+          go test -exec "${GITHUB_WORKSPACE}/bin/macos_exec_dyld.sh" -json -v -p 1 ./...  2>&1 | tee /tmp/gotest.log | gotestfmt
 
       - name: Run go test with SENZING_PATH environment variable
         run: |
