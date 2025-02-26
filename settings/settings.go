@@ -89,7 +89,7 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	senzingPath, isSet := os.LookupEnv("SENZING_PATH")
 	if isSet {
-		fmt.Println(">>>>>> Found SENZING_PATH")
+		fmt.Printf(">>>>>> Found SENZING_PATH: %s\n", senzingPath)
 		attributeMap["senzingPath"] = senzingPath
 	} else {
 		fmt.Println(">>>>>> Did not find SENZING_PATH")
