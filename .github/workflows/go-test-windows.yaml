@@ -40,9 +40,9 @@ jobs:
         with:
           senzingsdk-repository-path: ${{ secrets.SENZING_WIN_BETA_REPOSITORY }}
 
-      - name: Dir
-        run: |
-          dir "$Env:USERPROFILE"
+      # - name: Dir
+      #   run: |
+      #     dir "$Env:USERPROFILE"
 
       - name: Add to "Path" environment variable
         run: |
@@ -55,29 +55,25 @@ jobs:
       - name: Copy test database files
         run: mkdir "C:\Temp\sqlite" && copy testdata/sqlite/G2C.db "C:\Temp\sqlite\G2C.db"
 
-      - name: Environment variables 1
-        run: env
+      # - name: Environment variables 1
+      #   run: env
 
-      - name: Set environment variable
-        run: echo "SENZING_PATH=$env:USERPROFILE\Senzing" | Out-File -FilePath $env:GITHUB_ENV -Append
+      # - name:
+      #     Set environment variable
+      #     # shellcheck disable=SC2086
+      #   run: echo "SENZING_PATH=$env:USERPROFILE\Senzing" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Environment variables 2
-        run: env
-
-      - name: Run go test with SENZING_PATH environment variable
-        run: |
-          # echo "xSENZING_PATH=$env:USERPROFILE\Senzing"
-          # echo ("ySENZING_PATH=" + $env:USERPROFILE + "\Senzing")
-          # echo ("SENZING_PATH=" + $env:USERPROFILE + "\Senzing") >> "$GITHUB_ENV"
-          # echo "SENZING_PATH=$env:USERPROFILE\Senzing" | Out-File -FilePath $env:GITHUB_ENV -Append
-          # env
-          # echo "${{ env.SENZING_PATH }}"
-          # echo $env:SENZING_PATH
-          go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
-          cp cover cover.out
+      # - name: Environment variables 2
+      #   run: env
 
       - name: Run go test without SENZING_PATH environment variable
         run: |
+          go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
+          cp cover cover.out
+
+      - name: Run go test with SENZING_PATH environment variable
+        run: |
+          echo "SENZING_PATH=$env:USERPROFILE\Senzing" | Out-File -FilePath $env:GITHUB_ENV -Append
           go test -json -v -p 1 -coverprofile=cover -covermode=atomic -coverpkg=./... ./... 2>&1 | tee "C:\Temp\gotest.log" | gotestfmt
           cp cover cover.out
 
