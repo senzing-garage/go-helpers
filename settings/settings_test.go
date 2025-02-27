@@ -127,6 +127,11 @@ func TestBuildSimpleSettingsUsingMap_ParseResult(test *testing.T) {
 	}
 }
 
+func TestGetSenzingPath(test *testing.T) {
+	actual := GetSenzingPath()
+	assert.Equal(test, getSenzingPath(), actual)
+}
+
 func TestVerifySettings(test *testing.T) {
 	ctx := context.TODO()
 	for _, testCase := range testCases {

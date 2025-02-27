@@ -56,6 +56,7 @@ The keys and corresponding environment variables are:
 	licenseStringBase64     SENZING_TOOLS_LICENSE_STRING_BASE64
 	resourcePath            SENZING_TOOLS_RESOURCE_PATH
 	senzingDirectory        SENZING_TOOLS_SENZING_DIRECTORY
+	senzingPath             SENZING_PATH
 	supportPath             SENZING_TOOLS_SUPPORT_PATH
 
 Input
@@ -83,6 +84,13 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 	senzingEngineConfigurationJSON, isSet = os.LookupEnv("SENZING_ENGINE_CONFIGURATION_JSON")
 	if isSet {
 		return senzingEngineConfigurationJSON, err
+	}
+
+	// If SENZING_PATH is set, use it.
+
+	senzingPath, isSet := os.LookupEnv("SENZING_PATH")
+	if isSet {
+		attributeMap["senzingPath"] = senzingPath
 	}
 
 	// Add database URL.
@@ -141,9 +149,23 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 }
 
 /*
+The GetSenzingPath method returns the path to the Senzing binaries.
+If set, This is the value of the SENZING_PATH environment variable.
+If not set, it is a default value.
+
+Output
+  - A string containing the path to the Senzing binaries.
+*/
+func GetSenzingPath() string {
+	attributeMap := map[string]string{}
+	result := getSenzingDirectory(attributeMap)
+	return result
+}
+
+/*
 The VerifySettings method inspects the Senzing engine configuration JSON to see if it is misconfigured.
 
-Errors are documented at https://hub.senzing.com/go-helpers/errors.
+Errors are documented at https://garage.senzing.com/go-helpers/errors.
 
 Input
   - ctx: A context to control lifecycle.
@@ -163,7 +185,7 @@ func VerifySettings(ctx context.Context, settings string) error {
 	}
 	for _, value := range databaseURLs {
 		if len(value) == 0 {
-			return fmt.Errorf("SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://hub.senzing.com/go-helpers/errors")
+			return fmt.Errorf("SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://garage.senzing.com/go-helpers/errors")
 		}
 	}
 
@@ -180,7 +202,7 @@ func VerifySettings(ctx context.Context, settings string) error {
 	for _, configFile := range configFiles {
 		targetFile := fmt.Sprintf("%s/%s", configPath, configFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("CONFIGPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-helpers/errors", targetFile)
+			return fmt.Errorf("CONFIGPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors", targetFile)
 		}
 	}
 
@@ -196,7 +218,7 @@ func VerifySettings(ctx context.Context, settings string) error {
 	for _, resourceFile := range resourceFiles {
 		targetFile := fmt.Sprintf("%s/%s", resourcePath, resourceFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("RESOURCEPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-helpers/errors", targetFile)
+			return fmt.Errorf("RESOURCEPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors", targetFile)
 		}
 	}
 
@@ -213,7 +235,7 @@ func VerifySettings(ctx context.Context, settings string) error {
 	for _, resourceFile := range supportFiles {
 		targetFile := fmt.Sprintf("%s/%s", supportPath, resourceFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("SUPPORTPATH: Could not find %s\nFor more information, visit https://hub.senzing.com/go-helpers/errors", targetFile)
+			return fmt.Errorf("SUPPORTPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors", targetFile)
 		}
 	}
 
@@ -227,15 +249,6 @@ func VerifySettings(ctx context.Context, settings string) error {
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
-
-func getOsEnv(variableName string) (string, error) {
-	var err error
-	result, isSet := os.LookupEnv(variableName)
-	if !isSet {
-		err = fmt.Errorf("environment variable not set: %s", variableName)
-	}
-	return result, err
-}
 
 func buildSpecificDatabaseURL(databaseURL string) (string, error) {
 	result := ""
@@ -306,4 +319,51 @@ func buildSpecificDatabaseURL(databaseURL string) (string, error) {
 		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
 	}
 	return result, err
+}
+
+func buildStruct(attributeMap map[string]string) SzConfiguration {
+	var result SzConfiguration
+
+	databaseURL, ok := attributeMap["databaseURL"]
+	if !ok {
+		return result
+	}
+	senzingDirectory := getSenzingDirectory(attributeMap)
+
+	// Apply attributeMap.
+
+	result = SzConfiguration{
+		Pipeline: SzConfigurationPipeline{
+			ConfigPath:   mapWithDefault(attributeMap, "configPath", getConfigPath(senzingDirectory)),
+			ResourcePath: mapWithDefault(attributeMap, "resourcePath", getResourcePath(senzingDirectory)),
+			SupportPath:  mapWithDefault(attributeMap, "supportPath", getSupportPath(senzingDirectory)),
+		},
+		SQL: SzConfigurationSQL{
+			Connection: databaseURL,
+		},
+	}
+
+	licenseStringBase64, ok := attributeMap["licenseStringBase64"]
+	if ok {
+		result.Pipeline.LicenseStringBase64 = licenseStringBase64
+	}
+
+	return result
+}
+
+func getOsEnv(variableName string) (string, error) {
+	var err error
+	result, isSet := os.LookupEnv(variableName)
+	if !isSet {
+		err = fmt.Errorf("environment variable not set: %s", variableName)
+	}
+	return result, err
+}
+
+func mapWithDefault(aMap map[string]string, key string, defaultValue string) string {
+	result, ok := aMap[key]
+	if ok {
+		return result
+	}
+	return defaultValue
 }

@@ -2,6 +2,11 @@
 
 package settings
 
+import (
+	"fmt"
+	"os"
+)
+
 var testCasesForOsArch = []testCaseMetadata{
 	{
 		name:            "sqlite3-001",
@@ -23,4 +28,14 @@ var testCasesForOsArch = []testCaseMetadata{
 		databaseURL:     `sqlite3://na:na@nowhere/C:\Temp\sqlite\G2C.db`,
 		databaseURLPath: `/C:\Temp\sqlite\G2C.db`,
 	},
+}
+
+func getSenzingPath() string {
+	var result string
+	homeDrive, isHomeDriveSet := os.LookupEnv("HOMEDRIVE")
+	homePath, isHomeDirSet := os.LookupEnv("HOMEPATH")
+	if isHomeDriveSet && isHomeDirSet {
+		result = fmt.Sprintf("%s%s\\Senzing", homeDrive, homePath)
+	}
+	return result
 }

@@ -4,42 +4,38 @@ package settings
 
 import (
 	"context"
+	"fmt"
 )
 
 // ----------------------------------------------------------------------------
 // Internal methods
 // ----------------------------------------------------------------------------
 
-func buildStruct(attributeMap map[string]string) SzConfiguration {
-	var result SzConfiguration
+func getConfigPath(senzingDirectory string) string {
+	_ = senzingDirectory
+	return "/etc/opt/senzing"
+}
 
-	databaseURL, ok := attributeMap["databaseURL"]
-	if !ok {
-		return result
-	}
+func getResourcePath(senzingDirectory string) string {
+	return fmt.Sprintf("%s/er/resources", senzingDirectory)
+}
 
-	result = SzConfiguration{
-		Pipeline: SzConfigurationPipeline{
-			ConfigPath:   "/etc/opt/senzing",
-			ResourcePath: "/opt/senzing/er/resources",
-			SupportPath:  "/opt/senzing/data",
-		},
-		SQL: SzConfigurationSQL{
-			Connection: databaseURL,
-		},
-	}
-
-	licenseStringBase64, ok := attributeMap["licenseStringBase64"]
+func getSenzingDirectory(attributeMap map[string]string) string {
+	result := "/opt/senzing"
+	senzingPath, ok := attributeMap["senzingPath"]
 	if ok {
-		result.Pipeline.LicenseStringBase64 = licenseStringBase64
+		result = senzingPath
 	}
-
 	return result
 }
 
+func getSupportPath(senzingDirectory string) string {
+	return fmt.Sprintf("%s/data", senzingDirectory)
+}
+
 func verifySettings(ctx context.Context, settings string) error {
-	_ = settings
 	_ = ctx
+	_ = settings
 	var err error
 	return err
 }

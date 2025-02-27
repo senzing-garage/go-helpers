@@ -5,59 +5,36 @@ package settings
 import (
 	"context"
 	"fmt"
+	"os"
 )
 
 // ----------------------------------------------------------------------------
 // Internal methods
 // ----------------------------------------------------------------------------
 
-func mapWithDefault(aMap map[string]string, key string, defaultValue string) string {
-	result, ok := aMap[key]
-	if ok {
-		return result
-	}
-	return defaultValue
+func getConfigPath(senzingDirectory string) string {
+	return fmt.Sprintf("%s/er/etc", senzingDirectory)
 }
 
-func buildStruct(attributeMap map[string]string) SzConfiguration {
-	var result SzConfiguration
+func getResourcePath(senzingDirectory string) string {
+	return fmt.Sprintf("%s/er/resources", senzingDirectory)
+}
 
-	databaseURL, ok := attributeMap["databaseURL"]
-	if !ok {
-		return result
+func getSenzingDirectory(attributeMap map[string]string) string {
+	result := "/opt/senzing"
+	home, isSet := os.LookupEnv("HOME")
+	if isSet {
+		result = fmt.Sprintf("%s/senzing", home)
 	}
-
-	// Determine defaultDirectory.
-
-	defaultDirectory := "/opt/senzing/er"
-	senzingDirectory, ok := attributeMap["senzingDirectory"]
+	senzingPath, ok := attributeMap["senzingPath"]
 	if ok {
-		defaultDirectory = senzingDirectory
+		result = senzingPath
 	}
-
-	configPath := fmt.Sprintf("%s/etc", defaultDirectory)
-	resourcePath := fmt.Sprintf("%s/resources", defaultDirectory)
-	supportPath := fmt.Sprintf("%s/data", defaultDirectory)
-
-	// Apply attributeMap.
-
-	result = SzConfiguration{
-		Pipeline: SzConfigurationPipeline{
-			ConfigPath:   mapWithDefault(attributeMap, "configPath", configPath),
-			ResourcePath: mapWithDefault(attributeMap, "resourcePath", resourcePath),
-			SupportPath:  mapWithDefault(attributeMap, "supportPath", supportPath),
-		},
-		SQL: SzConfigurationSQL{
-			Connection: databaseURL,
-		},
-	}
-
-	licenseStringBase64, ok := attributeMap["licenseStringBase64"]
-	if ok {
-		result.Pipeline.LicenseStringBase64 = licenseStringBase64
-	}
-
 	return result
+}
+
+func getSupportPath(senzingDirectory string) string {
+	return fmt.Sprintf("%s/er/data", senzingDirectory)
 }
 
 func verifySettings(ctx context.Context, settings string) error {

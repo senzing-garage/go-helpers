@@ -12,56 +12,35 @@ import (
 // Internal methods
 // ----------------------------------------------------------------------------
 
-func mapWithDefault(aMap map[string]string, key string, defaultValue string) string {
-	result, ok := aMap[key]
-	if ok {
-		return result
-	}
-	return defaultValue
+func getConfigPath(senzingDirectory string) string {
+	return fmt.Sprintf("%s%cer%cetc", senzingDirectory, os.PathSeparator, os.PathSeparator)
 }
 
-func buildStruct(attributeMap map[string]string) SzConfiguration {
-	var result SzConfiguration
+func getResourcePath(senzingDirectory string) string {
+	return fmt.Sprintf("%s%cer%cresources", senzingDirectory, os.PathSeparator, os.PathSeparator)
+}
 
-	databaseURL, ok := attributeMap["databaseURL"]
-	if !ok {
-		return result
+func getSenzingDirectory(attributeMap map[string]string) string {
+	result := `C:\Program Files\senzing\er`
+	homeDrive, isHomeDriveSet := os.LookupEnv("HOMEDRIVE")
+	homePath, isHomeDirSet := os.LookupEnv("HOMEPATH")
+	if isHomeDriveSet && isHomeDirSet {
+		result = fmt.Sprintf("%s%s\\Senzing", homeDrive, homePath)
 	}
-
-	// Construct directories based on senzingDirectory.
-
-	senzingDirectory, ok := attributeMap["senzingDirectory"]
-	if !ok {
-		senzingDirectory = `C:\Program Files\Senzing\er`
+	senzingPath, ok := attributeMap["senzingPath"]
+	if ok {
+		result = senzingPath
 	}
-	configPath := fmt.Sprintf("%s%cetc", senzingDirectory, os.PathSeparator)
-	resourcePath := fmt.Sprintf("%s%cresources", senzingDirectory, os.PathSeparator)
-	supportPath := fmt.Sprintf("%s%cdata", senzingDirectory, os.PathSeparator)
-
-	// Apply attributeMap.
-
-	result = SzConfiguration{
-		Pipeline: SzConfigurationPipeline{
-			ConfigPath:   mapWithDefault(attributeMap, "configPath", configPath),
-			ResourcePath: mapWithDefault(attributeMap, "resourcePath", resourcePath),
-			SupportPath:  mapWithDefault(attributeMap, "supportPath", supportPath),
-		},
-		SQL: SzConfigurationSQL{
-			Connection: databaseURL,
-		},
-	}
-
-	licenseStringBase64, inMap := attributeMap["licenseStringBase64"]
-	if inMap {
-		result.Pipeline.LicenseStringBase64 = licenseStringBase64
-	}
-
 	return result
+}
+
+func getSupportPath(senzingDirectory string) string {
+	return fmt.Sprintf("%s%cer%cdata", senzingDirectory, os.PathSeparator, os.PathSeparator)
 }
 
 func verifySettings(ctx context.Context, settings string) error {
 	_ = ctx
 	_ = settings
-	var err error = nil
+	var err error
 	return err
 }
