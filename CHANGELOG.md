@@ -5,10 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], [markdownlint],
 and this project adheres to [Semantic Versioning].
 
-## [0.6.6] - 2025-02-25
+## [0.6.6] - 2025-02-27
 
 ### Changed in 0.6.6
 
+- Support `SENZING_PATH`
 - Modified `settings` for updated Senzing installation
 
 ## [0.6.5] - 2025-02-05
