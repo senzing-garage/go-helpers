@@ -232,8 +232,8 @@ func VerifySettings(ctx context.Context, settings string) error {
 		"anyTransRule.ibm",
 		"g2SifterRules.ibm",
 	}
-	for _, resourceFile := range supportFiles {
-		targetFile := fmt.Sprintf("%s/%s", supportPath, resourceFile)
+	for _, supportFile := range supportFiles {
+		targetFile := fmt.Sprintf("%s/%s", supportPath, supportFile)
 		if _, err := os.Stat(targetFile); err != nil {
 			return fmt.Errorf("SUPPORTPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors", targetFile)
 		}
