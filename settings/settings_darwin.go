@@ -34,7 +34,7 @@ func getSenzingDirectory(attributeMap map[string]string) string {
 }
 
 func getSupportPath(senzingDirectory string) string {
-	return fmt.Sprintf("%s/er/data", senzingDirectory)
+	return fmt.Sprintf("%s/data", senzingDirectory)
 }
 
 func verifySettings(ctx context.Context, settings string) error {
