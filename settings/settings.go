@@ -173,9 +173,6 @@ Input
 */
 func VerifySettings(ctx context.Context, settings string) error {
 	var err error
-
-	fmt.Printf(">>>>>>> VerifySettings.settings: %s: settings\n", settings)
-
 	parser := settingsparser.BasicSettingsParser{
 		Settings: settings,
 	}
@@ -231,9 +228,6 @@ func VerifySettings(ctx context.Context, settings string) error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Printf(">>>>>> supportPath: %s\n", supportPath)
-
 	supportFiles := []string{
 		"anyTransRule.ibm",
 		"g2SifterRules.ibm",
