@@ -174,7 +174,7 @@ Input
 func VerifySettings(ctx context.Context, settings string) error {
 	var err error
 
-	fmt.Printf(">>>>>> VerifySettings.settings: %s: settings\n", settings)
+	fmt.Printf(">>>>>>> VerifySettings.settings: %s: settings\n", settings)
 
 	parser := settingsparser.BasicSettingsParser{
 		Settings: settings,
