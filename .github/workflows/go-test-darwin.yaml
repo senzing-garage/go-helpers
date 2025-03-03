@@ -39,6 +39,12 @@ jobs:
         with:
           senzingsdk-repository-path: ${{ secrets.SENZING_OSX_BETA_REPOSITORY }}
 
+      - name: Search directories
+        run: |
+          ls /Users/runner/senzing
+          ls /Users/runner/senzing/er
+          ls /Users/runner/senzing/data
+
       - name: Copy /etc files
         run: sudo mkdir -p "${HOME}/senzing/er/etc" && sudo cp testdata/senzing-license/g2.lic "${HOME}/senzing/er/etc/g2.lic"
 
