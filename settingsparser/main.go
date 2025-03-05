@@ -12,9 +12,10 @@ import (
 
 type SettingsParser interface {
 	GetConfigPath(ctx context.Context) (string, error)
-	GetDatabaseURLs(ctx context.Context) ([]string, error)
+	GetDatabaseURIs(ctx context.Context) ([]string, error)
 	GetLicenseStringBase64(ctx context.Context) (string, error)
 	GetResourcePath(ctx context.Context) (string, error)
+	GetSettings(ctx context.Context) string
 	GetSupportPath(ctx context.Context) (string, error)
 	RedactedJSON(ctx context.Context) (string, error)
 }

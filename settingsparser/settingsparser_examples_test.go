@@ -21,11 +21,11 @@ func ExampleBasicSettingsParser_GetConfigPath() {
 	// Output: /etc/opt/senzing
 }
 
-func ExampleBasicSettingsParser_GetDatabaseURLs() {
+func ExampleBasicSettingsParser_GetDatabaseURIs() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/settingsparser/settingsparser_test.go
 	ctx := context.TODO()
 	parser := getParser(ctx)
-	configPath, err := parser.GetDatabaseURLs(ctx)
+	configPath, err := parser.GetDatabaseURIs(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
