@@ -184,12 +184,12 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 			return "", err
 		}
 	}
-	specificDatabaseURL, err := BuildSenzingDatabaseURI(senzingDatabaseURL)
+	senzingDatabaseURI, err := BuildSenzingDatabaseURI(senzingDatabaseURL)
 	if err != nil {
 		return "", err
 	}
 
-	attributeMap["databaseURL"] = specificDatabaseURL
+	attributeMap["databaseURL"] = senzingDatabaseURI
 
 	// Add Environment Variables to the map, if not already specified in the map.
 
@@ -261,11 +261,11 @@ func VerifySettings(ctx context.Context, settings string) error {
 
 	// Check database URLs.
 
-	databaseURLs, err := parser.GetDatabaseURLs(ctx)
+	databaseURIs, err := parser.GetDatabaseURIs(ctx)
 	if err != nil {
 		return err
 	}
-	for _, value := range databaseURLs {
+	for _, value := range databaseURIs {
 		if len(value) == 0 {
 			return fmt.Errorf("SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://garage.senzing.com/go-helpers/errors")
 		}
@@ -335,7 +335,7 @@ func VerifySettings(ctx context.Context, settings string) error {
 func buildStruct(attributeMap map[string]string) SzConfiguration {
 	var result SzConfiguration
 
-	databaseURL, ok := attributeMap["databaseURL"]
+	databaseURI, ok := attributeMap["databaseURL"]
 	if !ok {
 		return result
 	}
@@ -350,7 +350,7 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 			SupportPath:  mapWithDefault(attributeMap, "supportPath", getSupportPath(senzingDirectory)),
 		},
 		SQL: SzConfigurationSQL{
-			Connection: databaseURL,
+			Connection: databaseURI,
 		},
 	}
 

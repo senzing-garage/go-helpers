@@ -135,7 +135,7 @@ func TestBuildSimpleSettingsUsingMap_ParseResult(test *testing.T) {
 				testError(test, err)
 				parsedSettings, err := settingsparser.New(settings)
 				testError(test, err)
-				databaseURLs, err := parsedSettings.GetDatabaseURLs(ctx)
+				databaseURLs, err := parsedSettings.GetDatabaseURIs(ctx)
 				testError(test, err)
 				parsedDatabaseURL, err := url.Parse(databaseURLs[0])
 				testError(test, err)

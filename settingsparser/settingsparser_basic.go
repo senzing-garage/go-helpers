@@ -52,7 +52,7 @@ Input
 Output
   - A string containing the value of a PIPELINE.CONFIGPATH.
 */
-func (parser *BasicSettingsParser) GetDatabaseURLs(ctx context.Context) ([]string, error) {
+func (parser *BasicSettingsParser) GetDatabaseURIs(ctx context.Context) ([]string, error) {
 	_ = ctx
 	var result []string
 	engineConfiguration := &EngineConfiguration{}
@@ -184,17 +184,17 @@ func (parser *BasicSettingsParser) RedactedJSON(ctx context.Context) (string, er
 
 	// Get list of database URLs in the Senzing engine configuration json.
 
-	databaseURLs, err := parser.GetDatabaseURLs(ctx)
+	databaseURIs, err := parser.GetDatabaseURIs(ctx)
 	if err != nil {
 		return "", err
 	}
 
 	// For each database URL in the string, replace it with a redacted database URL.
 
-	for _, databaseURL := range databaseURLs {
-		redactedURL, err := redactURL(databaseURL)
+	for _, databaseURI := range databaseURIs {
+		redactedURL, err := redactURL(databaseURI)
 		if err == nil {
-			result = strings.ReplaceAll(result, databaseURL, redactedURL)
+			result = strings.ReplaceAll(result, databaseURI, redactedURL)
 		}
 	}
 
