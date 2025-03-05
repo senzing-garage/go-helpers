@@ -112,6 +112,16 @@ func TestSettingsParser_GetLicenseStringBase64(test *testing.T) {
 	assert.Equal(test, "${SENZING_LICENSE_BASE64_ENCODED}", actual)
 }
 
+func TestSettingsParser_GetSettings(test *testing.T) {
+	ctx := context.TODO()
+	expected := `{"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}`
+	parser := &BasicSettingsParser{
+		Settings: expected,
+	}
+	actual := parser.GetSettings(ctx)
+	assert.Equal(test, expected, actual)
+}
+
 func TestSettingsParser_New(test *testing.T) {
 	ctx := context.TODO()
 	settings := `

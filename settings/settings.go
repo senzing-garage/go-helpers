@@ -18,6 +18,88 @@ import (
 // Public functions
 // ----------------------------------------------------------------------------
 
+func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
+	result := ""
+	parsedURL, err := url.Parse(databaseURL)
+	if err != nil {
+		return "", err
+	}
+	switch parsedURL.Scheme {
+	case "db2":
+		result = fmt.Sprintf(
+			"%s://%s@%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			string(parsedURL.Path[1:]),
+		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
+		}
+	case "mssql":
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf(
+				"%s://%s@%s:%s?%s",
+				parsedURL.Scheme,
+				parsedURL.User,
+				parsedURL.Host,
+				string(parsedURL.Path[1:]),
+				parsedURL.Query().Encode(),
+			)
+		} else {
+			result = fmt.Sprintf(
+				"%s://%s@%s",
+				parsedURL.Scheme,
+				parsedURL.User,
+				string(parsedURL.Path[1:]),
+			)
+		}
+	case "mysql":
+		result = fmt.Sprintf(
+			"%s://%s@%s/?schema=%s%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			string(parsedURL.Path[1:]),
+			parsedURL.RawQuery,
+		)
+	case "oci":
+		result = fmt.Sprintf(
+			"%s://%s@%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			string(parsedURL.Path[1:]),
+		)
+	case "postgresql":
+		result = fmt.Sprintf(
+			"%s://%s@%s:%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			string(parsedURL.Path[1:]),
+		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
+		} else {
+			result = fmt.Sprintf("%s/", result)
+		}
+	case "sqlite3":
+		result = fmt.Sprintf(
+			"%s://%s@%s/%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			string(parsedURL.Path[1:]),
+		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
+		}
+	default:
+		result = ""
+		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
+	}
+	return result, err
+}
+
 /*
 The BuildSimpleSettingsUsingEnvVars method is a convenience method
 for invoking BuildSimpleSettingsUsingMap without any mapped values.
@@ -102,7 +184,7 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 			return "", err
 		}
 	}
-	specificDatabaseURL, err := buildSpecificDatabaseURL(senzingDatabaseURL)
+	specificDatabaseURL, err := BuildSenzingDatabaseURI(senzingDatabaseURL)
 	if err != nil {
 		return "", err
 	}
@@ -249,77 +331,6 @@ func VerifySettings(ctx context.Context, settings string) error {
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
-
-func buildSpecificDatabaseURL(databaseURL string) (string, error) {
-	result := ""
-	parsedURL, err := url.Parse(databaseURL)
-	if err != nil {
-		return "", err
-	}
-	switch parsedURL.Scheme {
-	case "db2":
-		result = fmt.Sprintf(
-			"%s://%s@%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			string(parsedURL.Path[1:]),
-		)
-		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
-		}
-	case "mssql":
-		result = fmt.Sprintf(
-			"%s://%s@%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			string(parsedURL.Path[1:]),
-		)
-	case "mysql":
-		result = fmt.Sprintf(
-			"%s://%s@%s/?schema=%s%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			parsedURL.Host,
-			string(parsedURL.Path[1:]),
-			parsedURL.RawQuery,
-		)
-	case "oci":
-		result = fmt.Sprintf(
-			"%s://%s@%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			string(parsedURL.Path[1:]),
-		)
-	case "postgresql":
-		result = fmt.Sprintf(
-			"%s://%s@%s:%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			parsedURL.Host,
-			string(parsedURL.Path[1:]),
-		)
-		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
-		} else {
-			result = fmt.Sprintf("%s/", result)
-		}
-	case "sqlite3":
-		result = fmt.Sprintf(
-			"%s://%s@%s/%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			parsedURL.Host,
-			string(parsedURL.Path[1:]),
-		)
-		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
-		}
-	default:
-		result = ""
-		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
-	}
-	return result, err
-}
 
 func buildStruct(attributeMap map[string]string) SzConfiguration {
 	var result SzConfiguration

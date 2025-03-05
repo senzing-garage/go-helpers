@@ -15,6 +15,7 @@ type SettingsParser interface {
 	GetDatabaseURLs(ctx context.Context) ([]string, error)
 	GetLicenseStringBase64(ctx context.Context) (string, error)
 	GetResourcePath(ctx context.Context) (string, error)
+	GetSettings(ctx context.Context) string
 	GetSupportPath(ctx context.Context) (string, error)
 	RedactedJSON(ctx context.Context) (string, error)
 }

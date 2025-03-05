@@ -14,6 +14,7 @@ type testCaseMetadata struct {
 	configPath          string
 	databaseURL         string
 	databaseURLPath     string
+	databaseURI         string
 	licenseStringBase64 string
 	name                string
 	resourcePath        string
@@ -22,38 +23,45 @@ type testCaseMetadata struct {
 }
 
 var testCasesForMultiPlatform = []testCaseMetadata{
-
 	{
 		name:        "db2-001",
 		databaseURL: "db2://username:password@hostname:50000/G2",
+		databaseURI: "db2://username:password@G2",
 	},
 	{
 		name:        "db2-002",
 		databaseURL: "db2://username:password@hostname:50000/G2/?schema=schemaname",
+		databaseURI: "db2://username:password@G2/?schema=schemaname",
 	},
 	{
 		name:        "oci-001",
 		databaseURL: "oci://username:password@hostname:1521/G2",
+		databaseURI: "oci://username:password@G2",
 	},
 	{
 		name:        "mssql-001",
 		databaseURL: "mssql://username:password@hostname:1433/G2",
+		databaseURI: "mssql://username:password@G2",
+	},
+	{
+		name:        "mssql-002",
+		databaseURL: "mssql://username:password@hostname:1433/G2/?driver=mssqldriver",
+		databaseURI: "mssql://username:password@hostname:1433:G2/?driver=mssqldriver",
 	},
 	{
 		name:        "mysql-001",
 		databaseURL: "mysql://username:password@hostname:3306/G2",
-	},
-	{
-		name:        "oci-001",
-		databaseURL: "oci://username:password@hostname:1521/G2",
+		databaseURI: "mysql://username:password@hostname:3306/?schema=G2",
 	},
 	{
 		name:        "postgresql-001",
 		databaseURL: "postgresql://username:password@hostname:5432/G2",
+		databaseURI: "postgresql://username:password@hostname:5432:G2/",
 	},
 	{
 		name:        "postgresql-002",
 		databaseURL: "postgresql://username:password@hostname:5432/G2/?schema=schemaname",
+		databaseURI: "postgresql://username:password@hostname:5432:G2/?schema=schemaname",
 	},
 }
 
@@ -62,6 +70,16 @@ var testCases = append(testCasesForMultiPlatform, testCasesForOsArch...)
 // ----------------------------------------------------------------------------
 // Test Public functions
 // ----------------------------------------------------------------------------
+
+func TestBuildSenzingDatabaseURI(test *testing.T) {
+	for _, testCase := range testCases {
+		test.Run(testCase.name, func(test *testing.T) {
+			result, err := BuildSenzingDatabaseURI(testCase.databaseURL)
+			testError(test, err)
+			assert.Equal(test, testCase.databaseURI, result)
+		})
+	}
+}
 
 func TestBuildSimpleSettingsUsingEnvVars(test *testing.T) {
 	_, err := BuildSimpleSettingsUsingEnvVars()
@@ -150,13 +168,13 @@ func TestVerifySettings(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func Test_buildSpecificDatabaseURL_badDatabaseURL(test *testing.T) {
-	actual, err := buildSpecificDatabaseURL("::::")
+	actual, err := BuildSenzingDatabaseURI("::::")
 	require.Error(test, err)
 	assert.Empty(test, actual)
 }
 
 func Test_buildSpecificDatabaseURL_badDatabaseURLProtocol(test *testing.T) {
-	actual, err := buildSpecificDatabaseURL("xyzzy://something")
+	actual, err := BuildSenzingDatabaseURI("xyzzy://something")
 	require.Error(test, err)
 	assert.Empty(test, actual)
 }

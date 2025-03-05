@@ -138,6 +138,20 @@ func (parser *BasicSettingsParser) GetResourcePath(ctx context.Context) (string,
 }
 
 /*
+The GetSettings returns the entire _ENGINE_CONFIGURATION_JSON.
+
+Input
+  - ctx: A context to control lifecycle.
+
+Output
+  - A string containing the value of _ENGINE_CONFIGURATION_JSON..
+*/
+func (parser *BasicSettingsParser) GetSettings(ctx context.Context) string {
+	_ = ctx
+	return parser.Settings
+}
+
+/*
 The GetSupportPath method returns the PIPELINE.SUPPORTPATH value of _ENGINE_CONFIGURATION_JSON.
 
 Input
