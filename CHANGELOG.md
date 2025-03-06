@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], [markdownlint],
 and this project adheres to [Semantic Versioning].
 
-## [0.6.8] - 2025-03-05
+## [0.6.8] - 2025-03-06
 
 ### Changed in 0.6.8
 

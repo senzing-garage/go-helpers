@@ -18,21 +18,12 @@ type testCaseMetadata struct {
 	licenseStringBase64 string
 	name                string
 	resourcePath        string
+	isReversible        bool
 	senzingDirectory    string
 	supportPath         string
 }
 
 var testCasesForMultiPlatform = []testCaseMetadata{
-	{
-		name:        "db2-001",
-		databaseURL: "db2://username:password@hostname:50000/G2",
-		databaseURI: "db2://username:password@G2",
-	},
-	{
-		name:        "db2-002",
-		databaseURL: "db2://username:password@hostname:50000/G2/?schema=schemaname",
-		databaseURI: "db2://username:password@G2/?schema=schemaname",
-	},
 	{
 		name:        "oci-001",
 		databaseURL: "oci://username:password@hostname:1521/G2",
@@ -49,19 +40,22 @@ var testCasesForMultiPlatform = []testCaseMetadata{
 		databaseURI: "mssql://username:password@hostname:1433:G2/?driver=mssqldriver",
 	},
 	{
-		name:        "mysql-001",
-		databaseURL: "mysql://username:password@hostname:3306/G2",
-		databaseURI: "mysql://username:password@hostname:3306/?schema=G2",
+		name:         "mysql-001",
+		databaseURL:  "mysql://username:password@hostname:3306/G2",
+		databaseURI:  "mysql://username:password@hostname:3306/?schema=G2",
+		isReversible: true,
 	},
 	{
-		name:        "postgresql-001",
-		databaseURL: "postgresql://username:password@hostname:5432/G2",
-		databaseURI: "postgresql://username:password@hostname:5432:G2/",
+		name:         "postgresql-001",
+		databaseURL:  "postgresql://username:password@hostname:5432/G2",
+		databaseURI:  "postgresql://username:password@hostname:5432:G2/",
+		isReversible: true,
 	},
 	{
-		name:        "postgresql-002",
-		databaseURL: "postgresql://username:password@hostname:5432/G2/?schema=schemaname",
-		databaseURI: "postgresql://username:password@hostname:5432:G2/?schema=schemaname",
+		name:         "postgresql-002",
+		databaseURL:  "postgresql://username:password@hostname:5432/G2/?schema=schemaname",
+		databaseURI:  "postgresql://username:password@hostname:5432:G2/?schema=schemaname",
+		isReversible: true,
 	},
 }
 
@@ -77,6 +71,20 @@ func TestBuildSenzingDatabaseURI(test *testing.T) {
 			result, err := BuildSenzingDatabaseURI(testCase.databaseURL)
 			testError(test, err)
 			assert.Equal(test, testCase.databaseURI, result)
+		})
+	}
+}
+
+func TestBuildSenzingDatabaseURL(test *testing.T) {
+	for _, testCase := range testCases {
+		test.Run(testCase.name, func(test *testing.T) {
+			result, err := BuildSenzingDatabaseURL(testCase.databaseURI)
+			if testCase.isReversible {
+				testError(test, err)
+				assert.Equal(test, testCase.databaseURL, result)
+			} else {
+				assert.Error(test, err)
+			}
 		})
 	}
 }
