@@ -18,44 +18,85 @@ type testCaseMetadata struct {
 	licenseStringBase64 string
 	name                string
 	resourcePath        string
-	isReversible        bool
+	notReversible       bool
 	senzingDirectory    string
 	supportPath         string
 }
 
 var testCasesForMultiPlatform = []testCaseMetadata{
 	{
-		name:        "oci-001",
-		databaseURL: "oci://username:password@hostname:1521/G2",
-		databaseURI: "oci://username:password@G2",
-	},
-	{
-		name:        "mssql-001",
-		databaseURL: "mssql://username:password@hostname:1433/G2",
-		databaseURI: "mssql://username:password@G2",
+		name:          "mssql-001",
+		databaseURL:   "mssql://username:password@hostname:1433/G2",
+		databaseURI:   "mssql://username:password@G2",
+		notReversible: true,
 	},
 	{
 		name:        "mssql-002",
+		databaseURL: "mssql://username:password@hostname:1433/G2/?TrustServerCertificate=True&driver=mssqldriver",
+		databaseURI: "mssql://username:password@hostname:1433:G2/?TrustServerCertificate=True&driver=mssqldriver",
+	},
+	{
+		name:        "mssql-003",
 		databaseURL: "mssql://username:password@hostname:1433/G2/?driver=mssqldriver",
 		databaseURI: "mssql://username:password@hostname:1433:G2/?driver=mssqldriver",
 	},
 	{
-		name:         "mysql-001",
-		databaseURL:  "mysql://username:password@hostname:3306/G2",
-		databaseURI:  "mysql://username:password@hostname:3306/?schema=G2",
-		isReversible: true,
+		name:          "mssql-004",
+		databaseURL:   "mssql://username:password@hostname:1433/G2?driver=mssqldriver",
+		databaseURI:   "mssql://username:password@hostname:1433:G2?driver=mssqldriver",
+		notReversible: true,
 	},
 	{
-		name:         "postgresql-001",
-		databaseURL:  "postgresql://username:password@hostname:5432/G2",
-		databaseURI:  "postgresql://username:password@hostname:5432:G2/",
-		isReversible: true,
+		name:        "mssql-005",
+		databaseURL: "mssql://sa:Passw0rd@localhost:1433/G2/?TrustServerCertificate=True&driver=libmsodbcsql-18.4.so.1.1",
+		databaseURI: "mssql://sa:Passw0rd@localhost:1433:G2/?TrustServerCertificate=True&driver=libmsodbcsql-18.4.so.1.1",
 	},
 	{
-		name:         "postgresql-002",
-		databaseURL:  "postgresql://username:password@hostname:5432/G2/?schema=schemaname",
-		databaseURI:  "postgresql://username:password@hostname:5432:G2/?schema=schemaname",
-		isReversible: true,
+		name:        "mysql-001",
+		databaseURL: "mysql://username:password@hostname:3306/G2",
+		databaseURI: "mysql://username:password@hostname:3306/?schema=G2",
+	},
+	{
+		name:        "mysql-002",
+		databaseURL: "mysql://mysql:mysql@127.0.0.1:3306/G2",
+		databaseURI: "mysql://mysql:mysql@127.0.0.1:3306/?schema=G2",
+	},
+	{
+		name:          "oci-001",
+		databaseURL:   "oci://username:password@hostname:1521/G2",
+		databaseURI:   "oci://username:password@//hostname:1521/G2",
+		notReversible: true, // FIXME: The BuildSenzingDatabaseURL() regex needs to change to make this reversible.
+	},
+	{
+		name:        "oci-002",
+		databaseURL: "oci://username:password@hostname:1521/G2/?noTimezoneCheck=true&sysdba=true",
+		databaseURI: "oci://username:password@//hostname:1521/G2/?noTimezoneCheck=true&sysdba=true",
+	},
+	{
+		name:          "oci-003",
+		databaseURL:   "oci://username:password@hostname:1521/G2?noTimezoneCheck=true&sysdba=true",
+		databaseURI:   "oci://username:password@//hostname:1521/G2?noTimezoneCheck=true&sysdba=true",
+		notReversible: true,
+	},
+	{
+		name:        "oci-004",
+		databaseURL: "oci://sys:Passw0rd@oracle:1521/G2/?noTimezoneCheck=true&sysdba=true",
+		databaseURI: "oci://sys:Passw0rd@//oracle:1521/G2/?noTimezoneCheck=true&sysdba=true",
+	},
+	{
+		name:        "postgresql-001",
+		databaseURL: "postgresql://username:password@hostname:5432/G2",
+		databaseURI: "postgresql://username:password@hostname:5432:G2/",
+	},
+	{
+		name:        "postgresql-002",
+		databaseURL: "postgresql://username:password@hostname:5432/G2/?schema=schemaname",
+		databaseURI: "postgresql://username:password@hostname:5432:G2/?schema=schemaname",
+	},
+	{
+		name:        "postgresql-003",
+		databaseURL: "postgresql://postgres:postgres@localhost:5432/G2/?sslmode=disable",
+		databaseURI: "postgresql://postgres:postgres@localhost:5432:G2/?sslmode=disable",
 	},
 }
 
@@ -79,11 +120,11 @@ func TestBuildSenzingDatabaseURL(test *testing.T) {
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
 			result, err := BuildSenzingDatabaseURL(testCase.databaseURI)
-			if testCase.isReversible {
+			if testCase.notReversible {
+				assert.Error(test, err)
+			} else {
 				testError(test, err)
 				assert.Equal(test, testCase.databaseURL, result)
-			} else {
-				assert.Error(test, err)
 			}
 		})
 	}

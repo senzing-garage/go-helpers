@@ -31,7 +31,7 @@ func ExampleBuildSimpleSettingsUsingMap_oci() {
 		fmt.Println(err)
 	}
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"oci://username:password@G2"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"oci://username:password@//hostname:1521/G2"}}
 }
 
 func ExampleBuildSimpleSettingsUsingMap_mssql() {

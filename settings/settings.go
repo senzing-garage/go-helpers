@@ -65,11 +65,15 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 		)
 	case "oci":
 		result = fmt.Sprintf(
-			"%s://%s@%s",
+			"%s://%s@//%s/%s",
 			parsedURL.Scheme,
 			parsedURL.User,
+			parsedURL.Host,
 			string(parsedURL.Path[1:]),
 		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
+		}
 	case "postgresql":
 		result = fmt.Sprintf(
 			"%s://%s@%s:%s",
@@ -114,20 +118,55 @@ func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
 	var err error
 	switch {
 	case strings.HasPrefix(databaseURI, "mssql://"):
-		err = fmt.Errorf("cannot reconstruct mssql from %s", databaseURI)
+		regExp := regexp.MustCompile(`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+):(?P<database>.+)/\?(?P<RawQuery>.+)`)
+		regExpMatches := regExp.FindStringSubmatch(databaseURI)
+		regExpFieldNames := regExp.SubexpNames()
+		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
+		if !hasRequiredKeys(aMap) {
+			return "", fmt.Errorf("cannot reconstruct mssql from %s", databaseURI)
+		}
+		resultURL := buildURL(aMap)
+		database, ok := aMap["database"]
+		if ok {
+			pathPattern := "/%s/"
+			resultURL.Path = fmt.Sprintf(pathPattern, database)
+		}
+		return resultURL.String(), err
 	case strings.HasPrefix(databaseURI, "mysql://"):
 		regExp := regexp.MustCompile(`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+)/\?schema=(?P<database>.+)`)
 		regExpMatches := regExp.FindStringSubmatch(databaseURI)
 		regExpFieldNames := regExp.SubexpNames()
 		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
+		if !hasRequiredKeys(aMap) {
+			return "", fmt.Errorf("cannot reconstruct mysql from %s", databaseURI)
+		}
 		resultURL := buildURL(aMap)
 		database, ok := aMap["database"]
 		if ok {
-			resultURL.Path = fmt.Sprintf("/%s", database)
+			pathPattern := "/%s"
+			if strings.HasSuffix(databaseURI, "/") {
+				pathPattern = "/%s/"
+			}
+			resultURL.Path = fmt.Sprintf(pathPattern, database)
 		}
 		return resultURL.String(), err
 	case strings.HasPrefix(databaseURI, "oci://"):
-		err = fmt.Errorf("cannot reconstruct oci from %s", databaseURI)
+		regExp := regexp.MustCompile(`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)/\?((?P<RawQuery>.+))?`)
+
+		// (?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)(/?(?P<RawQuery>))?`)
+		regExpMatches := regExp.FindStringSubmatch(databaseURI)
+		regExpFieldNames := regExp.SubexpNames()
+		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
+		if !hasRequiredKeys(aMap) {
+			return "", fmt.Errorf("cannot reconstruct oci from %s", databaseURI)
+		}
+		resultURL := buildURL(aMap)
+		database, ok := aMap["database"]
+		if ok {
+			pathPattern := "/%s/"
+			resultURL.Path = fmt.Sprintf(pathPattern, database)
+		}
+		return resultURL.String(), err
 	case strings.HasPrefix(databaseURI, "postgresql://"):
 		index := strings.LastIndex(databaseURI, ":")
 		result := strings.TrimSuffix(databaseURI[:index]+"/"+databaseURI[index+1:], "/")
@@ -448,6 +487,23 @@ func getOsEnv(variableName string) (string, error) {
 		err = fmt.Errorf("environment variable not set: %s", variableName)
 	}
 	return result, err
+}
+
+func hasRequiredKeys(aMap map[string]string) bool {
+	result := true
+	requiredKeys := []string{
+		"database",
+		"Host",
+		"Scheme",
+		"username",
+	}
+	for _, requiredKey := range requiredKeys {
+		_, ok := aMap[requiredKey]
+		if !ok {
+			return false
+		}
+	}
+	return result
 }
 
 func mapNamesToMatches(names []string, matches []string) map[string]string {
