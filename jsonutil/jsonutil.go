@@ -208,6 +208,27 @@ func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 }
 
 /*
+Given a string, return the reversed version of the string.
+
+Needed because of GitHub issues like:
+- https://github.com/golang/go/issues/14777
+- https://github.com/golang/go/issues/63683
+
+Input
+  - aString: The string to be reversed
+
+Output
+  - The input string in reversed order.
+*/
+func ReverseString(aString string) string {
+	runes := []rune(aString)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
+}
+
+/*
 Given JSON text, this will unmarshal it and recursively descend JSON arrays and JSON objects
 to remove the JSON key/value pairs whose keys match those specified for removal.  The JSON
 will then be marshalled back into text and returned.  This should work with any JSON literal:

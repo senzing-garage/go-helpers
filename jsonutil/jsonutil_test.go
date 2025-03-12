@@ -810,6 +810,43 @@ func TestRedactWithMap_Formatted4(test *testing.T) {
 }
 
 // ----------------------------------------------------------------------------
+// Test ReferseString function
+// ----------------------------------------------------------------------------
+
+type testReverseStringMetadata struct {
+	name           string
+	reversedString string
+	theString      string
+}
+
+var testReverseStringCases = []testReverseStringMetadata{
+	{
+		name:           "001",
+		theString:      "abc",
+		reversedString: "cba",
+	},
+	{
+		name:           "002",
+		theString:      "{}",
+		reversedString: "}{",
+	},
+	{
+		name:           "003",
+		theString:      `{"alpha": "beta"}`,
+		reversedString: `}"ateb" :"ahpla"{`,
+	},
+}
+
+func TestReverseString(test *testing.T) {
+	for _, testCase := range testReverseStringCases {
+		test.Run(testCase.name, func(test *testing.T) {
+			actual := ReverseString(testCase.theString)
+			assert.Equal(test, testCase.reversedString, actual)
+		})
+	}
+}
+
+// ----------------------------------------------------------------------------
 // Test Strip function
 // ----------------------------------------------------------------------------
 

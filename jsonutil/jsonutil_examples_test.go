@@ -121,6 +121,14 @@ func ExampleRedactWithMap() {
 	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":"***-**-****","surname":"Schmoe"}
 }
 
+func ExampleReverseString() {
+	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
+	var jsonText = `{"alpha": "beta"}`
+	reversedJSON := ReverseString(jsonText)
+	fmt.Println(reversedJSON)
+	// Output: }"ateb" :"ahpla"{
+}
+
 func ExampleStrip() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `

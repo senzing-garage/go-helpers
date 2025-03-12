@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], [markdownlint],
 and this project adheres to [Semantic Versioning].
 
-## [0.6.8] - 2025-03-11
+## [0.6.8] - 2025-03-12
+
+### Added in 0.6.8
+
+- `SenzingsParser.GetSettings()`
+- `jsonutil.ReverseString()`
 
 ### Changed in 0.6.8
 
-- Add `SenzingsParser.GetSettings()`
 - Improve `mssql` and `oci` database URIs
 
 ## [0.6.7] - 2025-03-03
