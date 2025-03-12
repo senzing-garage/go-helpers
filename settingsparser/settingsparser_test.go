@@ -24,7 +24,7 @@ func TestSettingsParser_GetConfigPath(test *testing.T) {
 	assert.Equal(test, "/etc/opt/senzing", actual)
 }
 
-func TestSettingsParser_GetDatabaseURLs(test *testing.T) {
+func TestSettingsParser_GetDatabaseURIs(test *testing.T) {
 	ctx := context.TODO()
 	parser := &BasicSettingsParser{
 		Settings: `
@@ -42,12 +42,12 @@ func TestSettingsParser_GetDatabaseURLs(test *testing.T) {
         }
         `,
 	}
-	actual, err := parser.GetDatabaseURLs(ctx)
+	actual, err := parser.GetDatabaseURIs(ctx)
 	testError(test, err)
 	assert.Equal(test, []string{"postgresql://username:password@db.example.com:5432:G2"}, actual)
 }
 
-func TestSettingsParser_GetDatabaseURLs_Multi(test *testing.T) {
+func TestSettingsParser_GetDatabaseURIs_Multi(test *testing.T) {
 	ctx := context.TODO()
 	parser := &BasicSettingsParser{
 		Settings: `
@@ -81,7 +81,7 @@ func TestSettingsParser_GetDatabaseURLs_Multi(test *testing.T) {
         }
         `,
 	}
-	actual, err := parser.GetDatabaseURLs(ctx)
+	actual, err := parser.GetDatabaseURIs(ctx)
 	testError(test, err)
 	assert.Len(test, actual, 3)
 	assert.True(test, contains(actual, "postgresql://username:password@db-1.example.com:5432:G2"))
@@ -110,6 +110,16 @@ func TestSettingsParser_GetLicenseStringBase64(test *testing.T) {
 	actual, err := parser.GetLicenseStringBase64(ctx)
 	testError(test, err)
 	assert.Equal(test, "${SENZING_LICENSE_BASE64_ENCODED}", actual)
+}
+
+func TestSettingsParser_GetSettings(test *testing.T) {
+	ctx := context.TODO()
+	expected := `{"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}`
+	parser := &BasicSettingsParser{
+		Settings: expected,
+	}
+	actual := parser.GetSettings(ctx)
+	assert.Equal(test, expected, actual)
 }
 
 func TestSettingsParser_New(test *testing.T) {
@@ -147,7 +157,7 @@ func TestSettingsParser_New(test *testing.T) {
 
 	parser, err := New(settings)
 	testError(test, err)
-	actual, err := parser.GetDatabaseURLs(ctx)
+	actual, err := parser.GetDatabaseURIs(ctx)
 	testError(test, err)
 	assert.Len(test, actual, 3)
 	assert.True(test, contains(actual, "postgresql://username:password@db-1.example.com:5432:G2"))

@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/senzing-garage/go-helpers/settingsparser"
 )
@@ -17,6 +19,165 @@ import (
 // ----------------------------------------------------------------------------
 // Public functions
 // ----------------------------------------------------------------------------
+
+/*
+The BuildSenzingDatabaseURI method returns a database URI that is recognized by the Senzing binaries.
+
+Input
+  - databaseURL: A parseable URL.
+
+Output
+  - A string containing a database URI that can be used in the Senzing engine configuration JSON document.
+*/
+func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
+	result := ""
+	parsedURL, err := url.Parse(databaseURL)
+	if err != nil {
+		return "", err
+	}
+	switch parsedURL.Scheme {
+	case "mssql":
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf(
+				"%s://%s@%s:%s?%s",
+				parsedURL.Scheme,
+				parsedURL.User,
+				parsedURL.Host,
+				string(parsedURL.Path[1:]),
+				parsedURL.Query().Encode(),
+			)
+		} else {
+			result = fmt.Sprintf(
+				"%s://%s@%s",
+				parsedURL.Scheme,
+				parsedURL.User,
+				string(parsedURL.Path[1:]),
+			)
+		}
+	case "mysql":
+		result = fmt.Sprintf(
+			"%s://%s@%s/?schema=%s%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			string(parsedURL.Path[1:]),
+			parsedURL.RawQuery,
+		)
+	case "oci":
+		result = fmt.Sprintf(
+			"%s://%s@//%s/%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			string(parsedURL.Path[1:]),
+		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
+		}
+	case "postgresql":
+		result = fmt.Sprintf(
+			"%s://%s@%s:%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			string(parsedURL.Path[1:]),
+		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
+		} else {
+			result = fmt.Sprintf("%s/", result)
+		}
+	case "sqlite3":
+		result = fmt.Sprintf(
+			"%s://%s@%s/%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			string(parsedURL.Path[1:]),
+		)
+		if len(parsedURL.RawQuery) > 0 {
+			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
+		}
+	default:
+		result = ""
+		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
+	}
+	return result, err
+}
+
+/*
+The BuildSenzingDatabaseURL method returns a parseable database URL based on a Senzing database URI.
+
+Input
+  - databaseURI: A string containing a database URI that is used in the Senzing engine configuration JSON document.
+
+Output
+  - databaseURL: A parseable URL.
+*/
+func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
+	var err error
+	switch {
+	case strings.HasPrefix(databaseURI, "mssql://"):
+		regExp := regexp.MustCompile(`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+):(?P<database>.+)/\?(?P<RawQuery>.+)`)
+		regExpMatches := regExp.FindStringSubmatch(databaseURI)
+		regExpFieldNames := regExp.SubexpNames()
+		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
+		if !hasRequiredKeys(aMap) {
+			return "", fmt.Errorf("cannot reconstruct mssql from %s", databaseURI)
+		}
+		resultURL := buildURL(aMap)
+		database, ok := aMap["database"]
+		if ok {
+			pathPattern := "/%s/"
+			resultURL.Path = fmt.Sprintf(pathPattern, database)
+		}
+		return resultURL.String(), err
+	case strings.HasPrefix(databaseURI, "mysql://"):
+		regExp := regexp.MustCompile(`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+)/\?schema=(?P<database>.+)`)
+		regExpMatches := regExp.FindStringSubmatch(databaseURI)
+		regExpFieldNames := regExp.SubexpNames()
+		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
+		if !hasRequiredKeys(aMap) {
+			return "", fmt.Errorf("cannot reconstruct mysql from %s", databaseURI)
+		}
+		resultURL := buildURL(aMap)
+		database, ok := aMap["database"]
+		if ok {
+			pathPattern := "/%s"
+			if strings.HasSuffix(databaseURI, "/") {
+				pathPattern = "/%s/"
+			}
+			resultURL.Path = fmt.Sprintf(pathPattern, database)
+		}
+		return resultURL.String(), err
+	case strings.HasPrefix(databaseURI, "oci://"):
+		regExp := regexp.MustCompile(`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)/\?((?P<RawQuery>.+))?`)
+
+		// (?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)(/?(?P<RawQuery>))?`)
+		regExpMatches := regExp.FindStringSubmatch(databaseURI)
+		regExpFieldNames := regExp.SubexpNames()
+		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
+		if !hasRequiredKeys(aMap) {
+			return "", fmt.Errorf("cannot reconstruct oci from %s", databaseURI)
+		}
+		resultURL := buildURL(aMap)
+		database, ok := aMap["database"]
+		if ok {
+			pathPattern := "/%s/"
+			resultURL.Path = fmt.Sprintf(pathPattern, database)
+		}
+		return resultURL.String(), err
+	case strings.HasPrefix(databaseURI, "postgresql://"):
+		index := strings.LastIndex(databaseURI, ":")
+		result := strings.TrimSuffix(databaseURI[:index]+"/"+databaseURI[index+1:], "/")
+		return result, err
+	case strings.HasPrefix(databaseURI, "sqlite3://"):
+		return databaseURI, err
+	default:
+		err = fmt.Errorf("unknown database schema: %s", databaseURI)
+	}
+	return "", err
+}
 
 /*
 The BuildSimpleSettingsUsingEnvVars method is a convenience method
@@ -102,12 +263,12 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 			return "", err
 		}
 	}
-	specificDatabaseURL, err := buildSpecificDatabaseURL(senzingDatabaseURL)
+	senzingDatabaseURI, err := BuildSenzingDatabaseURI(senzingDatabaseURL)
 	if err != nil {
 		return "", err
 	}
 
-	attributeMap["databaseURL"] = specificDatabaseURL
+	attributeMap["databaseURL"] = senzingDatabaseURI
 
 	// Add Environment Variables to the map, if not already specified in the map.
 
@@ -179,11 +340,11 @@ func VerifySettings(ctx context.Context, settings string) error {
 
 	// Check database URLs.
 
-	databaseURLs, err := parser.GetDatabaseURLs(ctx)
+	databaseURIs, err := parser.GetDatabaseURIs(ctx)
 	if err != nil {
 		return err
 	}
-	for _, value := range databaseURLs {
+	for _, value := range databaseURIs {
 		if len(value) == 0 {
 			return fmt.Errorf("SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://garage.senzing.com/go-helpers/errors")
 		}
@@ -250,81 +411,10 @@ func VerifySettings(ctx context.Context, settings string) error {
 // Private functions
 // ----------------------------------------------------------------------------
 
-func buildSpecificDatabaseURL(databaseURL string) (string, error) {
-	result := ""
-	parsedURL, err := url.Parse(databaseURL)
-	if err != nil {
-		return "", err
-	}
-	switch parsedURL.Scheme {
-	case "db2":
-		result = fmt.Sprintf(
-			"%s://%s@%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			string(parsedURL.Path[1:]),
-		)
-		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
-		}
-	case "mssql":
-		result = fmt.Sprintf(
-			"%s://%s@%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			string(parsedURL.Path[1:]),
-		)
-	case "mysql":
-		result = fmt.Sprintf(
-			"%s://%s@%s/?schema=%s%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			parsedURL.Host,
-			string(parsedURL.Path[1:]),
-			parsedURL.RawQuery,
-		)
-	case "oci":
-		result = fmt.Sprintf(
-			"%s://%s@%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			string(parsedURL.Path[1:]),
-		)
-	case "postgresql":
-		result = fmt.Sprintf(
-			"%s://%s@%s:%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			parsedURL.Host,
-			string(parsedURL.Path[1:]),
-		)
-		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
-		} else {
-			result = fmt.Sprintf("%s/", result)
-		}
-	case "sqlite3":
-		result = fmt.Sprintf(
-			"%s://%s@%s/%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			parsedURL.Host,
-			string(parsedURL.Path[1:]),
-		)
-		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
-		}
-	default:
-		result = ""
-		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
-	}
-	return result, err
-}
-
 func buildStruct(attributeMap map[string]string) SzConfiguration {
 	var result SzConfiguration
 
-	databaseURL, ok := attributeMap["databaseURL"]
+	databaseURI, ok := attributeMap["databaseURL"]
 	if !ok {
 		return result
 	}
@@ -339,7 +429,7 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 			SupportPath:  mapWithDefault(attributeMap, "supportPath", getSupportPath(senzingDirectory)),
 		},
 		SQL: SzConfigurationSQL{
-			Connection: databaseURL,
+			Connection: databaseURI,
 		},
 	}
 
@@ -351,6 +441,45 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 	return result
 }
 
+func buildURL(aMap map[string]string) *url.URL {
+	var username string
+	var password string
+	result := &url.URL{}
+	for key, value := range aMap {
+		switch key {
+		case "Scheme":
+			result.Scheme = value
+		case "Opaque":
+			result.Opaque = value
+		case "Host":
+			result.Host = value
+		case "Path":
+			result.Path = value
+		case "RawPath":
+			result.RawPath = value
+		case "RawQuery":
+			result.RawQuery = value
+		case "Fragment":
+			result.Fragment = value
+		case "RawFragment":
+			result.RawFragment = value
+		case "username":
+			username = value
+		case "password":
+			password = value
+		}
+	}
+
+	// Create url.Userinfo
+
+	if len(password) > 0 {
+		result.User = url.UserPassword(username, password)
+	} else if len(username) > 0 {
+		result.User = url.User(username)
+	}
+	return result
+}
+
 func getOsEnv(variableName string) (string, error) {
 	var err error
 	result, isSet := os.LookupEnv(variableName)
@@ -358,6 +487,36 @@ func getOsEnv(variableName string) (string, error) {
 		err = fmt.Errorf("environment variable not set: %s", variableName)
 	}
 	return result, err
+}
+
+func hasRequiredKeys(aMap map[string]string) bool {
+	result := true
+	requiredKeys := []string{
+		"database",
+		"Host",
+		"Scheme",
+		"username",
+	}
+	for _, requiredKey := range requiredKeys {
+		_, ok := aMap[requiredKey]
+		if !ok {
+			return false
+		}
+	}
+	return result
+}
+
+func mapNamesToMatches(names []string, matches []string) map[string]string {
+	result := map[string]string{}
+
+	for i, match := range matches {
+		result[names[i]] = match
+	}
+
+	// for i, name := range names {
+	// 	result[name] = matches[i]
+	// }
+	return result
 }
 
 func mapWithDefault(aMap map[string]string, key string, defaultValue string) string {
