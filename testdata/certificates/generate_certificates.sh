@@ -6,7 +6,13 @@ rm certificate-authority/*.pem
 rm client/*.pem
 rm server/*.pem
 
+# -----------------------------------------------------------------------------
+# Certificate Authority
+# -----------------------------------------------------------------------------
+
 echo "----- Generate Certificate Authority's self-signed certificate and private key."
+
+# Generate Certificate Authority private key and certificate signing request (CSR).
 
 openssl req \
     -days 365 \
@@ -32,9 +38,13 @@ openssl x509 \
     -noout \
     -text
 
-# Generate server's private key and certificate signing request (CSR).
+# -----------------------------------------------------------------------------
+# Server
+# -----------------------------------------------------------------------------
 
 echo "----- Generate server certificate."
+
+# Generate server's private key and certificate signing request (CSR).
 
 openssl req \
     -keyout server/private_key.pem \
@@ -70,9 +80,13 @@ openssl x509 \
     -noout \
     -text
 
-# Generate client's private key and certificate signing request (CSR).
+# -----------------------------------------------------------------------------
+# Client
+# -----------------------------------------------------------------------------
 
 echo "----- Generate client certificate."
+
+# Generate client's private key and certificate signing request (CSR).
 
 openssl req \
     -keyout client/private_key.pem \
