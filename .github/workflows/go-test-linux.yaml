@@ -1,6 +1,6 @@
 name: Go test linux
 
-on: [push]
+on: [push, workflow_dispatch]
 
 env:
   SENZING_LOG_LEVEL: TRACE
@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go: ["1.21"]
+        go: ["1.24"]
         os: [ubuntu-latest]
         senzingsdk-version: [staging-v4]
 
@@ -42,10 +42,14 @@ jobs:
           senzingsdk-repository-path: ${{ secrets.SENZING_APT_BETA_STAGING_REPOSITORY_URL }}
 
       - name: Copy /etc files
-        run: sudo mkdir -p /etc/opt/senzing && sudo cp testdata/senzing-license/g2.lic /etc/opt/senzing/g2.lic
+        run: |
+          sudo mkdir -p /etc/opt/senzing
+          sudo cp testdata/senzing-license/g2.lic /etc/opt/senzing/g2.lic
 
       - name: Copy test database files
-        run: mkdir -p /tmp/sqlite && cp testdata/sqlite/G2C.db /tmp/sqlite/
+        run: |
+          mkdir -p /tmp/sqlite
+          cp testdata/sqlite/G2C.db /tmp/sqlite/
 
       - name: Run go test without SENZING_PATH environment variable
         run: |
