@@ -167,8 +167,6 @@ func TestCopyFile_NoOverwrite(test *testing.T) {
 }
 
 func TestCopyFile_ToDirectoryWithOverwrite(test *testing.T) {
-	test.Parallel()
-
 	destinationDir := destinationDirectoryPath()
 	sourceFile, fileSize := sourceFilePath1()
 
