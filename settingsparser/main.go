@@ -54,11 +54,14 @@ const ComponentID = 6401
 
 func New(settings string) (SettingsParser, error) {
 	var err error
+
 	if !isJSON(settings) {
 		return nil, fmt.Errorf("incorrect JSON syntax in %s", settings)
 	}
+
 	result := &BasicSettingsParser{
 		Settings: settings,
 	}
+
 	return result, err
 }

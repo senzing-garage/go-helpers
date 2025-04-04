@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/senzing-garage/go-helpers/wraperror"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -31,10 +32,12 @@ func TestCopyFile_Basic1(test *testing.T) {
 
 	content, err := os.ReadFile(sourceFile)
 	testError(test, err)
+
 	expectedContent := string(content)
 
 	content, err = os.ReadFile(destinationFile)
 	testError(test, err)
+
 	actualContent := string(content)
 	assert.Equal(test, expectedContent, actualContent, "File contents of basic file 1 not as expected post CopyFile()")
 }
@@ -54,10 +57,12 @@ func TestCopyFile_Basic2(test *testing.T) {
 
 	content, err := os.ReadFile(sourceFile)
 	testError(test, err)
+
 	expectedContent := string(content)
 
 	content, err = os.ReadFile(destinationFile)
 	testError(test, err)
+
 	actualContent := string(content)
 	assert.Equal(test, expectedContent, actualContent, "File contents of basic file 2 not as expected post CopyFile()")
 }
@@ -80,10 +85,12 @@ func TestCopyFile_ToDirectory(test *testing.T) {
 
 	content, err := os.ReadFile(sourceFile)
 	testError(test, err)
+
 	expectedContent := string(content)
 
 	content, err = os.ReadFile(destinationFile)
 	testError(test, err)
+
 	actualContent := string(content)
 	assert.Equal(test, expectedContent, actualContent, "File contents of not as expected post CopyFile() to directory")
 }
@@ -99,6 +106,7 @@ func TestCopyFile_WithOverwrite(test *testing.T) {
 
 	content, err := os.ReadFile(sourceFile)
 	testError(test, err)
+
 	expectedContent := string(content)
 
 	createdFile, byteCount, err := CopyFile(sourceFile, destinationFile, true)
@@ -112,8 +120,14 @@ func TestCopyFile_WithOverwrite(test *testing.T) {
 
 	content, err = os.ReadFile(destinationFile)
 	testError(test, err)
+
 	actualContent := string(content)
-	assert.Equal(test, expectedContent, actualContent, "File contents of overwritten file not as expected post CopyFile()")
+	assert.Equal(
+		test,
+		expectedContent,
+		actualContent,
+		"File contents of overwritten file not as expected post CopyFile()",
+	)
 }
 
 func TestCopyFile_NoOverwrite(test *testing.T) {
@@ -134,6 +148,7 @@ func TestCopyFile_NoOverwrite(test *testing.T) {
 
 	content, err := os.ReadFile(destinationFile)
 	testError(test, err)
+
 	actualContent := string(content)
 	assert.Equal(test, expectedContent, actualContent,
 		"File contents not as expected post CopyFile() with no overwrite")
@@ -152,7 +167,6 @@ func TestCopyFile_ToDirectoryWithOverwrite(test *testing.T) {
 		// remove the file
 		err := os.Remove(destinationFile)
 		testError(test, err)
-
 	} else if !errors.Is(err, fs.ErrNotExist) {
 		// file exists, but we got a different error
 		testError(test, err)
@@ -163,21 +177,43 @@ func TestCopyFile_ToDirectoryWithOverwrite(test *testing.T) {
 
 	content, err := os.ReadFile(sourceFile)
 	testError(test, err)
+
 	expectedContent := string(content)
 
 	createdFile, byteCount, err := CopyFile(sourceFile, destinationDir, true)
 	testError(test, err)
-	assert.Equal(test, fileSize, byteCount, "Byte Count for CopyFile() to directory not as expected for overwritten file")
-	assert.Equal(test, destinationFile, createdFile, "Overwritten file path is not as expected for CopyFile() to directory")
+	assert.Equal(
+		test,
+		fileSize,
+		byteCount,
+		"Byte Count for CopyFile() to directory not as expected for overwritten file",
+	)
+	assert.Equal(
+		test,
+		destinationFile,
+		createdFile,
+		"Overwritten file path is not as expected for CopyFile() to directory",
+	)
 
 	stat, err := os.Stat(destinationFile)
 	testError(test, err)
-	assert.Equal(test, fileSize, stat.Size(), "File size of overwritten file not as expected post CopyFile() to directory")
+	assert.Equal(
+		test,
+		fileSize,
+		stat.Size(),
+		"File size of overwritten file not as expected post CopyFile() to directory",
+	)
 
 	content, err = os.ReadFile(destinationFile)
 	testError(test, err)
+
 	actualContent := string(content)
-	assert.Equal(test, expectedContent, actualContent, "File contents of overwritten file not as expected post CopyFile() to directory")
+	assert.Equal(
+		test,
+		expectedContent,
+		actualContent,
+		"File contents of overwritten file not as expected post CopyFile() to directory",
+	)
 }
 
 func TestCopyFile_ToDirectoryNoOverwrite(test *testing.T) {
@@ -193,7 +229,6 @@ func TestCopyFile_ToDirectoryNoOverwrite(test *testing.T) {
 		// remove the file
 		err := os.Remove(destinationFile)
 		testError(test, err)
-
 	} else if !errors.Is(err, fs.ErrNotExist) {
 		// file exists, but we got a different error
 		testError(test, err)
@@ -208,10 +243,16 @@ func TestCopyFile_ToDirectoryNoOverwrite(test *testing.T) {
 
 	stat, err := os.Stat(destinationFile)
 	testError(test, err)
-	assert.Equal(test, byteCount, stat.Size(), "File size not as expected post CopyFile() to directory with no overwrite")
+	assert.Equal(
+		test,
+		byteCount,
+		stat.Size(),
+		"File size not as expected post CopyFile() to directory with no overwrite",
+	)
 
 	content, err := os.ReadFile(destinationFile)
 	testError(test, err)
+
 	actualContent := string(content)
 	assert.Equal(test, expectedContent, actualContent,
 		"File contents not as expected post CopyFile() to directory with no overwrite")
@@ -278,12 +319,15 @@ func createTextFile(path string, text string) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to create file (%v): %v", path, err.Error())
 	}
+
 	defer source.Close()
+
 	byteCount, err := source.WriteString(text)
 	if err != nil {
 		return 0, fmt.Errorf("failed to write content (%v) to file (%v): %v",
 			text, path, err.Error())
 	}
+
 	return int64(byteCount), err
 }
 
@@ -292,8 +336,11 @@ func createTextFileN(path string, byteCount int64) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to create file (%v): %v", path, err.Error())
 	}
+
 	defer source.Close()
+
 	var index int64
+
 	var writeCount int64
 
 	for index = 0; index < byteCount; index++ {
@@ -302,12 +349,15 @@ func createTextFileN(path string, byteCount int64) (int64, error) {
 			return 0, fmt.Errorf("failed to write letter (%v) to file (%v): %v",
 				index, path, err.Error())
 		}
+
 		writeCount += int64(count)
 	}
+
 	if writeCount != byteCount {
 		return int64(writeCount), fmt.Errorf("wrote wrong number of bytes (%v) to file (%v)",
 			writeCount, path)
 	}
+
 	return int64(byteCount), err
 }
 
@@ -321,11 +371,14 @@ func TestMain(m *testing.M) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
 	code := m.Run()
+
 	err = teardown()
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	os.Exit(code)
 }
 
@@ -365,6 +418,7 @@ func setup() error {
 	if err != nil {
 		return err
 	}
+
 	_, err = createTextFileN(sourcePath2, fileSize2)
 	if err != nil {
 		return err
@@ -383,5 +437,5 @@ func teardown() error {
 			baseDir, err.Error())
 	}
 
-	return err
+	return wraperror.Errorf(err, "fileutil.teardown error: %w", err)
 }

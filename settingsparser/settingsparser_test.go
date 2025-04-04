@@ -182,6 +182,7 @@ func getTestObject(ctx context.Context, test *testing.T) SettingsParser {
 
 func getParser(ctx context.Context) SettingsParser {
 	_ = ctx
+
 	if settingsParserSingleton == nil {
 		settingsParserSingleton = &BasicSettingsParser{
 			Settings: `
@@ -199,6 +200,7 @@ func getParser(ctx context.Context) SettingsParser {
             `,
 		}
 	}
+
 	return settingsParserSingleton
 }
 

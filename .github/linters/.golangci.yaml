@@ -103,8 +103,8 @@ linters:
     # - varnamelen
     # - wastedassign
     # - whitespace
-    # - wrapcheck
-    # - wsl
+    - wrapcheck
+    - wsl
     - zerologlint
   exclusions:
     generated: lax

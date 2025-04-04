@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"sort"
 	"strings"
+
+	"github.com/senzing-garage/go-helpers/wraperror"
 )
 
 // ----------------------------------------------------------------------------
@@ -28,12 +30,15 @@ func Flatten(jsonText string, err error) string {
 		errorMap := map[string]any{}
 		errorMap["text"] = jsonText
 		errorMap["error"] = err.Error()
+
 		errorJSON, err := json.Marshal(errorMap)
 		if err != nil {
 			panic(err)
 		}
+
 		return string(errorJSON)
 	}
+
 	return jsonText
 }
 
@@ -69,7 +74,7 @@ func Normalize(jsonText string) (string, error) {
 
 	// check for an unmarshalling error
 	if err != nil {
-		return jsonText, err
+		return jsonText, wraperror.Errorf(err, "jsonutil.Normalize.Unmarshal error: %w", err)
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
@@ -80,7 +85,7 @@ func Normalize(jsonText string) (string, error) {
 	// marshall the parsed object back to text (bytes) and return the text and potential error
 	normalizedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(normalizedJSON), err
+	return string(normalizedJSON), wraperror.Errorf(err, "jsonutil.Normalize error: %w", err)
 }
 
 /*
@@ -103,7 +108,7 @@ func NormalizeAndSort(jsonText string) (string, error) {
 
 	// check for an unmarshalling error
 	if err != nil {
-		return jsonText, err
+		return jsonText, wraperror.Errorf(err, "jsonutil.NormalizeAndSort.Unmarshal error: %w", err)
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
@@ -117,7 +122,7 @@ func NormalizeAndSort(jsonText string) (string, error) {
 	// marshall the parsed object back to text (bytes) and return the text and potential error
 	normalizedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(normalizedJSON), err
+	return string(normalizedJSON), wraperror.Errorf(err, "jsonutil.NormalizeAndSort error: %w", err)
 }
 
 /*
@@ -135,6 +140,7 @@ func PrettyPrint(jsonText string, padding string) string {
 	if err := json.Indent(&prettyJSON, []byte(jsonText), "", padding); err != nil {
 		panic(err)
 	}
+
 	return prettyJSON.String()
 }
 
@@ -190,7 +196,7 @@ func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 
 	// check for an unmarshalling error
 	if err != nil {
-		return jsonText, err
+		return jsonText, wraperror.Errorf(err, "jsonutil.RedactWithMap.Unmarshal error: %w", err)
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
@@ -204,7 +210,7 @@ func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 	// marshall the parsed object back to text (bytes) and return the text and potential error
 	redactedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(redactedJSON), err
+	return string(redactedJSON), wraperror.Errorf(err, "jsonutil.RedactWithMap error: %w", err)
 }
 
 /*
@@ -225,6 +231,7 @@ func ReverseString(aString string) string {
 	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
 		runes[i], runes[j] = runes[j], runes[i]
 	}
+
 	return string(runes)
 }
 
@@ -256,7 +263,7 @@ func Strip(jsonText string, removeKeys ...string) (string, error) {
 
 	// check for an unmarshalling error
 	if err != nil {
-		return jsonText, err
+		return jsonText, wraperror.Errorf(err, "jsonutil.Strip.Unmarshal error: %w", err)
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
@@ -270,7 +277,7 @@ func Strip(jsonText string, removeKeys ...string) (string, error) {
 	// marshall the parsed object back to text (bytes) and return the text and potential error
 	modifiedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(modifiedJSON), err
+	return string(modifiedJSON), wraperror.Errorf(err, "jsonutil.Strip error: %w", err)
 }
 
 /*
@@ -310,19 +317,23 @@ func Truncate(jsonText string, lines int, removeKeys ...string) string {
 	}
 
 	var compactJSON bytes.Buffer
+
 	err = json.Compact(&compactJSON, []byte(normalizedAndSortedJSON))
 	if err != nil {
 		return jsonText
 	}
 
 	var indentedJSON bytes.Buffer
+
 	err = json.Indent(&indentedJSON, compactJSON.Bytes(), "", "")
 	if err != nil {
 		return jsonText
 	}
 
 	indentedSlices := strings.Split(indentedJSON.String(), "\n")
+
 	var resultSlices []string
+
 	for _, resultSlice := range indentedSlices {
 		resultSlices = append(resultSlices, strings.Replace(resultSlice, ": ", ":", 1))
 	}
@@ -335,6 +346,7 @@ func Truncate(jsonText string, lines int, removeKeys ...string) string {
 	default:
 		result = strings.Join(resultSlices[0:lines], "") + "..."
 	}
+
 	return result
 }
 
@@ -367,9 +379,6 @@ func redactValue(jsonValue any, redactMap map[string]any) {
 		redactObject(typedJSON, redactMap)
 	case []any:
 		redactArray(typedJSON, redactMap)
-	default:
-		// do nothing for JSON values that are not objects or arrays
-		// these values are already "sorted"
 	}
 }
 
@@ -385,9 +394,11 @@ func sortArray(jsonArray []any) {
 		if (jsonArray[i] == nil) && (jsonArray[j] == nil) {
 			return false
 		}
+
 		if (jsonArray[i] == nil) && (jsonArray[j] != nil) {
 			return true
 		}
+
 		if (jsonArray[i] != nil) && (jsonArray[j] == nil) {
 			return false
 		}
@@ -395,6 +406,7 @@ func sortArray(jsonArray []any) {
 		// otherwise marshal the value and compare the text
 		json1, _ := json.Marshal(jsonArray[i])
 		json2, _ := json.Marshal(jsonArray[j])
+
 		return (strings.Compare(string(json1), string(json2)) < 0)
 	})
 }
@@ -412,9 +424,6 @@ func sortValue(jsonValue any) {
 		sortObject(typedJSON)
 	case []any:
 		sortArray(typedJSON)
-	default:
-		// do nothing for JSON values that are not objects or arrays
-		// these values are already "sorted"
 	}
 }
 
@@ -443,8 +452,5 @@ func stripFieldsFromValue(jsonValue any, stripMap map[string]any) {
 		stripFieldsFromObject(typedJSON, stripMap)
 	case []any:
 		stripFieldsFromArray(typedJSON, stripMap)
-	default:
-		// do nothing for JSON values that are not objects or arrays
-		// these values are already "sorted"
 	}
 }

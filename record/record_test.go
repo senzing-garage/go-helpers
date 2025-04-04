@@ -8,7 +8,9 @@ import (
 // Test the NewRecord function
 func TestNewRecord_good(test *testing.T) {
 	jsonLine := `{"DATA_SOURCE": "ICIJ", "RECORD_ID": "24000001", "ENTITY_TYPE": "ADDRESS", "RECORD_TYPE": "ADDRESS", "icij_source": "BAHAMAS", "icij_type": "ADDRESS", "COUNTRIES": [{"COUNTRY_OF_ASSOCIATION": "BHS"}], "ADDR_FULL": "ANNEX FREDERICK & SHIRLEY STS, P.O. BOX N-4805, NASSAU, BAHAMAS", "REL_ANCHOR_DOMAIN": "ICIJ_ID", "REL_ANCHOR_KEY": "24000001"}`
+
 	record, err := NewRecord(jsonLine)
+
 	switch {
 	case err != nil:
 		test.Errorf("FAILED, received err: %s", err.Error())
@@ -60,10 +62,12 @@ func TestNewRecord_noDataSource(test *testing.T) {
 // Test the Validate function
 func TestValidate_good(test *testing.T) {
 	jsonLine := `{"DATA_SOURCE": "ICIJ", "RECORD_ID": "24000001", "ENTITY_TYPE": "ADDRESS", "RECORD_TYPE": "ADDRESS", "icij_source": "BAHAMAS", "icij_type": "ADDRESS", "COUNTRIES": [{"COUNTRY_OF_ASSOCIATION": "BHS"}], "ADDR_FULL": "ANNEX FREDERICK & SHIRLEY STS, P.O. BOX N-4805, NASSAU, BAHAMAS", "REL_ANCHOR_DOMAIN": "ICIJ_ID", "REL_ANCHOR_KEY": "24000001"}`
+
 	val, err := Validate(jsonLine)
 	if err != nil {
 		test.Errorf("FAILED, received err: %s", err.Error())
 	}
+
 	if !val {
 		test.Error("FAILED, expected JSON to validate.")
 	} else {
@@ -80,6 +84,7 @@ func TestValidate_noRecordId(test *testing.T) {
 	} else {
 		test.Error("FAILED, expected err.")
 	}
+
 	if val {
 		test.Error("FAILED, did NOT expected JSON to validate.")
 	} else {
@@ -96,6 +101,7 @@ func TestValidate_noDatasource(test *testing.T) {
 	} else {
 		test.Error("FAILED, expected err.")
 	}
+
 	if val {
 		test.Error("FAILED, did NOT expected JSON to validate.")
 	} else {
@@ -112,6 +118,7 @@ func TestValidate_invalidJson(test *testing.T) {
 	} else {
 		test.Error("FAILED, expected err.")
 	}
+
 	if val {
 		test.Error("FAILED, did NOT expected JSON to validate.")
 	} else {

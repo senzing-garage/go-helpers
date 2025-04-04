@@ -12,22 +12,25 @@ import (
 )
 
 func main() {
-
 	if len(os.Args) > 2 && os.Args[1] == "-j" {
 		args := os.Args[2:]
 
 		for _, jsonText := range args {
 			normalized, err := jsonutil.Normalize(jsonText)
 			failOnError(err)
+
 			normSorted, _ := jsonutil.NormalizeAndSort(jsonText)
+
 			fmt.Println("- - - - - - - - - - - - - - - - - - - - ")
 			fmt.Println(normalized)
 			fmt.Println()
 			fmt.Println(normSorted)
 			fmt.Println()
 		}
+
 		return
 	}
+
 	ctx := context.TODO()
 
 	// ------------------------------------------------------------------------
@@ -60,7 +63,6 @@ func main() {
 	iniParams2, err := settings.BuildSimpleSettingsUsingMap(attributeMap)
 	failOnError(err)
 	fmt.Println(iniParams2)
-
 }
 
 // ----------------------------------------------------------------------------

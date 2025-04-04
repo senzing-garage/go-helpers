@@ -17,8 +17,10 @@ type Debug interface {
 
 func New(level int) (Debug, error) {
 	var err error
+
 	result := &BasicDebug{
 		MinimumDebugLevel: level,
 	}
+
 	return result, err
 }

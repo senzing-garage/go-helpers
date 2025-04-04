@@ -148,6 +148,7 @@ func TestBuildSimpleSettingsUsingMap(test *testing.T) {
 func TestBuildSimpleSettingsUsingMap_using_SENZING_TOOLS_ENGINE_CONFIGURATION_JSON(test *testing.T) {
 	expected := "test value"
 	test.Setenv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON", expected)
+
 	actual, err := BuildSimpleSettingsUsingMap(map[string]string{})
 	require.NoError(test, err)
 	assert.Equal(test, expected, actual)
@@ -156,6 +157,7 @@ func TestBuildSimpleSettingsUsingMap_using_SENZING_TOOLS_ENGINE_CONFIGURATION_JS
 func TestBuildSimpleSettingsUsingMap_using_SENZING_ENGINE_CONFIGURATION_JSON(test *testing.T) {
 	expected := "test value"
 	test.Setenv("SENZING_ENGINE_CONFIGURATION_JSON", expected)
+
 	actual, err := BuildSimpleSettingsUsingMap(map[string]string{})
 	require.NoError(test, err)
 	assert.Equal(test, expected, actual)
@@ -165,6 +167,7 @@ func TestBuildSimpleSettingsUsingMap_using_SENZING_TOOLS_LICENSE_STRING_BASE64(t
 	ctx := context.TODO()
 	expected := "A1B2C3D4"
 	test.Setenv("SENZING_TOOLS_LICENSE_STRING_BASE64", expected)
+
 	actual, err := BuildSimpleSettingsUsingMap(map[string]string{})
 	require.NoError(test, err)
 	parsedActual, err := settingsparser.New(actual)
@@ -176,6 +179,7 @@ func TestBuildSimpleSettingsUsingMap_using_SENZING_TOOLS_LICENSE_STRING_BASE64(t
 
 func TestBuildSimpleSettingsUsingMap_ParseResult(test *testing.T) {
 	ctx := context.TODO()
+
 	for _, testCase := range testCases {
 		if len(testCase.databaseURLPath) > 0 {
 			test.Run(testCase.name, func(test *testing.T) {
@@ -201,6 +205,7 @@ func TestGetSenzingPath(test *testing.T) {
 
 func TestVerifySettings(test *testing.T) {
 	ctx := context.TODO()
+
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
 			aMap := buildMap(testCase)
@@ -249,21 +254,26 @@ func buildMap(testCase testCaseMetadata) map[string]string {
 	if len(testCase.configPath) > 0 {
 		result["configPath"] = testCase.configPath
 	}
+
 	if len(testCase.databaseURL) > 0 {
 		result["databaseURL"] = testCase.databaseURL
 	}
+
 	if len(testCase.licenseStringBase64) > 0 {
 		result["licenseStringBase64"] = testCase.licenseStringBase64
 	}
+
 	if len(testCase.resourcePath) > 0 {
 		result["resourcePath"] = testCase.resourcePath
 	}
+
 	if len(testCase.senzingDirectory) > 0 {
 		result["senzingDirectory"] = testCase.senzingDirectory
 	}
+
 	if len(testCase.supportPath) > 0 {
 		result["supportPath"] = testCase.supportPath
 	}
-	return result
 
+	return result
 }

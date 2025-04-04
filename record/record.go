@@ -2,6 +2,8 @@ package record
 
 import (
 	"encoding/json"
+
+	"github.com/senzing-garage/go-helpers/wraperror"
 )
 
 // ----------------------------------------------------------------------------
@@ -24,16 +26,22 @@ type Record struct {
 // Returns a valid Record or an error if validation fails
 func NewRecord(line string) (*Record, error) {
 	var record Record
+
 	err := json.Unmarshal([]byte(line), &record)
 	if err == nil {
 		record.JSON = line
 		_, validationErr := ValidateRecord(record)
+
 		if validationErr == nil {
 			return &record, nil
 		}
+
 		return &record, validationErr
 	}
-	return &record, szerrors.NewError(3000)
+
+	err = szerrors.NewError(3000)
+
+	return &record, wraperror.Errorf(err, "record.NewRecord error: %w", err)
 }
 
 // ----------------------------------------------------------------------------
@@ -43,12 +51,16 @@ func NewRecord(line string) (*Record, error) {
 // and it has an Id field
 func Validate(line string) (bool, error) {
 	var record Record
+
 	valid := json.Unmarshal([]byte(line), &record) == nil
 	if valid {
 		return ValidateRecord(record)
 	}
 	//TODO: should we return the actual parse error???
-	return valid, szerrors.NewError(3000)
+
+	err := szerrors.NewError(3000)
+
+	return valid, wraperror.Errorf(err, "record.Validate error: %w", err)
 }
 
 // ----------------------------------------------------------------------------
@@ -56,12 +68,16 @@ func Validate(line string) (bool, error) {
 // A Record is only valid if it has a DataSource field
 // and it has an Id field
 func ValidateRecord(record Record) (bool, error) {
-
+	var err error
 	if record.DataSource == "" {
-		return false, szerrors.NewError(3001)
+		err = szerrors.NewError(3001)
+		return false, wraperror.Errorf(err, "record.ValidateRecord.DataSource error: %w", err)
 	}
+
 	if record.ID == "" {
-		return false, szerrors.NewError(3002)
+		err = szerrors.NewError(3002)
+		return false, wraperror.Errorf(err, "record.ValidateRecord.Record.ID error: %w", err)
 	}
-	return true, nil
+
+	return true, wraperror.Errorf(err, "record.ValidateRecord error: %w", err)
 }

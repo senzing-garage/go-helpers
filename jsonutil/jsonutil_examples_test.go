@@ -27,6 +27,7 @@ func ExampleFlatten_withError() {
 func ExampleIsJSON() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true}`
+
 	validJSON := IsJSON(jsonText)
 	if validJSON {
 		fmt.Println(jsonText + " is valid JSON")
@@ -45,10 +46,12 @@ func ExampleNormalize() {
 		"age": 35,
 		"member": true
 	}`
+
 	normalizedJSON, err := Normalize(jsonText)
 	if err != nil {
 		fmt.Println("An error occurred: " + err.Error())
 	}
+
 	fmt.Println(normalizedJSON)
 	// Output: {"age":35,"givenName":"Joe","member":true,"surname":"Schmoe"}
 }
@@ -63,10 +66,12 @@ func ExampleNormalizeAndSort() {
 		"member": true,
 		"nicknames": ["Joseph", "Joey"]
 	}`
+
 	normalizedJSON, err := NormalizeAndSort(jsonText)
 	if err != nil {
 		fmt.Println("An error occurred: " + err.Error())
 	}
+
 	fmt.Println(normalizedJSON)
 	// Output: {"age":35,"givenName":"Joe","member":true,"nicknames":["Joey","Joseph"],"surname":"Schmoe"}
 }
@@ -74,6 +79,7 @@ func ExampleNormalizeAndSort() {
 func ExamplePrettyPrint() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true,"ssn": "111-22-3333"}`
+
 	fmt.Println(PrettyPrint(jsonText, "    "))
 	// Output:
 	// {
@@ -95,10 +101,12 @@ func ExampleRedact() {
 		"member": true,
 		"ssn": "111-22-3333"
 	}`
+
 	redactedJSON, err := Redact(jsonText, "ssn")
 	if err != nil {
 		fmt.Println("An error occurred: " + err.Error())
 	}
+
 	fmt.Println(redactedJSON)
 	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":null,"surname":"Schmoe"}
 }
@@ -113,10 +121,12 @@ func ExampleRedactWithMap() {
 		"member": true,
 		"ssn": "111-22-3333"
 	}`
+
 	redactedJSON, err := RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"})
 	if err != nil {
 		fmt.Println("An error occurred: " + err.Error())
 	}
+
 	fmt.Println(redactedJSON)
 	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":"***-**-****","surname":"Schmoe"}
 }
@@ -139,10 +149,12 @@ func ExampleStrip() {
 		"member": true,
 		"ssn": "111-22-3333"
 	}`
+
 	redactedJSON, err := Strip(jsonText, "ssn")
 	if err != nil {
 		fmt.Println("An error occurred: " + err.Error())
 	}
+
 	fmt.Println(redactedJSON)
 	// Output: {"age":35,"givenName":"Joe","member":true,"surname":"Schmoe"}
 }
@@ -157,6 +169,7 @@ func ExampleTruncate() {
 		"member": true,
 		"ssn": "111-22-3333"
 	}`
+
 	fmt.Println(Truncate(jsonText, 5, "age"))
 	// Output: {"givenName":"Joe","member":true,"ssn":"111-22-3333","surname":"Schmoe"...
 }
