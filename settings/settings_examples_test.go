@@ -1,9 +1,11 @@
 //go:build linux
 
-package settings
+package settings_test
 
 import (
 	"fmt"
+
+	"github.com/senzing-garage/go-helpers/settings"
 )
 
 // ----------------------------------------------------------------------------
@@ -15,7 +17,7 @@ func ExampleBuildSimpleSettingsUsingMap() {
 		"databaseURL": "postgresql://username:password@hostname:5432/G2",
 	}
 
-	result, err := BuildSimpleSettingsUsingMap(aMap)
+	result, err := settings.BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -29,7 +31,7 @@ func ExampleBuildSimpleSettingsUsingMap_oci() {
 		"databaseURL": "oci://username:password@hostname:1521/G2",
 	}
 
-	result, err := BuildSimpleSettingsUsingMap(aMap)
+	result, err := settings.BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -43,7 +45,7 @@ func ExampleBuildSimpleSettingsUsingMap_mssql() {
 		"databaseURL": "mssql://username:password@hostname:1433/G2",
 	}
 
-	result, err := BuildSimpleSettingsUsingMap(aMap)
+	result, err := settings.BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -57,7 +59,7 @@ func ExampleBuildSimpleSettingsUsingMap_mysql() {
 		"databaseURL": "mysql://username:password@hostname:3306/G2",
 	}
 
-	result, err := BuildSimpleSettingsUsingMap(aMap)
+	result, err := settings.BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -71,7 +73,7 @@ func ExampleBuildSimpleSettingsUsingMap_postgresql() {
 		"databaseURL": "postgresql://username:password@hostname:5432/G2",
 	}
 
-	result, err := BuildSimpleSettingsUsingMap(aMap)
+	result, err := settings.BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -85,7 +87,7 @@ func ExampleBuildSimpleSettingsUsingMap_postgresqlWithSchema() {
 		"databaseURL": "postgresql://username:password@hostname:5432/G2/?schema=schemaname",
 	}
 
-	result, err := BuildSimpleSettingsUsingMap(aMap)
+	result, err := settings.BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -98,7 +100,7 @@ func ExampleBuildSimpleSettingsUsingMap_sqlite() {
 		"databaseURL": "sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db",
 	}
 
-	result, err := BuildSimpleSettingsUsingMap(aMap)
+	result, err := settings.BuildSimpleSettingsUsingMap(aMap)
 	if err != nil {
 		fmt.Println(err)
 	}

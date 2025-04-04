@@ -1,6 +1,6 @@
 //go:build windows
 
-package settings
+package settings_test
 
 import (
 	"fmt"

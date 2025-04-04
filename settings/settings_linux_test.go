@@ -1,6 +1,6 @@
 //go:build linux
 
-package settings
+package settings_test
 
 var testCasesForOsArch = []testCaseMetadata{
 	{

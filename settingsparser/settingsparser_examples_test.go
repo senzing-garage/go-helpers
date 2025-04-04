@@ -1,8 +1,10 @@
-package settingsparser
+package settingsparser_test
 
 import (
 	"context"
 	"fmt"
+
+	"github.com/senzing-garage/go-helpers/settingsparser"
 )
 
 // ----------------------------------------------------------------------------
@@ -67,7 +69,7 @@ func ExampleBasicSettingsParser_GetSupportPath() {
 
 func ExampleBasicSettingsParser_RedactedJSON_single() {
 	ctx := context.TODO()
-	parser := &BasicSettingsParser{
+	parser := &settingsparser.BasicSettingsParser{
 		Settings: `
         {
             "PIPELINE": {
@@ -127,7 +129,7 @@ func ExampleBasicSettingsParser_RedactedJSON_multiple() {
         }
         `
 
-	parser, err := New(settings)
+	parser, err := settingsparser.New(settings)
 	if err != nil {
 		fmt.Println(err)
 	}

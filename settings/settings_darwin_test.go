@@ -1,6 +1,6 @@
 //go:build darwin
 
-package settings
+package settings_test
 
 import (
 	"fmt"

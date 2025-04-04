@@ -1,7 +1,6 @@
 package getenv_test
 
 import (
-	"os"
 	"testing"
 
 	"github.com/senzing-garage/go-helpers/getenv"
@@ -14,7 +13,7 @@ import (
 
 func TestHelpers_GetEnv(test *testing.T) {
 	expected := "EXPECTED_VALUE"
-	os.Setenv("TEST_ENV_VAR", expected)
+	test.Setenv("TEST_ENV_VAR", expected)
 
 	actual := getenv.GetEnv("TEST_ENV_VAR", "DEFAULT_VALUE")
 	require.Equal(test, expected, actual)

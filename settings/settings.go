@@ -31,7 +31,7 @@ Output
   - A string containing a database URI that can be used in the Senzing engine configuration JSON document.
 */
 func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
-	result := ""
+	var result string
 
 	parsedURL, err := url.Parse(databaseURL)
 	if err != nil {
@@ -46,7 +46,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 				parsedURL.Scheme,
 				parsedURL.User,
 				parsedURL.Host,
-				string(parsedURL.Path[1:]),
+				parsedURL.Path[1:],
 				parsedURL.Query().Encode(),
 			)
 		} else {
@@ -54,7 +54,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 				"%s://%s@%s",
 				parsedURL.Scheme,
 				parsedURL.User,
-				string(parsedURL.Path[1:]),
+				parsedURL.Path[1:],
 			)
 		}
 	case "mysql":
@@ -63,7 +63,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 			parsedURL.Scheme,
 			parsedURL.User,
 			parsedURL.Host,
-			string(parsedURL.Path[1:]),
+			parsedURL.Path[1:],
 			parsedURL.RawQuery,
 		)
 	case "oci":
@@ -72,7 +72,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 			parsedURL.Scheme,
 			parsedURL.User,
 			parsedURL.Host,
-			string(parsedURL.Path[1:]),
+			parsedURL.Path[1:],
 		)
 		if len(parsedURL.RawQuery) > 0 {
 			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
@@ -83,7 +83,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 			parsedURL.Scheme,
 			parsedURL.User,
 			parsedURL.Host,
-			string(parsedURL.Path[1:]),
+			parsedURL.Path[1:],
 		)
 		if len(parsedURL.RawQuery) > 0 {
 			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
@@ -96,7 +96,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 			parsedURL.Scheme,
 			parsedURL.User,
 			parsedURL.Host,
-			string(parsedURL.Path[1:]),
+			parsedURL.Path[1:],
 		)
 		if len(parsedURL.RawQuery) > 0 {
 			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
@@ -485,8 +485,8 @@ func VerifySettings(ctx context.Context, settings string) error {
 func buildStruct(attributeMap map[string]string) SzConfiguration {
 	var result SzConfiguration
 
-	databaseURI, ok := attributeMap["databaseURL"]
-	if !ok {
+	databaseURI, isOK := attributeMap["databaseURL"]
+	if !isOK {
 		return result
 	}
 
@@ -505,8 +505,8 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 		},
 	}
 
-	licenseStringBase64, ok := attributeMap["licenseStringBase64"]
-	if ok {
+	licenseStringBase64, isOK := attributeMap["licenseStringBase64"]
+	if isOK {
 		result.Pipeline.LicenseStringBase64 = licenseStringBase64
 	}
 

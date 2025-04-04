@@ -1,9 +1,11 @@
-package fileutil
+package fileutil_test
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/senzing-garage/go-helpers/fileutil"
 )
 
 func ExampleCopyFile() {
@@ -19,7 +21,7 @@ func ExampleCopyFile() {
 	targetFilePath := filepath.Join(os.TempDir(), "target-file.txt")
 
 	// copy the file
-	createdFile, byteCount, err := CopyFile(sourceFilePath, targetFilePath, true)
+	createdFile, byteCount, err := fileutil.CopyFile(sourceFilePath, targetFilePath, true)
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
@@ -42,7 +44,7 @@ func ExampleCopyFile_toDirectory() {
 	targetDirectory, _ := os.MkdirTemp("", "target-directory-*")
 
 	// copy the file
-	createdFile, byteCount, err := CopyFile(sourceFilePath, targetDirectory, true)
+	createdFile, byteCount, err := fileutil.CopyFile(sourceFilePath, targetDirectory, true)
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {

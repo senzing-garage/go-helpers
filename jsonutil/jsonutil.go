@@ -389,23 +389,23 @@ func sortArray(jsonArray []any) {
 	}
 
 	// now sort the array itself
-	sort.Slice(jsonArray, func(i, j int) bool {
+	sort.Slice(jsonArray, func(iIndex, jIndex int) bool {
 		// special case JSON null values
-		if (jsonArray[i] == nil) && (jsonArray[j] == nil) {
+		if (jsonArray[iIndex] == nil) && (jsonArray[jIndex] == nil) {
 			return false
 		}
 
-		if (jsonArray[i] == nil) && (jsonArray[j] != nil) {
+		if (jsonArray[iIndex] == nil) && (jsonArray[jIndex] != nil) {
 			return true
 		}
 
-		if (jsonArray[i] != nil) && (jsonArray[j] == nil) {
+		if (jsonArray[iIndex] != nil) && (jsonArray[jIndex] == nil) {
 			return false
 		}
 
 		// otherwise marshal the value and compare the text
-		json1, _ := json.Marshal(jsonArray[i])
-		json2, _ := json.Marshal(jsonArray[j])
+		json1, _ := json.Marshal(jsonArray[iIndex])
+		json2, _ := json.Marshal(jsonArray[jIndex])
 
 		return (strings.Compare(string(json1), string(json2)) < 0)
 	})

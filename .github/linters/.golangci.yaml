@@ -92,17 +92,17 @@ linters:
     # - tagliatelle
     - testableexamples
     - testifylint
-    # - testpackage
-    # - thelper
+    - testpackage
+    - thelper
     - tparallel
-    # - unconvert
-    # - unparam
+    - unconvert
+    - unparam
     - unused
     - usestdlibvars
-    # - usetesting
-    # - varnamelen
-    # - wastedassign
-    # - whitespace
+    - usetesting
+    - varnamelen
+    - wastedassign
+    - whitespace
     - wrapcheck
     - wsl
     - zerologlint

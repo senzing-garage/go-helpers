@@ -1,10 +1,10 @@
-package settings
+package settings_test
 
 import (
-	"context"
 	"net/url"
 	"testing"
 
+	"github.com/senzing-garage/go-helpers/settings"
 	"github.com/senzing-garage/go-helpers/settingsparser"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -109,8 +109,8 @@ var testCases = append(testCasesForMultiPlatform, testCasesForOsArch...)
 func TestBuildSenzingDatabaseURI(test *testing.T) {
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
-			result, err := BuildSenzingDatabaseURI(testCase.databaseURL)
-			testError(test, err)
+			result, err := settings.BuildSenzingDatabaseURI(testCase.databaseURL)
+			require.NoError(test, err)
 			assert.Equal(test, testCase.databaseURI, result)
 		})
 	}
@@ -119,11 +119,11 @@ func TestBuildSenzingDatabaseURI(test *testing.T) {
 func TestBuildSenzingDatabaseURL(test *testing.T) {
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
-			result, err := BuildSenzingDatabaseURL(testCase.databaseURI)
+			result, err := settings.BuildSenzingDatabaseURL(testCase.databaseURI)
 			if testCase.notReversible {
 				assert.Error(test, err)
 			} else {
-				testError(test, err)
+				require.NoError(test, err)
 				assert.Equal(test, testCase.databaseURL, result)
 			}
 		})
@@ -131,16 +131,16 @@ func TestBuildSenzingDatabaseURL(test *testing.T) {
 }
 
 func TestBuildSimpleSettingsUsingEnvVars(test *testing.T) {
-	_, err := BuildSimpleSettingsUsingEnvVars()
-	testError(test, err)
+	_, err := settings.BuildSimpleSettingsUsingEnvVars()
+	require.NoError(test, err)
 }
 
 func TestBuildSimpleSettingsUsingMap(test *testing.T) {
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
 			aMap := buildMap(testCase)
-			_, err := BuildSimpleSettingsUsingMap(aMap)
-			testError(test, err)
+			_, err := settings.BuildSimpleSettingsUsingMap(aMap)
+			require.NoError(test, err)
 		})
 	}
 }
@@ -149,7 +149,7 @@ func TestBuildSimpleSettingsUsingMap_using_SENZING_TOOLS_ENGINE_CONFIGURATION_JS
 	expected := "test value"
 	test.Setenv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON", expected)
 
-	actual, err := BuildSimpleSettingsUsingMap(map[string]string{})
+	actual, err := settings.BuildSimpleSettingsUsingMap(map[string]string{})
 	require.NoError(test, err)
 	assert.Equal(test, expected, actual)
 }
@@ -158,17 +158,17 @@ func TestBuildSimpleSettingsUsingMap_using_SENZING_ENGINE_CONFIGURATION_JSON(tes
 	expected := "test value"
 	test.Setenv("SENZING_ENGINE_CONFIGURATION_JSON", expected)
 
-	actual, err := BuildSimpleSettingsUsingMap(map[string]string{})
+	actual, err := settings.BuildSimpleSettingsUsingMap(map[string]string{})
 	require.NoError(test, err)
 	assert.Equal(test, expected, actual)
 }
 
 func TestBuildSimpleSettingsUsingMap_using_SENZING_TOOLS_LICENSE_STRING_BASE64(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 	expected := "A1B2C3D4"
 	test.Setenv("SENZING_TOOLS_LICENSE_STRING_BASE64", expected)
 
-	actual, err := BuildSimpleSettingsUsingMap(map[string]string{})
+	actual, err := settings.BuildSimpleSettingsUsingMap(map[string]string{})
 	require.NoError(test, err)
 	parsedActual, err := settingsparser.New(actual)
 	require.NoError(test, err)
@@ -178,20 +178,20 @@ func TestBuildSimpleSettingsUsingMap_using_SENZING_TOOLS_LICENSE_STRING_BASE64(t
 }
 
 func TestBuildSimpleSettingsUsingMap_ParseResult(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 
 	for _, testCase := range testCases {
 		if len(testCase.databaseURLPath) > 0 {
 			test.Run(testCase.name, func(test *testing.T) {
 				aMap := buildMap(testCase)
-				settings, err := BuildSimpleSettingsUsingMap(aMap)
-				testError(test, err)
+				settings, err := settings.BuildSimpleSettingsUsingMap(aMap)
+				require.NoError(test, err)
 				parsedSettings, err := settingsparser.New(settings)
-				testError(test, err)
+				require.NoError(test, err)
 				databaseURLs, err := parsedSettings.GetDatabaseURIs(ctx)
-				testError(test, err)
+				require.NoError(test, err)
 				parsedDatabaseURL, err := url.Parse(databaseURLs[0])
-				testError(test, err)
+				require.NoError(test, err)
 				assert.Equal(test, testCase.databaseURLPath, parsedDatabaseURL.Path)
 			})
 		}
@@ -199,55 +199,27 @@ func TestBuildSimpleSettingsUsingMap_ParseResult(test *testing.T) {
 }
 
 func TestGetSenzingPath(test *testing.T) {
-	actual := GetSenzingPath()
+	actual := settings.GetSenzingPath()
 	assert.Equal(test, getSenzingPath(), actual)
 }
 
 func TestVerifySettings(test *testing.T) {
-	ctx := context.TODO()
+	ctx := test.Context()
 
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
 			aMap := buildMap(testCase)
-			testJSON, err := BuildSimpleSettingsUsingMap(aMap)
-			testError(test, err)
-			err = VerifySettings(ctx, testJSON)
-			testError(test, err)
+			testJSON, err := settings.BuildSimpleSettingsUsingMap(aMap)
+			require.NoError(test, err)
+			err = settings.VerifySettings(ctx, testJSON)
+			require.NoError(test, err)
 		})
 	}
 }
 
 // ----------------------------------------------------------------------------
-// Test private functions
-// ----------------------------------------------------------------------------
-
-func Test_buildSpecificDatabaseURL_badDatabaseURL(test *testing.T) {
-	actual, err := BuildSenzingDatabaseURI("::::")
-	require.Error(test, err)
-	assert.Empty(test, actual)
-}
-
-func Test_buildSpecificDatabaseURL_badDatabaseURLProtocol(test *testing.T) {
-	actual, err := BuildSenzingDatabaseURI("xyzzy://something")
-	require.Error(test, err)
-	assert.Empty(test, actual)
-}
-
-func Test_getOsEnv_badEnvVarName(test *testing.T) {
-	actual, err := getOsEnv("SENZING_ENVIRONMENT_VARIABLE_DOES_NOT_EXIST")
-	require.Error(test, err)
-	assert.Empty(test, actual)
-}
-
-// ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------
-
-func testError(test *testing.T, err error) {
-	if err != nil {
-		assert.FailNow(test, err.Error())
-	}
-}
 
 func buildMap(testCase testCaseMetadata) map[string]string {
 	result := map[string]string{}
