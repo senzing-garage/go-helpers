@@ -12,6 +12,8 @@ import (
 // ----------------------------------------------------------------------------
 
 func TestLoadX509KeyPair_unencrypted(test *testing.T) {
+	test.Parallel()
+
 	certFile := "../testdata/certificates/client/certificate.pem"
 	keyFile := "../testdata/certificates/client/private_key.pem"
 	password := ""

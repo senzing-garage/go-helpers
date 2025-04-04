@@ -4,7 +4,6 @@ package tls
 
 import (
 	"crypto/tls"
-	"fmt"
 	"os"
 	"os/exec"
 
@@ -31,7 +30,7 @@ func loadX509KeyPairWithPassword(certFile string, keyFile string, password strin
 		return tlsCertificate, wraperror.Errorf(err, "tls.loadX509KeyPairWithPassword.exec.LookPath error: %w", err)
 	}
 
-	passin := fmt.Sprintf("pass:%s", password)
+	passin := "pass:" + password
 	cmd := exec.Command(path, "rsa", "-in", keyFile, "-out", tmpFile.Name(), "-passin", passin)
 
 	_, err = cmd.Output()

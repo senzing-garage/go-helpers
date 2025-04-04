@@ -12,6 +12,8 @@ import (
 // ----------------------------------------------------------------------------
 
 func TestDebug_Print_0(test *testing.T) {
+	test.Parallel()
+
 	debugger, err := debug.New(0)
 	require.NoError(test, err)
 	debugger.Print(1, "Should not print level 1\n")
@@ -21,6 +23,8 @@ func TestDebug_Print_0(test *testing.T) {
 }
 
 func TestDebug_Print_5(test *testing.T) {
+	test.Parallel()
+
 	debugger, err := debug.New(5)
 	require.NoError(test, err)
 	debugger.Print(1, "Should not print level 1\n")
@@ -30,6 +34,8 @@ func TestDebug_Print_5(test *testing.T) {
 }
 
 func TestDebug_Print_10(test *testing.T) {
+	test.Parallel()
+
 	debugger, err := debug.New(10)
 	require.NoError(test, err)
 	debugger.Print(1, "Should not print level 1\n")
@@ -39,6 +45,8 @@ func TestDebug_Print_10(test *testing.T) {
 }
 
 func TestDebug_Printf_0(test *testing.T) {
+	test.Parallel()
+
 	debugger, err := debug.New(0)
 	require.NoError(test, err)
 	debugger.Printf(1, "Should not print level %d\n", 1)
@@ -48,6 +56,8 @@ func TestDebug_Printf_0(test *testing.T) {
 }
 
 func TestDebug_Printf_5(test *testing.T) {
+	test.Parallel()
+
 	debugger, err := debug.New(5)
 	require.NoError(test, err)
 	debugger.Printf(1, "Should not print level %d\n", 1)
@@ -57,6 +67,8 @@ func TestDebug_Printf_5(test *testing.T) {
 }
 
 func TestDebug_Printf_10(test *testing.T) {
+	test.Parallel()
+
 	debugger, err := debug.New(10)
 	require.NoError(test, err)
 	debugger.Printf(1, "Should not print level %d\n", 1)
@@ -66,6 +78,8 @@ func TestDebug_Printf_10(test *testing.T) {
 }
 
 func TestDebug_Println_0(test *testing.T) {
+	test.Parallel()
+
 	debugger, err := debug.New(0)
 	require.NoError(test, err)
 	debugger.Println(1, "Should not print level 1")
@@ -75,6 +89,8 @@ func TestDebug_Println_0(test *testing.T) {
 }
 
 func TestDebug_Println_5(test *testing.T) {
+	test.Parallel()
+
 	debugger, err := debug.New(5)
 	require.NoError(test, err)
 	debugger.Println(1, "Should not print level 1")
@@ -84,6 +100,8 @@ func TestDebug_Println_5(test *testing.T) {
 }
 
 func TestDebug_Println_10(test *testing.T) {
+	test.Parallel()
+
 	debugger, err := debug.New(10)
 	require.NoError(test, err)
 	debugger.Println(1, "Should not print level 1")

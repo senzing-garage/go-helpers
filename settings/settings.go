@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -15,6 +16,10 @@ import (
 
 	"github.com/senzing-garage/go-helpers/settingsparser"
 	"github.com/senzing-garage/go-helpers/wraperror"
+)
+
+const (
+	pathPattern = "/%s/"
 )
 
 // ----------------------------------------------------------------------------
@@ -88,7 +93,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 		if len(parsedURL.RawQuery) > 0 {
 			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
 		} else {
-			result = fmt.Sprintf("%s/", result)
+			result += "/"
 		}
 	case "sqlite3":
 		result = fmt.Sprintf(
@@ -138,7 +143,6 @@ func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
 
 		database, ok := aMap["database"]
 		if ok {
-			pathPattern := "/%s/"
 			resultURL.Path = fmt.Sprintf(pathPattern, database)
 		}
 
@@ -163,12 +167,12 @@ func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
 
 		database, ok := aMap["database"]
 		if ok {
-			pathPattern := "/%s"
+			localPathPattern := "/%s"
 			if strings.HasSuffix(databaseURI, "/") {
-				pathPattern = "/%s/"
+				localPathPattern = "/%s/"
 			}
 
-			resultURL.Path = fmt.Sprintf(pathPattern, database)
+			resultURL.Path = fmt.Sprintf(localPathPattern, database)
 		}
 
 		return resultURL.String(), wraperror.Errorf(
@@ -194,7 +198,6 @@ func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
 
 		database, ok := aMap["database"]
 		if ok {
-			pathPattern := "/%s/"
 			resultURL.Path = fmt.Sprintf(pathPattern, database)
 		}
 
@@ -234,6 +237,7 @@ Output
 */
 func BuildSimpleSettingsUsingEnvVars() (string, error) {
 	attributeMap := map[string]string{}
+
 	return BuildSimpleSettingsUsingMap(attributeMap)
 }
 
@@ -403,7 +407,7 @@ func VerifySettings(ctx context.Context, settings string) error {
 
 	for _, value := range databaseURIs {
 		if len(value) == 0 {
-			return fmt.Errorf(
+			return errors.New(
 				"SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
 			)
 		}

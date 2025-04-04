@@ -19,6 +19,8 @@ import (
 // ----------------------------------------------------------------------------
 
 func TestCopyFile_Basic1(test *testing.T) {
+	test.Parallel()
+
 	destinationDir := destinationDirectoryPath()
 	destinationFile := filepath.Join(destinationDir, "basic_file_1.txt")
 	sourceFile, fileSize := sourceFilePath1()
@@ -44,6 +46,8 @@ func TestCopyFile_Basic1(test *testing.T) {
 }
 
 func TestCopyFile_Basic2(test *testing.T) {
+	test.Parallel()
+
 	destinationDir := destinationDirectoryPath()
 	destinationFile := filepath.Join(destinationDir, "basic_file_2.txt")
 	sourceFile, fileSize := sourceFilePath2()
@@ -69,6 +73,8 @@ func TestCopyFile_Basic2(test *testing.T) {
 }
 
 func TestCopyFile_ToDirectory(test *testing.T) {
+	test.Parallel()
+
 	destinationDir := destinationDirectoryPath()
 	sourceFile, fileSize := sourceFilePath1()
 
@@ -97,6 +103,8 @@ func TestCopyFile_ToDirectory(test *testing.T) {
 }
 
 func TestCopyFile_WithOverwrite(test *testing.T) {
+	test.Parallel()
+
 	destinationDir := destinationDirectoryPath()
 	destinationFile := filepath.Join(destinationDir, "with_overwrite.txt")
 
@@ -133,6 +141,8 @@ func TestCopyFile_WithOverwrite(test *testing.T) {
 }
 
 func TestCopyFile_NoOverwrite(test *testing.T) {
+	test.Parallel()
+
 	destinationDir := destinationDirectoryPath()
 	destinationFile := filepath.Join(destinationDir, "no_overwrite.txt")
 
@@ -157,6 +167,8 @@ func TestCopyFile_NoOverwrite(test *testing.T) {
 }
 
 func TestCopyFile_ToDirectoryWithOverwrite(test *testing.T) {
+	test.Parallel()
+
 	destinationDir := destinationDirectoryPath()
 	sourceFile, fileSize := sourceFilePath1()
 
@@ -219,6 +231,8 @@ func TestCopyFile_ToDirectoryWithOverwrite(test *testing.T) {
 }
 
 func TestCopyFile_ToDirectoryNoOverwrite(test *testing.T) {
+	test.Parallel()
+
 	destinationDir := destinationDirectoryPath()
 	sourceFile, _ := sourceFilePath2()
 
@@ -261,6 +275,8 @@ func TestCopyFile_ToDirectoryNoOverwrite(test *testing.T) {
 }
 
 func TestCopyFile_FromDirectory(test *testing.T) {
+	test.Parallel()
+
 	sourceDir := sourceDirectoryPath()
 	destinationDir := destinationDirectoryPath()
 	destinationFile := filepath.Join(destinationDir, "directory_copy")
@@ -269,6 +285,8 @@ func TestCopyFile_FromDirectory(test *testing.T) {
 }
 
 func TestCopyFile_SourceNotFound(test *testing.T) {
+	test.Parallel()
+
 	sourceDir := sourceDirectoryPath()
 	sourceFile := filepath.Join(sourceDir, "does_not_exist.txt")
 	destinationDir := destinationDirectoryPath()
@@ -278,6 +296,8 @@ func TestCopyFile_SourceNotFound(test *testing.T) {
 }
 
 func TestCopyFile_DestinationNotFound(test *testing.T) {
+	test.Parallel()
+
 	sourceFile, _ := sourceFilePath1()
 	destinationDir := destinationDirectoryPath()
 	badSubDirectory := filepath.Join(destinationDir, "does_not_exist")
@@ -302,11 +322,11 @@ func destinationDirectoryPath() string {
 	return filepath.Join(baseDirectoryPath(), "destination")
 }
 
-func sourceFilePath1() (path string, fileSize int64) {
+func sourceFilePath1() (string, int64) {
 	return filepath.Join(sourceDirectoryPath(), "Five_Byte_File.txt"), 5
 }
 
-func sourceFilePath2() (path string, fileSize int64) {
+func sourceFilePath2() (string, int64) {
 	return filepath.Join(sourceDirectoryPath(), "Ten_Byte_File.txt"), 10
 }
 
@@ -341,6 +361,9 @@ func createTextFileN(path string, byteCount int64) (int64, error) {
 	defer source.Close()
 
 	for index = 0; index < byteCount; index++ {
+		// for index := range byteCount {
+		_ = index
+
 		count, err := source.WriteString("A")
 		if err != nil {
 			return writeCount, wraperror.Errorf(err, "failed to write letter (%v) to file (%v): %w",
@@ -404,7 +427,7 @@ func setup() error {
 			sourceDir, err.Error())
 	}
 
-	// make the destinaton directory and any required parents
+	// make the destination directory and any required parents
 	err = os.MkdirAll(destinationDir, 0770)
 	if err != nil {
 		return fmt.Errorf("failed to create destination directory (%v): %v",

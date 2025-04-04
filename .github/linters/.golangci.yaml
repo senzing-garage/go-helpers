@@ -36,10 +36,10 @@ linters:
     # - gochecknoinits
     - gochecksumtype
     - gocognit
-    # - goconst
+    - goconst
     - gocritic
     - gocyclo
-    # - godot
+    - godot
     # - godox
     - goheader
     - gomoddirectives
@@ -55,13 +55,13 @@ linters:
     - ineffassign
     - interfacebloat
     # - intrange
-    # - ireturn
+    - ireturn
     # - lll
     - loggercheck
     - maintidx
     - makezero
-    # - mirror
-    # - misspell
+    - mirror
+    - misspell
     # - mnd
     - musttag
     - nakedret
@@ -69,14 +69,14 @@ linters:
     - nilerr
     - nilnesserr
     - nilnil
-    # - nlreturn
+    - nlreturn
     - noctx
     - nolintlint
-    # - nonamedreturns
+    - nonamedreturns
     - nosprintfhostport
     # - paralleltest
-    # - perfsprint
-    # - prealloc
+    - perfsprint
+    - prealloc
     - predeclared
     - promlinter
     - protogetter
@@ -89,12 +89,12 @@ linters:
     - sqlclosecheck
     - staticcheck
     - tagalign
-    # - tagliatelle
+    - tagliatelle
     - testableexamples
     - testifylint
     - testpackage
     - thelper
-    - tparallel
+    # - tparallel
     - unconvert
     - unparam
     - unused
@@ -117,7 +117,16 @@ linters:
       - third_party$
       - builtin$
       - examples$
-
+  settings:
+    ireturn:
+      allow:
+        - error
+        - debug.Debug
+        - settingsparser.SettingsParser
+    tagliatelle:
+      case:
+        rules:
+          json: upperSnake
 formatters:
   enable:
     - gci

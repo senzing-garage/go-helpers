@@ -17,6 +17,7 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSettingsParser_GetConfigPath(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	parser := getTestObject(ctx, test)
 	actual, err := parser.GetConfigPath(ctx)
@@ -25,6 +26,7 @@ func TestSettingsParser_GetConfigPath(test *testing.T) {
 }
 
 func TestSettingsParser_GetDatabaseURIs(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	parser := &settingsparser.BasicSettingsParser{
 		Settings: `
@@ -48,6 +50,7 @@ func TestSettingsParser_GetDatabaseURIs(test *testing.T) {
 }
 
 func TestSettingsParser_GetDatabaseURIs_Multi(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	parser := &settingsparser.BasicSettingsParser{
 		Settings: `
@@ -90,6 +93,7 @@ func TestSettingsParser_GetDatabaseURIs_Multi(test *testing.T) {
 }
 
 func TestSettingsParser_GetLicenseStringBase64(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	parser := &settingsparser.BasicSettingsParser{
 		Settings: `
@@ -113,6 +117,7 @@ func TestSettingsParser_GetLicenseStringBase64(test *testing.T) {
 }
 
 func TestSettingsParser_GetSettings(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	expected := `{"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}`
 	parser := &settingsparser.BasicSettingsParser{
@@ -123,6 +128,7 @@ func TestSettingsParser_GetSettings(test *testing.T) {
 }
 
 func TestSettingsParser_New(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 	settings := `
         {
@@ -166,6 +172,8 @@ func TestSettingsParser_New(test *testing.T) {
 }
 
 func TestSettingsParser_New_badJSON(test *testing.T) {
+	test.Parallel()
+
 	settings := "}{"
 	_, err := settingsparser.New(settings)
 	require.Error(test, err)
@@ -177,6 +185,7 @@ func TestSettingsParser_New_badJSON(test *testing.T) {
 
 func getTestObject(ctx context.Context, t *testing.T) settingsparser.SettingsParser {
 	t.Helper()
+
 	return getParser(ctx)
 }
 

@@ -109,6 +109,8 @@ var testCases = append(testCasesForMultiPlatform, testCasesForOsArch...)
 func TestBuildSenzingDatabaseURI(test *testing.T) {
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
+			test.Parallel()
+
 			result, err := settings.BuildSenzingDatabaseURI(testCase.databaseURL)
 			require.NoError(test, err)
 			assert.Equal(test, testCase.databaseURI, result)
@@ -119,6 +121,8 @@ func TestBuildSenzingDatabaseURI(test *testing.T) {
 func TestBuildSenzingDatabaseURL(test *testing.T) {
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
+			test.Parallel()
+
 			result, err := settings.BuildSenzingDatabaseURL(testCase.databaseURI)
 			if testCase.notReversible {
 				assert.Error(test, err)
@@ -131,6 +135,8 @@ func TestBuildSenzingDatabaseURL(test *testing.T) {
 }
 
 func TestBuildSimpleSettingsUsingEnvVars(test *testing.T) {
+	test.Parallel()
+
 	_, err := settings.BuildSimpleSettingsUsingEnvVars()
 	require.NoError(test, err)
 }
@@ -138,6 +144,8 @@ func TestBuildSimpleSettingsUsingEnvVars(test *testing.T) {
 func TestBuildSimpleSettingsUsingMap(test *testing.T) {
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
+			test.Parallel()
+
 			aMap := buildMap(testCase)
 			_, err := settings.BuildSimpleSettingsUsingMap(aMap)
 			require.NoError(test, err)
@@ -183,6 +191,8 @@ func TestBuildSimpleSettingsUsingMap_ParseResult(test *testing.T) {
 	for _, testCase := range testCases {
 		if len(testCase.databaseURLPath) > 0 {
 			test.Run(testCase.name, func(test *testing.T) {
+				test.Parallel()
+
 				aMap := buildMap(testCase)
 				settings, err := settings.BuildSimpleSettingsUsingMap(aMap)
 				require.NoError(test, err)
@@ -199,6 +209,8 @@ func TestBuildSimpleSettingsUsingMap_ParseResult(test *testing.T) {
 }
 
 func TestGetSenzingPath(test *testing.T) {
+	test.Parallel()
+
 	actual := settings.GetSenzingPath()
 	assert.Equal(test, getSenzingPath(), actual)
 }
@@ -208,6 +220,8 @@ func TestVerifySettings(test *testing.T) {
 
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
+			test.Parallel()
+
 			aMap := buildMap(testCase)
 			testJSON, err := settings.BuildSimpleSettingsUsingMap(aMap)
 			require.NoError(test, err)

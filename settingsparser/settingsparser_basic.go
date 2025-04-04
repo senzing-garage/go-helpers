@@ -171,6 +171,7 @@ Output
 */
 func (parser *BasicSettingsParser) GetSettings(ctx context.Context) string {
 	_ = ctx
+
 	return parser.Settings
 }
 

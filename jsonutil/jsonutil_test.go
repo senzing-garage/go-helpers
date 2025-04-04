@@ -14,6 +14,8 @@ import (
 // ----------------------------------------------------------------------------
 
 func TestFlatten_NoError(test *testing.T) {
+	test.Parallel()
+
 	actual := jsonutil.Flatten(`{"foo": 5, "bar": 6}`, nil)
 
 	var expected = `{"foo": 5, "bar": 6}`
@@ -22,6 +24,8 @@ func TestFlatten_NoError(test *testing.T) {
 }
 
 func TestFlatten_WithError(test *testing.T) {
+	test.Parallel()
+
 	err := errors.New("failed")
 	actual := jsonutil.Flatten(`{"foo": 5, "bar": 6}`, err)
 
@@ -35,6 +39,8 @@ func TestFlatten_WithError(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestIsJson_Basic(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": 20.5}`
 
 	var expected = true
@@ -44,6 +50,8 @@ func TestIsJson_Basic(test *testing.T) {
 }
 
 func TestIsJson_Compound(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": {"phoox": 3, "bax": 5}}`
 
 	var expected = true
@@ -53,6 +61,8 @@ func TestIsJson_Compound(test *testing.T) {
 }
 
 func TestIsJson_Integer(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123"
 
 	var expected = true
@@ -62,6 +72,8 @@ func TestIsJson_Integer(test *testing.T) {
 }
 
 func TestIsJson_Decimal(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123.4"
 
 	var expected = true
@@ -71,6 +83,8 @@ func TestIsJson_Decimal(test *testing.T) {
 }
 
 func TestIsJson_String(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `"Hello"`
 
 	var expected = true
@@ -80,6 +94,8 @@ func TestIsJson_String(test *testing.T) {
 }
 
 func TestIsJson_Boolean(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "true"
 
 	var expected = true
@@ -89,6 +105,8 @@ func TestIsJson_Boolean(test *testing.T) {
 }
 
 func TestIsJson_Null(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "null"
 
 	var expected = true
@@ -98,6 +116,8 @@ func TestIsJson_Null(test *testing.T) {
 }
 
 func TestIsJson_Array(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", true, {"foo": 5, "bar": 6}]`
 
 	var expected = true
@@ -107,6 +127,8 @@ func TestIsJson_Array(test *testing.T) {
 }
 
 func TestIsJson_BadJson(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 
 	var expected = false
@@ -116,6 +138,8 @@ func TestIsJson_BadJson(test *testing.T) {
 }
 
 func TestIsJson_Formatted(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -133,6 +157,8 @@ func TestIsJson_Formatted(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestNormalize_Basic(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
@@ -143,6 +169,8 @@ func TestNormalize_Basic(test *testing.T) {
 }
 
 func TestNormalize_Compound(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": {"phoox": null, "bax": 5}}`
 
 	var expected = `{"bar":"abc","foo":123,"lum":{"bax":5,"phoox":null},"phoo":true}`
@@ -153,6 +181,8 @@ func TestNormalize_Compound(test *testing.T) {
 }
 
 func TestNormalize_Integer(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123"
 
 	var expected = "123"
@@ -163,6 +193,8 @@ func TestNormalize_Integer(test *testing.T) {
 }
 
 func TestNormalize_Decimal(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123.4"
 
 	var expected = "123.4"
@@ -173,6 +205,8 @@ func TestNormalize_Decimal(test *testing.T) {
 }
 
 func TestNormalize_String(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `"Hello"`
 
 	var expected = `"Hello"`
@@ -183,6 +217,8 @@ func TestNormalize_String(test *testing.T) {
 }
 
 func TestNormalize_Boolean(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "true"
 
 	var expected = "true"
@@ -193,6 +229,8 @@ func TestNormalize_Boolean(test *testing.T) {
 }
 
 func TestNormalize_Null(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "null"
 
 	var expected = "null"
@@ -203,6 +241,8 @@ func TestNormalize_Null(test *testing.T) {
 }
 
 func TestNormalize_Array(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",true,{"bar":6,"foo":5}]`
@@ -213,12 +253,16 @@ func TestNormalize_Array(test *testing.T) {
 }
 
 func TestNormalize_BadJson(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	actual, err := jsonutil.Normalize(jsonText)
 	require.Error(test, err, "Invalid JSON text was normalized without an error: "+actual)
 }
 
 func TestNormalize_Formatted(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -237,6 +281,8 @@ func TestNormalize_Formatted(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestNormalizeAndSort_Basic(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
@@ -247,6 +293,8 @@ func TestNormalizeAndSort_Basic(test *testing.T) {
 }
 
 func TestNormalizeAndSort_StringArray(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `["foo", "bar", "phoo", "lum"]`
 
 	var expected = `["bar","foo","lum","phoo"]`
@@ -257,6 +305,8 @@ func TestNormalizeAndSort_StringArray(test *testing.T) {
 }
 
 func TestNormalizeAndSort_Compound(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": null, "bax": 5}}`
 
 	var expected = `{"bar":[2,4,6],"foo":123,"lum":{"bax":5,"phoox":null},"phoo":true}`
@@ -267,6 +317,8 @@ func TestNormalizeAndSort_Compound(test *testing.T) {
 }
 
 func TestNormalizeAndSort_Integer(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123"
 
 	var expected = "123"
@@ -277,6 +329,8 @@ func TestNormalizeAndSort_Integer(test *testing.T) {
 }
 
 func TestNormalizeAndSort_Decimal(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123.4"
 
 	var expected = "123.4"
@@ -287,6 +341,8 @@ func TestNormalizeAndSort_Decimal(test *testing.T) {
 }
 
 func TestNormalizeAndSort_String(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `"Hello"`
 
 	var expected = `"Hello"`
@@ -297,6 +353,8 @@ func TestNormalizeAndSort_String(test *testing.T) {
 }
 
 func TestNormalizeAndSort_Boolean(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "true"
 
 	var expected = "true"
@@ -307,6 +365,8 @@ func TestNormalizeAndSort_Boolean(test *testing.T) {
 }
 
 func TestNormalizeAndSort_Null(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "null"
 
 	var expected = "null"
@@ -317,6 +377,8 @@ func TestNormalizeAndSort_Null(test *testing.T) {
 }
 
 func TestNormalizeAndSort_MixedArray(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[null,"Hello",123,123.5,true,{"bar":6,"foo":5}]`
@@ -327,12 +389,16 @@ func TestNormalizeAndSort_MixedArray(test *testing.T) {
 }
 
 func TestNormalizeAndSort_BadJson(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	actual, err := jsonutil.NormalizeAndSort(jsonText)
 	require.Error(test, err, "Invalid JSON text was normalized without an error: "+actual)
 }
 
 func TestNormalizeAndSort_Formatted(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -352,6 +418,8 @@ func TestNormalizeAndSort_Formatted(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestPrettyPrint(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"bar":true,"foo":123,"phoo":[{"a":1,"b":5},{"a":1,"c":[0,8,9]},{"a":2,"c":4}]}`
 
 	var expected = `{
@@ -382,6 +450,8 @@ func TestPrettyPrint(test *testing.T) {
 }
 
 func TestPrettyPrint_UsingSpaces(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"bar":true,"foo":123,"phoo":[{"a":1,"b":5},{"a":1,"c":[0,8,9]},{"a":2,"c":4}]}`
 
 	var expected = `{
@@ -416,6 +486,8 @@ func TestPrettyPrint_UsingSpaces(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestRedact_Basic0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
@@ -426,6 +498,8 @@ func TestRedact_Basic0(test *testing.T) {
 }
 
 func TestRedact_Basic1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"bar":"abc","foo":null,"lum":null,"phoo":true}`
@@ -436,6 +510,8 @@ func TestRedact_Basic1(test *testing.T) {
 }
 
 func TestRedact_Basic2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"bar":null,"foo":null,"lum":null,"phoo":true}`
@@ -446,6 +522,8 @@ func TestRedact_Basic2(test *testing.T) {
 }
 
 func TestRedact_StringArray(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `["foo", "bar", "phoo", "lum"]`
 
 	var expected = `["foo","bar","phoo","lum"]`
@@ -456,6 +534,8 @@ func TestRedact_StringArray(test *testing.T) {
 }
 
 func TestRedact_Compound0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":[4,6,2],"foo":123,"lum":{"bax":5,"phoox":false},"phoo":true}`
@@ -466,6 +546,8 @@ func TestRedact_Compound0(test *testing.T) {
 }
 
 func TestRedact_Compound1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":[4,6,2],"foo":123,"lum":{"bax":5,"phoox":null},"phoo":true}`
@@ -476,6 +558,8 @@ func TestRedact_Compound1(test *testing.T) {
 }
 
 func TestRedact_Compound2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":null,"foo":123,"lum":{"bax":5,"phoox":null},"phoo":true}`
@@ -486,6 +570,8 @@ func TestRedact_Compound2(test *testing.T) {
 }
 
 func TestRedact_Compound3(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoox": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":null,"foo":123,"lum":{"bax":null,"phoox":null},"phoox":null}`
@@ -496,6 +582,8 @@ func TestRedact_Compound3(test *testing.T) {
 }
 
 func TestRedact_Compound4(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":null,"foo":null,"lum":{"bax":null,"phoox":null},"phoo":true}`
@@ -506,6 +594,8 @@ func TestRedact_Compound4(test *testing.T) {
 }
 
 func TestRedact_Compound5(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":null,"foo":null,"lum":null,"phoo":null}`
@@ -516,6 +606,8 @@ func TestRedact_Compound5(test *testing.T) {
 }
 
 func TestRedact_Integer(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123"
 
 	var expected = "123"
@@ -526,6 +618,8 @@ func TestRedact_Integer(test *testing.T) {
 }
 
 func TestRedact_Decimal(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123.4"
 
 	var expected = "123.4"
@@ -536,6 +630,8 @@ func TestRedact_Decimal(test *testing.T) {
 }
 
 func TestRedact_String(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `"Hello"`
 
 	var expected = `"Hello"`
@@ -546,6 +642,8 @@ func TestRedact_String(test *testing.T) {
 }
 
 func TestRedact_Boolean(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "true"
 
 	var expected = "true"
@@ -556,6 +654,8 @@ func TestRedact_Boolean(test *testing.T) {
 }
 
 func TestRedact_Null(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "null"
 
 	var expected = "null"
@@ -566,6 +666,8 @@ func TestRedact_Null(test *testing.T) {
 }
 
 func TestRedact_MixedArray0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{"bar":6,"foo":5}]`
@@ -576,6 +678,8 @@ func TestRedact_MixedArray0(test *testing.T) {
 }
 
 func TestRedact_MixedArray1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{"bar":null,"foo":5}]`
@@ -586,6 +690,8 @@ func TestRedact_MixedArray1(test *testing.T) {
 }
 
 func TestRedact_MixedArray2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{"bar":null,"foo":null}]`
@@ -596,6 +702,8 @@ func TestRedact_MixedArray2(test *testing.T) {
 }
 
 func TestRedact_MixedArray3(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{"bar":null,"foo":null}]`
@@ -606,12 +714,16 @@ func TestRedact_MixedArray3(test *testing.T) {
 }
 
 func TestRedact_BadJson(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	actual, err := jsonutil.Redact(jsonText, "foo", "bar")
 	require.Error(test, err, "Invalid JSON text was redacted without an error: "+actual)
 }
 
 func TestRedact_Formatted0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -627,6 +739,8 @@ func TestRedact_Formatted0(test *testing.T) {
 }
 
 func TestRedact_Formatted1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -642,6 +756,8 @@ func TestRedact_Formatted1(test *testing.T) {
 }
 
 func TestRedact_Formatted2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -657,6 +773,8 @@ func TestRedact_Formatted2(test *testing.T) {
 }
 
 func TestRedact_Formatted3(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -672,6 +790,8 @@ func TestRedact_Formatted3(test *testing.T) {
 }
 
 func TestRedact_Formatted4(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -691,6 +811,8 @@ func TestRedact_Formatted4(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestRedactWithMap_Basic0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
@@ -701,6 +823,8 @@ func TestRedactWithMap_Basic0(test *testing.T) {
 }
 
 func TestRedactWithMap_Basic1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"bar":"abc","foo":"","lum":null,"phoo":true}`
@@ -711,6 +835,8 @@ func TestRedactWithMap_Basic1(test *testing.T) {
 }
 
 func TestRedactWithMap_Basic2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"bar":"-","foo":"","lum":null,"phoo":true}`
@@ -721,6 +847,8 @@ func TestRedactWithMap_Basic2(test *testing.T) {
 }
 
 func TestRedactWithMap_StringArray(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `["foo", "bar", "phoo", "lum"]`
 
 	var expected = `["foo","bar","phoo","lum"]`
@@ -731,6 +859,8 @@ func TestRedactWithMap_StringArray(test *testing.T) {
 }
 
 func TestRedactWithMap_Compound0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":[4,6,2],"foo":123,"lum":{"bax":5,"phoox":false},"phoo":true}`
@@ -741,6 +871,8 @@ func TestRedactWithMap_Compound0(test *testing.T) {
 }
 
 func TestRedactWithMap_Compound1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":[4,6,2],"foo":123,"lum":{"bax":5,"phoox":""},"phoo":true}`
@@ -751,6 +883,8 @@ func TestRedactWithMap_Compound1(test *testing.T) {
 }
 
 func TestRedactWithMap_Compound2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoox": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":"-","foo":123,"lum":{"bax":5,"phoox":""},"phoox":""}`
@@ -761,6 +895,8 @@ func TestRedactWithMap_Compound2(test *testing.T) {
 }
 
 func TestRedactWithMap_Compound3(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":"-","foo":123,"lum":{"bax":null,"phoox":""},"phoo":true}`
@@ -771,6 +907,8 @@ func TestRedactWithMap_Compound3(test *testing.T) {
 }
 
 func TestRedactWithMap_Compound4(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":"-","foo":"xxx","lum":{"bax":null,"phoox":""},"phoo":true}`
@@ -781,6 +919,8 @@ func TestRedactWithMap_Compound4(test *testing.T) {
 }
 
 func TestRedactWithMap_Compound5(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":"-","foo":null,"lum":false,"phoo":"xxx"}`
@@ -792,6 +932,8 @@ func TestRedactWithMap_Compound5(test *testing.T) {
 }
 
 func TestRedactWithMap_Integer(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123"
 
 	var expected = "123"
@@ -802,6 +944,8 @@ func TestRedactWithMap_Integer(test *testing.T) {
 }
 
 func TestRedactWithMap_Decimal(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123.4"
 
 	var expected = "123.4"
@@ -812,6 +956,8 @@ func TestRedactWithMap_Decimal(test *testing.T) {
 }
 
 func TestRedactWithMap_String(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `"Hello"`
 
 	var expected = `"Hello"`
@@ -822,6 +968,8 @@ func TestRedactWithMap_String(test *testing.T) {
 }
 
 func TestRedactWithMap_Boolean(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "true"
 
 	var expected = "true"
@@ -832,6 +980,8 @@ func TestRedactWithMap_Boolean(test *testing.T) {
 }
 
 func TestRedactWithMap_Null(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "null"
 
 	var expected = "null"
@@ -842,6 +992,8 @@ func TestRedactWithMap_Null(test *testing.T) {
 }
 
 func TestRedactWithMap_MixedArray0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{"bar":6,"foo":5}]`
@@ -852,6 +1004,8 @@ func TestRedactWithMap_MixedArray0(test *testing.T) {
 }
 
 func TestRedactWithMap_MixedArray1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{"bar":"","foo":5}]`
@@ -862,6 +1016,8 @@ func TestRedactWithMap_MixedArray1(test *testing.T) {
 }
 
 func TestRedactWithMap_MixedArray2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{"bar":"-","foo":""}]`
@@ -872,6 +1028,8 @@ func TestRedactWithMap_MixedArray2(test *testing.T) {
 }
 
 func TestRedactWithMap_MixedArray3(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{"bar":"-","foo":""}]`
@@ -882,12 +1040,16 @@ func TestRedactWithMap_MixedArray3(test *testing.T) {
 }
 
 func TestRedactWithMap_BadJson(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	actual, err := jsonutil.RedactWithMap(jsonText, map[string]any{"foo": "", "bar": "-"})
 	require.Error(test, err, "Invalid JSON text was redacted with map without an error: "+actual)
 }
 
 func TestRedactWithMap_Formatted0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -903,6 +1065,8 @@ func TestRedactWithMap_Formatted0(test *testing.T) {
 }
 
 func TestRedactWithMap_Formatted1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -918,6 +1082,8 @@ func TestRedactWithMap_Formatted1(test *testing.T) {
 }
 
 func TestRedactWithMap_Formatted2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -933,6 +1099,8 @@ func TestRedactWithMap_Formatted2(test *testing.T) {
 }
 
 func TestRedactWithMap_Formatted3(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -948,6 +1116,8 @@ func TestRedactWithMap_Formatted3(test *testing.T) {
 }
 
 func TestRedactWithMap_Formatted4(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -991,8 +1161,12 @@ var testReverseStringCases = []testReverseStringMetadata{
 }
 
 func TestReverseString(test *testing.T) {
+	test.Parallel()
+
 	for _, testCase := range testReverseStringCases {
 		test.Run(testCase.name, func(test *testing.T) {
+			test.Parallel()
+
 			actual := jsonutil.ReverseString(testCase.theString)
 			assert.Equal(test, testCase.reversedString, actual)
 		})
@@ -1004,6 +1178,8 @@ func TestReverseString(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestStrip_Basic0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"bar":"abc","foo":123,"lum":null,"phoo":true}`
@@ -1014,6 +1190,8 @@ func TestStrip_Basic0(test *testing.T) {
 }
 
 func TestStrip_Basic1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"bar":"abc","lum":null,"phoo":true}`
@@ -1024,6 +1202,8 @@ func TestStrip_Basic1(test *testing.T) {
 }
 
 func TestStrip_Basic2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": "abc", "phoo": true, "lum": null}`
 
 	var expected = `{"lum":null,"phoo":true}`
@@ -1034,6 +1214,8 @@ func TestStrip_Basic2(test *testing.T) {
 }
 
 func TestStrip_StringArray(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `["foo", "bar", "phoo", "lum"]`
 
 	var expected = `["foo","bar","phoo","lum"]`
@@ -1044,6 +1226,8 @@ func TestStrip_StringArray(test *testing.T) {
 }
 
 func TestStrip_Compound0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":[4,6,2],"foo":123,"lum":{"bax":5,"phoox":false},"phoo":true}`
@@ -1054,6 +1238,8 @@ func TestStrip_Compound0(test *testing.T) {
 }
 
 func TestStrip_Compound1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"bar":[4,6,2],"foo":123,"lum":{"bax":5},"phoo":true}`
@@ -1064,6 +1250,8 @@ func TestStrip_Compound1(test *testing.T) {
 }
 
 func TestStrip_Compound2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"foo":123,"lum":{"bax":5},"phoo":true}`
@@ -1074,6 +1262,8 @@ func TestStrip_Compound2(test *testing.T) {
 }
 
 func TestStrip_Compound3(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoox": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"foo":123,"lum":{}}`
@@ -1084,6 +1274,8 @@ func TestStrip_Compound3(test *testing.T) {
 }
 
 func TestStrip_Compound4(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{"lum":{},"phoo":true}`
@@ -1094,6 +1286,8 @@ func TestStrip_Compound4(test *testing.T) {
 }
 
 func TestStrip_Compound5(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{"foo": 123, "bar": [4, 6, 2], "phoo": true, "lum": {"phoox": false, "bax": 5}}`
 
 	var expected = `{}`
@@ -1104,6 +1298,8 @@ func TestStrip_Compound5(test *testing.T) {
 }
 
 func TestStrip_Integer(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123"
 
 	var expected = "123"
@@ -1114,6 +1310,8 @@ func TestStrip_Integer(test *testing.T) {
 }
 
 func TestStrip_Decimal(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "123.4"
 
 	var expected = "123.4"
@@ -1124,6 +1322,8 @@ func TestStrip_Decimal(test *testing.T) {
 }
 
 func TestStrip_String(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `"Hello"`
 
 	var expected = `"Hello"`
@@ -1134,6 +1334,8 @@ func TestStrip_String(test *testing.T) {
 }
 
 func TestStrip_Boolean(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "true"
 
 	var expected = "true"
@@ -1144,6 +1346,8 @@ func TestStrip_Boolean(test *testing.T) {
 }
 
 func TestStrip_Null(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = "null"
 
 	var expected = "null"
@@ -1154,6 +1358,8 @@ func TestStrip_Null(test *testing.T) {
 }
 
 func TestStrip_MixedArray0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{"bar":6,"foo":5}]`
@@ -1164,6 +1370,8 @@ func TestStrip_MixedArray0(test *testing.T) {
 }
 
 func TestStrip_MixedArray1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{"foo":5}]`
@@ -1174,6 +1382,8 @@ func TestStrip_MixedArray1(test *testing.T) {
 }
 
 func TestStrip_MixedArray2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{}]`
@@ -1184,6 +1394,8 @@ func TestStrip_MixedArray2(test *testing.T) {
 }
 
 func TestStrip_MixedArray3(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `[123, 123.5, "Hello", null, true, {"foo": 5, "bar": 6}]`
 
 	var expected = `[123,123.5,"Hello",null,true,{}]`
@@ -1194,12 +1406,16 @@ func TestStrip_MixedArray3(test *testing.T) {
 }
 
 func TestStrip_BadJson(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `{foo: 123, bar: "abc", phoo: true, lum: {"phoox": 3, "bax": 5}}`
 	actual, err := jsonutil.Strip(jsonText, "foo", "bar")
 	require.Error(test, err, "Invalid JSON text was stripped without an error: "+actual)
 }
 
 func TestStrip_Formatted0(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -1215,6 +1431,8 @@ func TestStrip_Formatted0(test *testing.T) {
 }
 
 func TestStrip_Formatted1(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -1230,6 +1448,8 @@ func TestStrip_Formatted1(test *testing.T) {
 }
 
 func TestStrip_Formatted2(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -1245,6 +1465,8 @@ func TestStrip_Formatted2(test *testing.T) {
 }
 
 func TestStrip_Formatted3(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -1260,6 +1482,8 @@ func TestStrip_Formatted3(test *testing.T) {
 }
 
 func TestStrip_Formatted4(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -1279,6 +1503,8 @@ func TestStrip_Formatted4(test *testing.T) {
 // ----------------------------------------------------------------------------
 
 func TestTruncate_AllLines(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -1293,6 +1519,8 @@ func TestTruncate_AllLines(test *testing.T) {
 }
 
 func TestTruncate_3_lines(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -1307,6 +1535,8 @@ func TestTruncate_3_lines(test *testing.T) {
 }
 
 func TestTruncate_6_lines(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,
@@ -1321,6 +1551,8 @@ func TestTruncate_6_lines(test *testing.T) {
 }
 
 func TestTruncate_bad_JSON(test *testing.T) {
+	test.Parallel()
+
 	var jsonText = `
 	{
 		"foo": 123,

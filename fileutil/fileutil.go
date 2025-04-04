@@ -28,11 +28,7 @@ Output
   - The number of bytes that were copied (zero in case there was an error)
   - An error if one occurred or nil if no error occurred.
 */
-func CopyFile(
-	sourceFile string,
-	destinationFileOrDirectory string,
-	overwrite bool,
-) (createdFile string, fileSize int64, err error) {
+func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bool) (string, int64, error) {
 	// stat the source file
 	stat, err := os.Stat(sourceFile)
 	if err != nil {

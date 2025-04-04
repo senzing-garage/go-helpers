@@ -7,8 +7,10 @@ import (
 )
 
 // ----------------------------------------------------------------------------
-// Test the NewRecord function
+// Test the NewRecord function.
 func TestNewRecord_good(test *testing.T) {
+	test.Parallel()
+
 	jsonLine := `{"DATA_SOURCE": "ICIJ", "RECORD_ID": "24000001", "ENTITY_TYPE": "ADDRESS", "RECORD_TYPE": "ADDRESS", "icij_source": "BAHAMAS", "icij_type": "ADDRESS", "COUNTRIES": [{"COUNTRY_OF_ASSOCIATION": "BHS"}], "ADDR_FULL": "ANNEX FREDERICK & SHIRLEY STS, P.O. BOX N-4805, NASSAU, BAHAMAS", "REL_ANCHOR_DOMAIN": "ICIJ_ID", "REL_ANCHOR_KEY": "24000001"}`
 
 	record, err := record.NewRecord(jsonLine)
@@ -28,6 +30,8 @@ func TestNewRecord_good(test *testing.T) {
 }
 
 func TestNewRecord_invalidJson(test *testing.T) {
+	test.Parallel()
+
 	jsonLine := `{"DATA_SOURCE": "ICIJ", "RECORD_ID": "24000005B" "ENTITY_TYPE": "ADDRESS", "RECORD_TYPE": "ADDRESS", "icij_source": "BAHAMAS", "icij_type": "ADDRESS", "COUNTRIES": [{"COUNTRY_OF_ASSOCIATION": "BHS"}], "ADDR_FULL": "LYFORD CAY HOUSE, 3RD FLOOR, LYFORD CAY, P.O. BOX N-3024, NASSAU, BAHAMAS", "REL_ANCHOR_DOMAIN": "ICIJ_ID", "REL_ANCHOR_KEY": "24000005"}`
 	_, err := record.NewRecord(jsonLine)
 
@@ -39,6 +43,8 @@ func TestNewRecord_invalidJson(test *testing.T) {
 }
 
 func TestNewRecord_noRecordId(test *testing.T) {
+	test.Parallel()
+
 	jsonLine := `{"DATA_SOURCE": "ICIJ", "ENTITY_TYPE": "ADDRESS", "RECORD_TYPE": "ADDRESS", "icij_source": "BAHAMAS", "icij_type": "ADDRESS", "COUNTRIES": [{"COUNTRY_OF_ASSOCIATION": "BHS"}], "ADDR_FULL": "ANNEX FREDERICK & SHIRLEY STS, P.O. BOX N-4805, NASSAU, BAHAMAS", "REL_ANCHOR_DOMAIN": "ICIJ_ID", "REL_ANCHOR_KEY": "24000001"}`
 	_, err := record.NewRecord(jsonLine)
 
@@ -50,6 +56,8 @@ func TestNewRecord_noRecordId(test *testing.T) {
 }
 
 func TestNewRecord_noDataSource(test *testing.T) {
+	test.Parallel()
+
 	jsonLine := `{"RECORD_ID": "24000001", "ENTITY_TYPE": "ADDRESS", "RECORD_TYPE": "ADDRESS", "icij_source": "BAHAMAS", "icij_type": "ADDRESS", "COUNTRIES": [{"COUNTRY_OF_ASSOCIATION": "BHS"}], "ADDR_FULL": "ANNEX FREDERICK & SHIRLEY STS, P.O. BOX N-4805, NASSAU, BAHAMAS", "REL_ANCHOR_DOMAIN": "ICIJ_ID", "REL_ANCHOR_KEY": "24000001"}`
 	_, err := record.NewRecord(jsonLine)
 
@@ -61,8 +69,10 @@ func TestNewRecord_noDataSource(test *testing.T) {
 }
 
 // ----------------------------------------------------------------------------
-// Test the Validate function
+// Test the Validate function.
 func TestValidate_good(test *testing.T) {
+	test.Parallel()
+
 	jsonLine := `{"DATA_SOURCE": "ICIJ", "RECORD_ID": "24000001", "ENTITY_TYPE": "ADDRESS", "RECORD_TYPE": "ADDRESS", "icij_source": "BAHAMAS", "icij_type": "ADDRESS", "COUNTRIES": [{"COUNTRY_OF_ASSOCIATION": "BHS"}], "ADDR_FULL": "ANNEX FREDERICK & SHIRLEY STS, P.O. BOX N-4805, NASSAU, BAHAMAS", "REL_ANCHOR_DOMAIN": "ICIJ_ID", "REL_ANCHOR_KEY": "24000001"}`
 
 	val, err := record.Validate(jsonLine)
@@ -78,6 +88,8 @@ func TestValidate_good(test *testing.T) {
 }
 
 func TestValidate_noRecordId(test *testing.T) {
+	test.Parallel()
+
 	jsonLine := `{"DATA_SOURCE": "ICIJ", "ENTITY_TYPE": "ADDRESS", "RECORD_TYPE": "ADDRESS", "icij_source": "BAHAMAS", "icij_type": "ADDRESS", "COUNTRIES": [{"COUNTRY_OF_ASSOCIATION": "BHS"}], "ADDR_FULL": "ANNEX FREDERICK & SHIRLEY STS, P.O. BOX N-4805, NASSAU, BAHAMAS", "REL_ANCHOR_DOMAIN": "ICIJ_ID", "REL_ANCHOR_KEY": "24000001"}`
 	val, err := record.Validate(jsonLine)
 
@@ -95,6 +107,8 @@ func TestValidate_noRecordId(test *testing.T) {
 }
 
 func TestValidate_noDatasource(test *testing.T) {
+	test.Parallel()
+
 	jsonLine := `{"RECORD_ID": "24000001", "ENTITY_TYPE": "ADDRESS", "RECORD_TYPE": "ADDRESS", "icij_source": "BAHAMAS", "icij_type": "ADDRESS", "COUNTRIES": [{"COUNTRY_OF_ASSOCIATION": "BHS"}], "ADDR_FULL": "ANNEX FREDERICK & SHIRLEY STS, P.O. BOX N-4805, NASSAU, BAHAMAS", "REL_ANCHOR_DOMAIN": "ICIJ_ID", "REL_ANCHOR_KEY": "24000001"}`
 	val, err := record.Validate(jsonLine)
 
@@ -112,6 +126,8 @@ func TestValidate_noDatasource(test *testing.T) {
 }
 
 func TestValidate_invalidJson(test *testing.T) {
+	test.Parallel()
+
 	jsonLine := `{"DATA_SOURCE": "ICIJ", "RECORD_ID": "24000005B" "ENTITY_TYPE": "ADDRESS", "RECORD_TYPE": "ADDRESS", "icij_source": "BAHAMAS", "icij_type": "ADDRESS", "COUNTRIES": [{"COUNTRY_OF_ASSOCIATION": "BHS"}], "ADDR_FULL": "LYFORD CAY HOUSE, 3RD FLOOR, LYFORD CAY, P.O. BOX N-3024, NASSAU, BAHAMAS", "REL_ANCHOR_DOMAIN": "ICIJ_ID", "REL_ANCHOR_KEY": "24000005"}`
 	val, err := record.Validate(jsonLine)
 

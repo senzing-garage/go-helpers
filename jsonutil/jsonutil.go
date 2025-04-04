@@ -9,6 +9,10 @@ import (
 	"github.com/senzing-garage/go-helpers/wraperror"
 )
 
+const (
+	Null = "null"
+)
+
 // ----------------------------------------------------------------------------
 // Public functions
 // ----------------------------------------------------------------------------
@@ -79,7 +83,7 @@ func Normalize(jsonText string) (string, error) {
 
 	// check for a null literal which is unmarshalled as a nil pointer
 	if parsedJSON == nil {
-		return "null", nil
+		return Null, nil
 	}
 
 	// marshall the parsed object back to text (bytes) and return the text and potential error
@@ -113,7 +117,7 @@ func NormalizeAndSort(jsonText string) (string, error) {
 
 	// check for a null literal which is unmarshalled as a nil pointer
 	if parsedJSON == nil {
-		return "null", nil
+		return Null, nil
 	}
 
 	// sort the parsed JSON value
@@ -201,7 +205,7 @@ func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 
 	// check for a null literal which is unmarshalled as a nil pointer
 	if parsedJSON == nil {
-		return "null", nil
+		return Null, nil
 	}
 
 	// sort the parsed JSON value
@@ -268,7 +272,7 @@ func Strip(jsonText string, removeKeys ...string) (string, error) {
 
 	// check for a null literal which is unmarshalled as a nil pointer
 	if parsedJSON == nil {
-		return "null", nil
+		return Null, nil
 	}
 
 	// sort the parsed JSON value
@@ -332,8 +336,7 @@ func Truncate(jsonText string, lines int, removeKeys ...string) string {
 
 	indentedSlices := strings.Split(indentedJSON.String(), "\n")
 
-	var resultSlices []string
-
+	resultSlices := make([]string, 0, len(indentedSlices))
 	for _, resultSlice := range indentedSlices {
 		resultSlices = append(resultSlices, strings.Replace(resultSlice, ": ", ":", 1))
 	}
@@ -407,7 +410,7 @@ func sortArray(jsonArray []any) {
 		json1, _ := json.Marshal(jsonArray[iIndex])
 		json2, _ := json.Marshal(jsonArray[jIndex])
 
-		return (strings.Compare(string(json1), string(json2)) < 0)
+		return (bytes.Compare(json1, json2) < 0)
 	})
 }
 

@@ -23,7 +23,7 @@ type Record struct {
 // Functions
 // ----------------------------------------------------------------------------
 
-// Returns a valid Record or an error if validation fails
+// Returns a valid Record or an error if validation fails.
 func NewRecord(line string) (*Record, error) {
 	var record Record
 
@@ -48,7 +48,7 @@ func NewRecord(line string) (*Record, error) {
 
 // A string is only a valid Record, if it is a well formed JSON-line
 // and it has a DataSource field
-// and it has an Id field
+// and it has an Id field.
 func Validate(line string) (bool, error) {
 	var record Record
 
@@ -66,16 +66,18 @@ func Validate(line string) (bool, error) {
 // ----------------------------------------------------------------------------
 
 // A Record is only valid if it has a DataSource field
-// and it has an Id field
+// and it has an Id field.
 func ValidateRecord(record Record) (bool, error) {
 	var err error
 	if record.DataSource == "" {
 		err = szerrors.NewError(3001)
+
 		return false, wraperror.Errorf(err, "record.ValidateRecord.DataSource error: %w", err)
 	}
 
 	if record.ID == "" {
 		err = szerrors.NewError(3002)
+
 		return false, wraperror.Errorf(err, "record.ValidateRecord.Record.ID error: %w", err)
 	}
 

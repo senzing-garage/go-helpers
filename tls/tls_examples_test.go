@@ -13,10 +13,12 @@ import (
 // ----------------------------------------------------------------------------
 
 func ExampleLoadX509KeyPair() {
-	var password string
+	const (
+		certFile = "../testdata/certificates/client/certificate.pem"
+		keyFile  = "../testdata/certificates/client/private_key.pem"
+	)
 
-	certFile := "../testdata/certificates/client/certificate.pem"
-	keyFile := "../testdata/certificates/client/private_key.pem"
+	var password string
 
 	_, err := localtls.LoadX509KeyPair(certFile, keyFile, password)
 	if err != nil {
