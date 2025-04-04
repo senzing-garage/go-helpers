@@ -6,6 +6,7 @@ package settingsparser
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -73,7 +74,7 @@ func (parser *BasicSettingsParser) GetDatabaseURIs(ctx context.Context) ([]strin
 	// Handle multi-database case.
 
 	backend := engineConfiguration.SQL.Backend
-	if len(backend) > 0 && backend != "SQL" {
+	if (len(backend) > 0) && (backend != "SQL") { //nolint:nestif
 		var dictionary map[string]interface{}
 
 		var databaseJSONKeys []string
@@ -86,8 +87,18 @@ func (parser *BasicSettingsParser) GetDatabaseURIs(ctx context.Context) ([]strin
 		// Determine JSON keys for database definitions.
 
 		backendMap := dictionary[backend]
-		for _, value := range backendMap.(map[string]interface{}) {
-			valueString := value.(string)
+
+		backendMapTyped, isOK := backendMap.(map[string]interface{})
+		if !isOK {
+			panic(fmt.Sprintf("failed type assertion for %v.(map[string]interface{})", backendMap))
+		}
+
+		for _, value := range backendMapTyped {
+			valueString, isOK := value.(string)
+			if !isOK {
+				panic(fmt.Sprintf("failed type assertion for %v.(string)", value))
+			}
+
 			if !contains(databaseJSONKeys, valueString) {
 				databaseJSONKeys = append(databaseJSONKeys, valueString)
 			}
@@ -96,9 +107,16 @@ func (parser *BasicSettingsParser) GetDatabaseURIs(ctx context.Context) ([]strin
 		// Add each database.
 
 		for _, databaseJSONKey := range databaseJSONKeys {
-			databaseJSON := dictionary[databaseJSONKey].(map[string]interface{})
+			databaseJSON, isOK := dictionary[databaseJSONKey].(map[string]interface{})
+			if !isOK {
+				panic(fmt.Sprintf("failed type assertion for dictionary[%s].(map[string]interface{}", databaseJSONKey))
+			}
 
-			databaseName := databaseJSON["DB_1"].(string)
+			databaseName, isOK := databaseJSON["DB_1"].(string)
+			if !isOK {
+				panic(`failed type assertion for databaseJSON["DB_1"].(string)`)
+			}
+
 			if !contains(result, databaseName) {
 				result = append(result, databaseName)
 			}

@@ -420,18 +420,9 @@ func VerifySettings(ctx context.Context, settings string) error {
 		return wraperror.Errorf(err, "settings.VerifySettings.GetConfigPath error: %w", err)
 	}
 
-	configFiles := []string{
-		"cfgVariant.json",
-		"defaultGNRCP.config",
-	}
-	for _, configFile := range configFiles {
-		targetFile := fmt.Sprintf("%s/%s", configPath, configFile)
-		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf(
-				"CONFIGPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
-				targetFile,
-			)
-		}
+	err = checkConfigPath(configPath)
+	if err != nil {
+		return wraperror.Errorf(err, "settings.VerifySettings.checkConfigPath error: %w", err)
 	}
 
 	// Check Resource path.
@@ -441,17 +432,9 @@ func VerifySettings(ctx context.Context, settings string) error {
 		return wraperror.Errorf(err, "settings.VerifySettings.GetResourcePath error: %w", err)
 	}
 
-	resourceFiles := []string{
-		"templates/g2config.json",
-	}
-	for _, resourceFile := range resourceFiles {
-		targetFile := fmt.Sprintf("%s/%s", resourcePath, resourceFile)
-		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf(
-				"RESOURCEPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
-				targetFile,
-			)
-		}
+	err = checkResourcePath(resourcePath)
+	if err != nil {
+		return wraperror.Errorf(err, "settings.VerifySettings.checkResourcePath error: %w", err)
 	}
 
 	// Check Support path.
@@ -461,18 +444,9 @@ func VerifySettings(ctx context.Context, settings string) error {
 		return wraperror.Errorf(err, "settings.VerifySettings.GetSupportPath error: %w", err)
 	}
 
-	supportFiles := []string{
-		"anyTransRule.ibm",
-		"g2SifterRules.ibm",
-	}
-	for _, supportFile := range supportFiles {
-		targetFile := fmt.Sprintf("%s/%s", supportPath, supportFile)
-		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf(
-				"SUPPORTPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
-				targetFile,
-			)
-		}
+	err = checkSupportPath(supportPath)
+	if err != nil {
+		return wraperror.Errorf(err, "settings.VerifySettings.checkResourcePath error: %w", err)
 	}
 
 	// Os / Arch specific calls
@@ -558,6 +532,65 @@ func buildURL(aMap map[string]string) *url.URL {
 	}
 
 	return result
+}
+
+func checkConfigPath(configPath string) error {
+	var err error
+
+	configFiles := []string{
+		"cfgVariant.json",
+		"defaultGNRCP.config",
+	}
+	for _, configFile := range configFiles {
+		targetFile := fmt.Sprintf("%s/%s", configPath, configFile)
+		if _, err := os.Stat(targetFile); err != nil {
+			return fmt.Errorf(
+				"CONFIGPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+				targetFile,
+			)
+		}
+	}
+
+	return err
+}
+
+func checkResourcePath(resourcePath string) error {
+	var err error
+
+	resourceFiles := []string{
+		"templates/g2config.json",
+	}
+	for _, resourceFile := range resourceFiles {
+		targetFile := fmt.Sprintf("%s/%s", resourcePath, resourceFile)
+		if _, err := os.Stat(targetFile); err != nil {
+			return fmt.Errorf(
+				"RESOURCEPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+				targetFile,
+			)
+		}
+	}
+
+	return err
+}
+
+func checkSupportPath(supportPath string) error {
+	var err error
+
+	supportFiles := []string{
+		"anyTransRule.ibm",
+		"g2SifterRules.ibm",
+	}
+	for _, supportFile := range supportFiles {
+		targetFile := fmt.Sprintf("%s/%s", supportPath, supportFile)
+		if _, err := os.Stat(targetFile); err != nil {
+			return fmt.Errorf(
+				"SUPPORTPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+				targetFile,
+			)
+		}
+	}
+
+	return err
 }
 
 func getOsEnv(variableName string) (string, error) {
