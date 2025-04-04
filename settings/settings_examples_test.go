@@ -45,7 +45,7 @@ func ExampleBuildSimpleSettingsUsingEnvVars() {
 	}
 
 	fmt.Println(result)
-	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"sqlite3://na:na@nowhere/tmp/sqlite/G2C.db?cache=shared&mode=memory"}}
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"sqlite3://na:na@nowhere/tmp/sqlite/G2C.db"}}
 }
 
 func ExampleBuildSimpleSettingsUsingMap() {
