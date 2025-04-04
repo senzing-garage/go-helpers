@@ -33,7 +33,7 @@ func TestSettingsParser_GetDatabaseURIs(test *testing.T) {
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
-                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "LICENSESTRINGBASE64": "123..DEF",
                 "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
@@ -57,7 +57,7 @@ func TestSettingsParser_GetDatabaseURIs_Multi(test *testing.T) {
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
-                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "LICENSESTRINGBASE64": "123..DEF",
                 "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
@@ -100,7 +100,7 @@ func TestSettingsParser_GetLicenseStringBase64(test *testing.T) {
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
-                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "LICENSESTRINGBASE64": "123..DEF",
                 "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
@@ -113,7 +113,7 @@ func TestSettingsParser_GetLicenseStringBase64(test *testing.T) {
 	}
 	actual, err := parser.GetLicenseStringBase64(ctx)
 	require.NoError(test, err)
-	require.Equal(test, "${SENZING_LICENSE_BASE64_ENCODED}", actual)
+	require.Equal(test, "123..DEF", actual)
 }
 
 func TestSettingsParser_GetSettings(test *testing.T) {
@@ -134,7 +134,7 @@ func TestSettingsParser_New(test *testing.T) {
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
-                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "LICENSESTRINGBASE64": "123..DEF",
                 "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
@@ -198,7 +198,7 @@ func getParser(ctx context.Context) settingsparser.SettingsParser {
             {
                 "PIPELINE": {
                     "CONFIGPATH": "/etc/opt/senzing",
-                    "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                    "LICENSESTRINGBASE64": "123..DEF",
                     "RESOURCEPATH": "/opt/senzing/er/resources",
                     "SUPPORTPATH": "/opt/senzing/data"
                 },

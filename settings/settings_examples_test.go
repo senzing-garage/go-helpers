@@ -3,6 +3,7 @@
 package settings_test
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/senzing-garage/go-helpers/settings"
@@ -11,6 +12,41 @@ import (
 // ----------------------------------------------------------------------------
 // Examples for godoc documentation
 // ----------------------------------------------------------------------------
+
+func ExampleBuildSenzingDatabaseURI() {
+	databaseURL := "postgresql://username:password@hostname:5432/G2/?schema=schemaname"
+
+	result, err := settings.BuildSenzingDatabaseURI(databaseURL)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(result)
+	// Output: postgresql://username:password@hostname:5432:G2/?schema=schemaname
+}
+
+func ExampleBuildSenzingDatabaseURL() {
+	databaseURI := "postgresql://username:password@hostname:5432:G2/?schema=schemaname"
+
+	result, err := settings.BuildSenzingDatabaseURL(databaseURI)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(result)
+
+	// Output: postgresql://username:password@hostname:5432/G2/?schema=schemaname
+}
+
+func ExampleBuildSimpleSettingsUsingEnvVars() {
+	result, err := settings.BuildSimpleSettingsUsingEnvVars()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(result)
+	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"sqlite3://na:na@nowhere/tmp/sqlite/G2C.db?cache=shared&mode=memory"}}
+}
 
 func ExampleBuildSimpleSettingsUsingMap() {
 	aMap := map[string]string{
@@ -107,4 +143,28 @@ func ExampleBuildSimpleSettingsUsingMap_sqlite() {
 
 	fmt.Println(result)
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db"}}
+}
+
+func ExampleGetSenzingPath() {
+	result := settings.GetSenzingPath()
+	fmt.Println(result)
+	// Output: /opt/senzing
+}
+
+func ExampleVerifySettings() {
+	ctx := context.TODO()
+
+	testJSON, err := settings.BuildSimpleSettingsUsingEnvVars()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = settings.VerifySettings(ctx, testJSON)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("JSON is valid.")
+	}
+
+	// Output: JSON is valid.
 }

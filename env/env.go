@@ -1,4 +1,4 @@
-package getenv
+package env
 
 import "os"
 

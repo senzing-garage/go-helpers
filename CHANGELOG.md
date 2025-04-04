@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], [markdownlint],
 and this project adheres to [Semantic Versioning].
 
-## [0.6.10] - 2025-04-04
+## [0.6.10] - 2025-04-07
 
 ### Added in 0.6.10
 
-- `getenv`
+- `env`
 - `wraperror`
 
 ## [0.6.9] - 2025-03-20

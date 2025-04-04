@@ -6,7 +6,7 @@ Single-database example of a _ENGINE_CONFIGURATION_JSON string:
 	{
 		"PIPELINE": {
 			"CONFIGPATH": "/etc/opt/senzing",
-			"LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}"
+			"LICENSESTRINGBASE64": "123..DEF"
 			"RESOURCEPATH": "/opt/senzing/er/resources",
 			"SUPPORTPATH": "/opt/senzing/data",
 		},
@@ -20,7 +20,7 @@ Multi-database example of a _ENGINE_CONFIGURATION_JSON string:
 	{
 		"PIPELINE": {
 			"CONFIGPATH": "/etc/opt/senzing",
-			"LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+			"LICENSESTRINGBASE64": "123..DEF",
 			"RESOURCEPATH": "/opt/senzing/er/resources",
 			"SUPPORTPATH": "/opt/senzing/data"
 		},
