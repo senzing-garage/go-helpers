@@ -7,6 +7,8 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	"github.com/senzing-garage/go-helpers/wraperror"
 )
 
 /*
@@ -26,7 +28,7 @@ Output
   - The number of bytes that were copied (zero in case there was an error)
   - An error if one occurred or nil if no error occurred.
 */
-func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bool) (createdFile string, fileSize int64, err error) {
+func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bool) (string, int64, error) {
 	// stat the source file
 	stat, err := os.Stat(sourceFile)
 	if err != nil {
@@ -42,6 +44,7 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 
 	// check if the destination file is a directory and if so, append the source file name
 	stat, err = os.Stat(destinationPath)
+
 	switch {
 	case err != nil && !errors.Is(err, fs.ErrNotExist):
 		// we got an error and the error was not due to the path not existing
@@ -51,9 +54,16 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 		// we have a non-existent file path -- check that its parent directory exists
 		dir := filepath.Dir(destinationPath)
 		dirStat, err := os.Stat(dir)
+
 		if err != nil {
-			return "", 0, fmt.Errorf("failed to stat directory (%s) for destination path (%s): %s", dir, destinationPath, err.Error())
+			return "", 0, fmt.Errorf(
+				"failed to stat directory (%s) for destination path (%s): %s",
+				dir,
+				destinationPath,
+				err.Error(),
+			)
 		}
+
 		if !dirStat.Mode().IsDir() {
 			return "", 0, fmt.Errorf("directory (%v) for destination path (%v) is not a directory",
 				dir, destinationPath)
@@ -74,7 +84,6 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 	case !overwrite:
 		return "", 0, fmt.Errorf("destination file already exists and overwrite is not allowed: %v",
 			destinationPath)
-
 	}
 
 	// open the source file
@@ -94,5 +103,6 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 
 	// copy the data from source to destination
 	byteCount, err := io.Copy(destination, source)
-	return destinationPath, byteCount, err
+
+	return destinationPath, byteCount, wraperror.Errorf(err, "fileutil.CopyFile error: %w", err)
 }

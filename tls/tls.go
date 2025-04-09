@@ -2,6 +2,8 @@ package tls
 
 import (
 	"crypto/tls"
+
+	"github.com/senzing-garage/go-helpers/wraperror"
 )
 
 /*
@@ -17,7 +19,12 @@ Output
 */
 func LoadX509KeyPair(certFile string, keyFile string, password string) (tls.Certificate, error) {
 	if len(password) == 0 {
-		return tls.LoadX509KeyPair(certFile, keyFile)
+		result, err := tls.LoadX509KeyPair(certFile, keyFile)
+
+		return result, wraperror.Errorf(err, "tls.LoadX509KeyPair length=0 error: %w", err)
 	}
-	return loadX509KeyPairWithPassword(certFile, keyFile, password) // OS-specific implementation.
+
+	result, err := loadX509KeyPairWithPassword(certFile, keyFile, password) // OS-specific implementation.
+
+	return result, wraperror.Errorf(err, "tls.LoadX509KeyPair error: %w", err)
 }

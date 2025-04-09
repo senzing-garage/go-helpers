@@ -1,7 +1,9 @@
-package jsonutil
+package jsonutil_test
 
 import (
 	"fmt"
+
+	"github.com/senzing-garage/go-helpers/jsonutil"
 )
 
 // ----------------------------------------------------------------------------
@@ -11,7 +13,7 @@ import (
 func ExampleFlatten_noError() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{ "name": "Joe Schmoe", "ssn": "111-22-3333" }`
-	redactedJSON := Flatten(RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
+	redactedJSON := jsonutil.Flatten(jsonutil.RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
 	fmt.Println(redactedJSON)
 	// Output: {"name":"Joe Schmoe","ssn":"***-**-****"}
 }
@@ -19,15 +21,16 @@ func ExampleFlatten_noError() {
 func ExampleFlatten_withError() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{ "name": "Joe Schmoe" "ssn": "111-22-3333" }` // missing a comma
-	redactedJSON := Flatten(RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
+	redactedJSON := jsonutil.Flatten(jsonutil.RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
 	fmt.Println(redactedJSON)
-	// Output: {"error":"invalid character '\"' after object key:value pair","text":"{ \"name\": \"Joe Schmoe\" \"ssn\": \"111-22-3333\" }"}
+	// Output: {"error":"jsonutil.RedactWithMap.Unmarshal error: invalid character '\"' after object key:value pair","text":"{ \"name\": \"Joe Schmoe\" \"ssn\": \"111-22-3333\" }"}
 }
 
 func ExampleIsJSON() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true}`
-	validJSON := IsJSON(jsonText)
+
+	validJSON := jsonutil.IsJSON(jsonText)
 	if validJSON {
 		fmt.Println(jsonText + " is valid JSON")
 	} else {
@@ -45,10 +48,12 @@ func ExampleNormalize() {
 		"age": 35,
 		"member": true
 	}`
-	normalizedJSON, err := Normalize(jsonText)
+
+	normalizedJSON, err := jsonutil.Normalize(jsonText)
 	if err != nil {
 		fmt.Println("An error occurred: " + err.Error())
 	}
+
 	fmt.Println(normalizedJSON)
 	// Output: {"age":35,"givenName":"Joe","member":true,"surname":"Schmoe"}
 }
@@ -63,10 +68,12 @@ func ExampleNormalizeAndSort() {
 		"member": true,
 		"nicknames": ["Joseph", "Joey"]
 	}`
-	normalizedJSON, err := NormalizeAndSort(jsonText)
+
+	normalizedJSON, err := jsonutil.NormalizeAndSort(jsonText)
 	if err != nil {
 		fmt.Println("An error occurred: " + err.Error())
 	}
+
 	fmt.Println(normalizedJSON)
 	// Output: {"age":35,"givenName":"Joe","member":true,"nicknames":["Joey","Joseph"],"surname":"Schmoe"}
 }
@@ -74,7 +81,8 @@ func ExampleNormalizeAndSort() {
 func ExamplePrettyPrint() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true,"ssn": "111-22-3333"}`
-	fmt.Println(PrettyPrint(jsonText, "    "))
+
+	fmt.Println(jsonutil.PrettyPrint(jsonText, "    "))
 	// Output:
 	// {
 	//     "givenName": "Joe",
@@ -95,10 +103,12 @@ func ExampleRedact() {
 		"member": true,
 		"ssn": "111-22-3333"
 	}`
-	redactedJSON, err := Redact(jsonText, "ssn")
+
+	redactedJSON, err := jsonutil.Redact(jsonText, "ssn")
 	if err != nil {
 		fmt.Println("An error occurred: " + err.Error())
 	}
+
 	fmt.Println(redactedJSON)
 	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":null,"surname":"Schmoe"}
 }
@@ -113,10 +123,12 @@ func ExampleRedactWithMap() {
 		"member": true,
 		"ssn": "111-22-3333"
 	}`
-	redactedJSON, err := RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"})
+
+	redactedJSON, err := jsonutil.RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"})
 	if err != nil {
 		fmt.Println("An error occurred: " + err.Error())
 	}
+
 	fmt.Println(redactedJSON)
 	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":"***-**-****","surname":"Schmoe"}
 }
@@ -124,7 +136,7 @@ func ExampleRedactWithMap() {
 func ExampleReverseString() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
 	var jsonText = `{"alpha": "beta"}`
-	reversedJSON := ReverseString(jsonText)
+	reversedJSON := jsonutil.ReverseString(jsonText)
 	fmt.Println(reversedJSON)
 	// Output: }"ateb" :"ahpla"{
 }
@@ -139,10 +151,12 @@ func ExampleStrip() {
 		"member": true,
 		"ssn": "111-22-3333"
 	}`
-	redactedJSON, err := Strip(jsonText, "ssn")
+
+	redactedJSON, err := jsonutil.Strip(jsonText, "ssn")
 	if err != nil {
 		fmt.Println("An error occurred: " + err.Error())
 	}
+
 	fmt.Println(redactedJSON)
 	// Output: {"age":35,"givenName":"Joe","member":true,"surname":"Schmoe"}
 }
@@ -157,6 +171,7 @@ func ExampleTruncate() {
 		"member": true,
 		"ssn": "111-22-3333"
 	}`
-	fmt.Println(Truncate(jsonText, 5, "age"))
+
+	fmt.Println(jsonutil.Truncate(jsonText, 5, "age"))
 	// Output: {"givenName":"Joe","member":true,"ssn":"111-22-3333","surname":"Schmoe"...
 }

@@ -1,15 +1,15 @@
-package settingsparser
+package settingsparser_test
 
 import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/senzing-garage/go-helpers/settingsparser"
 	"github.com/stretchr/testify/require"
 )
 
 var (
-	settingsParserSingleton SettingsParser
+	settingsParserSingleton settingsparser.SettingsParser
 )
 
 // ----------------------------------------------------------------------------
@@ -17,21 +17,23 @@ var (
 // ----------------------------------------------------------------------------
 
 func TestSettingsParser_GetConfigPath(test *testing.T) {
-	ctx := context.TODO()
+	test.Parallel()
+	ctx := test.Context()
 	parser := getTestObject(ctx, test)
 	actual, err := parser.GetConfigPath(ctx)
-	testError(test, err)
-	assert.Equal(test, "/etc/opt/senzing", actual)
+	require.NoError(test, err)
+	require.Equal(test, "/etc/opt/senzing", actual)
 }
 
 func TestSettingsParser_GetDatabaseURIs(test *testing.T) {
-	ctx := context.TODO()
-	parser := &BasicSettingsParser{
+	test.Parallel()
+	ctx := test.Context()
+	parser := &settingsparser.BasicSettingsParser{
 		Settings: `
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
-                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "LICENSESTRINGBASE64": "123..DEF",
                 "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
@@ -43,18 +45,19 @@ func TestSettingsParser_GetDatabaseURIs(test *testing.T) {
         `,
 	}
 	actual, err := parser.GetDatabaseURIs(ctx)
-	testError(test, err)
-	assert.Equal(test, []string{"postgresql://username:password@db.example.com:5432:G2"}, actual)
+	require.NoError(test, err)
+	require.Equal(test, []string{"postgresql://username:password@db.example.com:5432:G2"}, actual)
 }
 
 func TestSettingsParser_GetDatabaseURIs_Multi(test *testing.T) {
-	ctx := context.TODO()
-	parser := &BasicSettingsParser{
+	test.Parallel()
+	ctx := test.Context()
+	parser := &settingsparser.BasicSettingsParser{
 		Settings: `
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
-                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "LICENSESTRINGBASE64": "123..DEF",
                 "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
@@ -82,21 +85,22 @@ func TestSettingsParser_GetDatabaseURIs_Multi(test *testing.T) {
         `,
 	}
 	actual, err := parser.GetDatabaseURIs(ctx)
-	testError(test, err)
-	assert.Len(test, actual, 3)
-	assert.True(test, contains(actual, "postgresql://username:password@db-1.example.com:5432:G2"))
-	assert.True(test, contains(actual, "postgresql://username:password@db-2.example.com:5432:G2"))
-	assert.True(test, contains(actual, "postgresql://username:password@db-3.example.com:5432:G2"))
+	require.NoError(test, err)
+	require.Len(test, actual, 3)
+	require.Contains(test, actual, "postgresql://username:password@db-1.example.com:5432:G2")
+	require.Contains(test, actual, "postgresql://username:password@db-2.example.com:5432:G2")
+	require.Contains(test, actual, "postgresql://username:password@db-3.example.com:5432:G2")
 }
 
 func TestSettingsParser_GetLicenseStringBase64(test *testing.T) {
-	ctx := context.TODO()
-	parser := &BasicSettingsParser{
+	test.Parallel()
+	ctx := test.Context()
+	parser := &settingsparser.BasicSettingsParser{
 		Settings: `
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
-                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "LICENSESTRINGBASE64": "123..DEF",
                 "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
@@ -108,27 +112,29 @@ func TestSettingsParser_GetLicenseStringBase64(test *testing.T) {
         `,
 	}
 	actual, err := parser.GetLicenseStringBase64(ctx)
-	testError(test, err)
-	assert.Equal(test, "${SENZING_LICENSE_BASE64_ENCODED}", actual)
+	require.NoError(test, err)
+	require.Equal(test, "123..DEF", actual)
 }
 
 func TestSettingsParser_GetSettings(test *testing.T) {
-	ctx := context.TODO()
+	test.Parallel()
+	ctx := test.Context()
 	expected := `{"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/"}}`
-	parser := &BasicSettingsParser{
+	parser := &settingsparser.BasicSettingsParser{
 		Settings: expected,
 	}
 	actual := parser.GetSettings(ctx)
-	assert.Equal(test, expected, actual)
+	require.Equal(test, expected, actual)
 }
 
 func TestSettingsParser_New(test *testing.T) {
-	ctx := context.TODO()
+	test.Parallel()
+	ctx := test.Context()
 	settings := `
         {
             "PIPELINE": {
                 "CONFIGPATH": "/etc/opt/senzing",
-                "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                "LICENSESTRINGBASE64": "123..DEF",
                 "RESOURCEPATH": "/opt/senzing/er/resources",
                 "SUPPORTPATH": "/opt/senzing/data"
             },
@@ -155,19 +161,21 @@ func TestSettingsParser_New(test *testing.T) {
         }
         `
 
-	parser, err := New(settings)
-	testError(test, err)
+	parser, err := settingsparser.New(settings)
+	require.NoError(test, err)
 	actual, err := parser.GetDatabaseURIs(ctx)
-	testError(test, err)
-	assert.Len(test, actual, 3)
-	assert.True(test, contains(actual, "postgresql://username:password@db-1.example.com:5432:G2"))
-	assert.True(test, contains(actual, "postgresql://username:password@db-2.example.com:5432:G2"))
-	assert.True(test, contains(actual, "postgresql://username:password@db-3.example.com:5432:G2"))
+	require.NoError(test, err)
+	require.Len(test, actual, 3)
+	require.Contains(test, actual, "postgresql://username:password@db-1.example.com:5432:G2")
+	require.Contains(test, actual, "postgresql://username:password@db-2.example.com:5432:G2")
+	require.Contains(test, actual, "postgresql://username:password@db-3.example.com:5432:G2")
 }
 
 func TestSettingsParser_New_badJSON(test *testing.T) {
+	test.Parallel()
+
 	settings := "}{"
-	_, err := New(settings)
+	_, err := settingsparser.New(settings)
 	require.Error(test, err)
 }
 
@@ -175,20 +183,22 @@ func TestSettingsParser_New_badJSON(test *testing.T) {
 // Internal functions
 // ----------------------------------------------------------------------------
 
-func getTestObject(ctx context.Context, test *testing.T) SettingsParser {
-	_ = test
+func getTestObject(ctx context.Context, t *testing.T) settingsparser.SettingsParser {
+	t.Helper()
+
 	return getParser(ctx)
 }
 
-func getParser(ctx context.Context) SettingsParser {
+func getParser(ctx context.Context) settingsparser.SettingsParser {
 	_ = ctx
+
 	if settingsParserSingleton == nil {
-		settingsParserSingleton = &BasicSettingsParser{
+		settingsParserSingleton = &settingsparser.BasicSettingsParser{
 			Settings: `
             {
                 "PIPELINE": {
                     "CONFIGPATH": "/etc/opt/senzing",
-                    "LICENSESTRINGBASE64": "${SENZING_LICENSE_BASE64_ENCODED}",
+                    "LICENSESTRINGBASE64": "123..DEF",
                     "RESOURCEPATH": "/opt/senzing/er/resources",
                     "SUPPORTPATH": "/opt/senzing/data"
                 },
@@ -199,11 +209,6 @@ func getParser(ctx context.Context) SettingsParser {
             `,
 		}
 	}
-	return settingsParserSingleton
-}
 
-func testError(test *testing.T, err error) {
-	if err != nil {
-		assert.FailNow(test, err.Error())
-	}
+	return settingsParserSingleton
 }

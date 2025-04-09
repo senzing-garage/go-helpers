@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -14,6 +15,11 @@ import (
 	"strings"
 
 	"github.com/senzing-garage/go-helpers/settingsparser"
+	"github.com/senzing-garage/go-helpers/wraperror"
+)
+
+const (
+	pathPattern = "/%s/"
 )
 
 // ----------------------------------------------------------------------------
@@ -30,11 +36,13 @@ Output
   - A string containing a database URI that can be used in the Senzing engine configuration JSON document.
 */
 func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
-	result := ""
+	var result string
+
 	parsedURL, err := url.Parse(databaseURL)
 	if err != nil {
-		return "", err
+		return "", wraperror.Errorf(err, "settings.BuildSenzingDatabaseURI.url.Parse error: %w", err)
 	}
+
 	switch parsedURL.Scheme {
 	case "mssql":
 		if len(parsedURL.RawQuery) > 0 {
@@ -43,7 +51,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 				parsedURL.Scheme,
 				parsedURL.User,
 				parsedURL.Host,
-				string(parsedURL.Path[1:]),
+				parsedURL.Path[1:],
 				parsedURL.Query().Encode(),
 			)
 		} else {
@@ -51,7 +59,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 				"%s://%s@%s",
 				parsedURL.Scheme,
 				parsedURL.User,
-				string(parsedURL.Path[1:]),
+				parsedURL.Path[1:],
 			)
 		}
 	case "mysql":
@@ -60,7 +68,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 			parsedURL.Scheme,
 			parsedURL.User,
 			parsedURL.Host,
-			string(parsedURL.Path[1:]),
+			parsedURL.Path[1:],
 			parsedURL.RawQuery,
 		)
 	case "oci":
@@ -69,7 +77,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 			parsedURL.Scheme,
 			parsedURL.User,
 			parsedURL.Host,
-			string(parsedURL.Path[1:]),
+			parsedURL.Path[1:],
 		)
 		if len(parsedURL.RawQuery) > 0 {
 			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
@@ -80,12 +88,12 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 			parsedURL.Scheme,
 			parsedURL.User,
 			parsedURL.Host,
-			string(parsedURL.Path[1:]),
+			parsedURL.Path[1:],
 		)
 		if len(parsedURL.RawQuery) > 0 {
 			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
 		} else {
-			result = fmt.Sprintf("%s/", result)
+			result += "/"
 		}
 	case "sqlite3":
 		result = fmt.Sprintf(
@@ -93,7 +101,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 			parsedURL.Scheme,
 			parsedURL.User,
 			parsedURL.Host,
-			string(parsedURL.Path[1:]),
+			parsedURL.Path[1:],
 		)
 		if len(parsedURL.RawQuery) > 0 {
 			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
@@ -102,7 +110,8 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 		result = ""
 		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
 	}
-	return result, err
+
+	return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURI error: %w", err)
 }
 
 /*
@@ -116,67 +125,103 @@ Output
 */
 func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
 	var err error
+
 	switch {
 	case strings.HasPrefix(databaseURI, "mssql://"):
-		regExp := regexp.MustCompile(`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+):(?P<database>.+)/\?(?P<RawQuery>.+)`)
+		regExp := regexp.MustCompile(
+			`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+):(?P<database>.+)/\?(?P<RawQuery>.+)`,
+		)
 		regExpMatches := regExp.FindStringSubmatch(databaseURI)
 		regExpFieldNames := regExp.SubexpNames()
+
 		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
 		if !hasRequiredKeys(aMap) {
 			return "", fmt.Errorf("cannot reconstruct mssql from %s", databaseURI)
 		}
+
 		resultURL := buildURL(aMap)
+
 		database, ok := aMap["database"]
 		if ok {
-			pathPattern := "/%s/"
 			resultURL.Path = fmt.Sprintf(pathPattern, database)
 		}
-		return resultURL.String(), err
+
+		return resultURL.String(), wraperror.Errorf(
+			err,
+			"settings.BuildSenzingDatabaseURL HasPrefix mssql:// error: %w",
+			err,
+		)
 	case strings.HasPrefix(databaseURI, "mysql://"):
-		regExp := regexp.MustCompile(`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+)/\?schema=(?P<database>.+)`)
+		regExp := regexp.MustCompile(
+			`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+)/\?schema=(?P<database>.+)`,
+		)
 		regExpMatches := regExp.FindStringSubmatch(databaseURI)
 		regExpFieldNames := regExp.SubexpNames()
+
 		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
 		if !hasRequiredKeys(aMap) {
 			return "", fmt.Errorf("cannot reconstruct mysql from %s", databaseURI)
 		}
+
 		resultURL := buildURL(aMap)
+
 		database, ok := aMap["database"]
 		if ok {
-			pathPattern := "/%s"
+			localPathPattern := "/%s"
 			if strings.HasSuffix(databaseURI, "/") {
-				pathPattern = "/%s/"
+				localPathPattern = "/%s/"
 			}
-			resultURL.Path = fmt.Sprintf(pathPattern, database)
+
+			resultURL.Path = fmt.Sprintf(localPathPattern, database)
 		}
-		return resultURL.String(), err
+
+		return resultURL.String(), wraperror.Errorf(
+			err,
+			"settings.BuildSenzingDatabaseURL HasPrefix mysql:// error: %w",
+			err,
+		)
 	case strings.HasPrefix(databaseURI, "oci://"):
-		regExp := regexp.MustCompile(`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)/\?((?P<RawQuery>.+))?`)
+		regExp := regexp.MustCompile(
+			`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)/\?((?P<RawQuery>.+))?`,
+		)
 
 		// (?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)(/?(?P<RawQuery>))?`)
 		regExpMatches := regExp.FindStringSubmatch(databaseURI)
 		regExpFieldNames := regExp.SubexpNames()
+
 		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
 		if !hasRequiredKeys(aMap) {
 			return "", fmt.Errorf("cannot reconstruct oci from %s", databaseURI)
 		}
+
 		resultURL := buildURL(aMap)
+
 		database, ok := aMap["database"]
 		if ok {
-			pathPattern := "/%s/"
 			resultURL.Path = fmt.Sprintf(pathPattern, database)
 		}
-		return resultURL.String(), err
+
+		return resultURL.String(), wraperror.Errorf(
+			err,
+			"settings.BuildSenzingDatabaseURL HasPrefix oci:// error: %w",
+			err,
+		)
 	case strings.HasPrefix(databaseURI, "postgresql://"):
 		index := strings.LastIndex(databaseURI, ":")
 		result := strings.TrimSuffix(databaseURI[:index]+"/"+databaseURI[index+1:], "/")
-		return result, err
+
+		return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL HasPrefix postgresql:// error: %w", err)
 	case strings.HasPrefix(databaseURI, "sqlite3://"):
-		return databaseURI, err
+		return databaseURI, wraperror.Errorf(
+			err,
+			"settings.BuildSenzingDatabaseURL HasPrefix sqlite3:// error: %w",
+			err,
+		)
 	default:
 		err = fmt.Errorf("unknown database schema: %s", databaseURI)
 	}
-	return "", err
+
+	return "", wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL error: %w", err)
 }
 
 /*
@@ -192,6 +237,7 @@ Output
 */
 func BuildSimpleSettingsUsingEnvVars() (string, error) {
 	attributeMap := map[string]string{}
+
 	return BuildSimpleSettingsUsingMap(attributeMap)
 }
 
@@ -236,7 +282,11 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	senzingEngineConfigurationJSON, isSet := os.LookupEnv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON")
 	if isSet {
-		return senzingEngineConfigurationJSON, err
+		return senzingEngineConfigurationJSON, wraperror.Errorf(
+			err,
+			"settings.BuildSimpleSettingsUsingMap.os.LookupEnv.1 error: %w",
+			err,
+		)
 	}
 
 	// If SENZING_ENGINE_CONFIGURATION_JSON is set, use it.
@@ -244,7 +294,11 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	senzingEngineConfigurationJSON, isSet = os.LookupEnv("SENZING_ENGINE_CONFIGURATION_JSON")
 	if isSet {
-		return senzingEngineConfigurationJSON, err
+		return senzingEngineConfigurationJSON, wraperror.Errorf(
+			err,
+			"settings.BuildSimpleSettingsUsingMap.os.LookupEnv.2 error: %w",
+			err,
+		)
 	}
 
 	// If SENZING_PATH is set, use it.
@@ -260,12 +314,13 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 	if !inMap {
 		senzingDatabaseURL, err = getOsEnv("SENZING_TOOLS_DATABASE_URL")
 		if err != nil {
-			return "", err
+			return "", wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap.getOsEnv error: %w", err)
 		}
 	}
+
 	senzingDatabaseURI, err := BuildSenzingDatabaseURI(senzingDatabaseURL)
 	if err != nil {
-		return "", err
+		return "", wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap.BuildSenzingDatabaseURI error: %w", err)
 	}
 
 	attributeMap["databaseURL"] = senzingDatabaseURI
@@ -301,12 +356,13 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 	resultBuffer := &bytes.Buffer{}
 	jsonEncoder := json.NewEncoder(resultBuffer)
 	jsonEncoder.SetEscapeHTML(false)
+
 	err = jsonEncoder.Encode(resultStruct)
 	if err != nil {
-		return "", err
+		return "", wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap.jsonEncoder.Encode error: %w", err)
 	}
 
-	return resultBuffer.String(), err
+	return resultBuffer.String(), wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap error: %w", err)
 }
 
 /*
@@ -320,6 +376,7 @@ Output
 func GetSenzingPath() string {
 	attributeMap := map[string]string{}
 	result := getSenzingDirectory(attributeMap)
+
 	return result
 }
 
@@ -329,11 +386,14 @@ The VerifySettings method inspects the Senzing engine configuration JSON to see 
 Errors are documented at https://garage.senzing.com/go-helpers/errors.
 
 Input
+
   - ctx: A context to control lifecycle.
+
   - settings: A JSON string. See https://github.com/senzing-garage/knowledge-base/blob/main/lists/environment-variables.md#senzing_tools_engine_configuration_json
 */
 func VerifySettings(ctx context.Context, settings string) error {
 	var err error
+
 	parser := settingsparser.BasicSettingsParser{
 		Settings: settings,
 	}
@@ -342,11 +402,14 @@ func VerifySettings(ctx context.Context, settings string) error {
 
 	databaseURIs, err := parser.GetDatabaseURIs(ctx)
 	if err != nil {
-		return err
+		return wraperror.Errorf(err, "settings.VerifySettings.GetDatabaseURIs error: %w", err)
 	}
+
 	for _, value := range databaseURIs {
 		if len(value) == 0 {
-			return fmt.Errorf("SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://garage.senzing.com/go-helpers/errors")
+			return errors.New(
+				"SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+			)
 		}
 	}
 
@@ -354,50 +417,36 @@ func VerifySettings(ctx context.Context, settings string) error {
 
 	configPath, err := parser.GetConfigPath(ctx)
 	if err != nil {
-		return err
+		return wraperror.Errorf(err, "settings.VerifySettings.GetConfigPath error: %w", err)
 	}
-	configFiles := []string{
-		"cfgVariant.json",
-		"defaultGNRCP.config",
-	}
-	for _, configFile := range configFiles {
-		targetFile := fmt.Sprintf("%s/%s", configPath, configFile)
-		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("CONFIGPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors", targetFile)
-		}
+
+	err = checkConfigPath(configPath)
+	if err != nil {
+		return wraperror.Errorf(err, "settings.VerifySettings.checkConfigPath error: %w", err)
 	}
 
 	// Check Resource path.
 
 	resourcePath, err := parser.GetResourcePath(ctx)
 	if err != nil {
-		return err
+		return wraperror.Errorf(err, "settings.VerifySettings.GetResourcePath error: %w", err)
 	}
-	resourceFiles := []string{
-		"templates/g2config.json",
-	}
-	for _, resourceFile := range resourceFiles {
-		targetFile := fmt.Sprintf("%s/%s", resourcePath, resourceFile)
-		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("RESOURCEPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors", targetFile)
-		}
+
+	err = checkResourcePath(resourcePath)
+	if err != nil {
+		return wraperror.Errorf(err, "settings.VerifySettings.checkResourcePath error: %w", err)
 	}
 
 	// Check Support path.
 
 	supportPath, err := parser.GetSupportPath(ctx)
 	if err != nil {
-		return err
+		return wraperror.Errorf(err, "settings.VerifySettings.GetSupportPath error: %w", err)
 	}
-	supportFiles := []string{
-		"anyTransRule.ibm",
-		"g2SifterRules.ibm",
-	}
-	for _, supportFile := range supportFiles {
-		targetFile := fmt.Sprintf("%s/%s", supportPath, supportFile)
-		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf("SUPPORTPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors", targetFile)
-		}
+
+	err = checkSupportPath(supportPath)
+	if err != nil {
+		return wraperror.Errorf(err, "settings.VerifySettings.checkResourcePath error: %w", err)
 	}
 
 	// Os / Arch specific calls
@@ -414,10 +463,11 @@ func VerifySettings(ctx context.Context, settings string) error {
 func buildStruct(attributeMap map[string]string) SzConfiguration {
 	var result SzConfiguration
 
-	databaseURI, ok := attributeMap["databaseURL"]
-	if !ok {
+	databaseURI, isOK := attributeMap["databaseURL"]
+	if !isOK {
 		return result
 	}
+
 	senzingDirectory := getSenzingDirectory(attributeMap)
 
 	// Apply attributeMap.
@@ -433,8 +483,8 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 		},
 	}
 
-	licenseStringBase64, ok := attributeMap["licenseStringBase64"]
-	if ok {
+	licenseStringBase64, isOK := attributeMap["licenseStringBase64"]
+	if isOK {
 		result.Pipeline.LicenseStringBase64 = licenseStringBase64
 	}
 
@@ -443,8 +493,11 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 
 func buildURL(aMap map[string]string) *url.URL {
 	var username string
+
 	var password string
+
 	result := &url.URL{}
+
 	for key, value := range aMap {
 		switch key {
 		case "Scheme":
@@ -477,20 +530,83 @@ func buildURL(aMap map[string]string) *url.URL {
 	} else if len(username) > 0 {
 		result.User = url.User(username)
 	}
+
 	return result
+}
+
+func checkConfigPath(configPath string) error {
+	var err error
+
+	configFiles := []string{
+		"cfgVariant.json",
+		"defaultGNRCP.config",
+	}
+	for _, configFile := range configFiles {
+		targetFile := fmt.Sprintf("%s/%s", configPath, configFile)
+		if _, err := os.Stat(targetFile); err != nil {
+			return fmt.Errorf(
+				"CONFIGPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+				targetFile,
+			)
+		}
+	}
+
+	return err
+}
+
+func checkResourcePath(resourcePath string) error {
+	var err error
+
+	resourceFiles := []string{
+		"templates/g2config.json",
+	}
+	for _, resourceFile := range resourceFiles {
+		targetFile := fmt.Sprintf("%s/%s", resourcePath, resourceFile)
+		if _, err := os.Stat(targetFile); err != nil {
+			return fmt.Errorf(
+				"RESOURCEPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+				targetFile,
+			)
+		}
+	}
+
+	return err
+}
+
+func checkSupportPath(supportPath string) error {
+	var err error
+
+	supportFiles := []string{
+		"anyTransRule.ibm",
+		"g2SifterRules.ibm",
+	}
+	for _, supportFile := range supportFiles {
+		targetFile := fmt.Sprintf("%s/%s", supportPath, supportFile)
+		if _, err := os.Stat(targetFile); err != nil {
+			return fmt.Errorf(
+				"SUPPORTPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+				targetFile,
+			)
+		}
+	}
+
+	return err
 }
 
 func getOsEnv(variableName string) (string, error) {
 	var err error
+
 	result, isSet := os.LookupEnv(variableName)
 	if !isSet {
 		err = fmt.Errorf("environment variable not set: %s", variableName)
 	}
+
 	return result, err
 }
 
 func hasRequiredKeys(aMap map[string]string) bool {
 	result := true
+
 	requiredKeys := []string{
 		"database",
 		"Host",
@@ -503,6 +619,7 @@ func hasRequiredKeys(aMap map[string]string) bool {
 			return false
 		}
 	}
+
 	return result
 }
 
@@ -524,5 +641,6 @@ func mapWithDefault(aMap map[string]string, key string, defaultValue string) str
 	if ok {
 		return result
 	}
+
 	return defaultValue
 }

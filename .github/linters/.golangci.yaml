@@ -13,7 +13,7 @@ linters:
     - copyloopvar
     # - cyclop
     - decorder
-    # - depguard
+    - depguard
     - dogsled
     - dupl
     # - dupword
@@ -28,18 +28,18 @@ linters:
     - exptostd
     - fatcontext
     # - forbidigo
-    # - forcetypeassert
+    - forcetypeassert
     # - funlen
     - ginkgolinter
     - gocheckcompilerdirectives
     # - gochecknoglobals
-    # - gochecknoinits
+    - gochecknoinits
     - gochecksumtype
     - gocognit
-    # - goconst
+    - goconst
     - gocritic
     - gocyclo
-    # - godot
+    - godot
     # - godox
     - goheader
     - gomoddirectives
@@ -55,13 +55,13 @@ linters:
     - ineffassign
     - interfacebloat
     # - intrange
-    # - ireturn
+    - ireturn
     # - lll
     - loggercheck
     - maintidx
     - makezero
-    # - mirror
-    # - misspell
+    - mirror
+    - misspell
     # - mnd
     - musttag
     - nakedret
@@ -69,14 +69,14 @@ linters:
     - nilerr
     - nilnesserr
     - nilnil
-    # - nlreturn
+    - nlreturn
     - noctx
     - nolintlint
-    # - nonamedreturns
+    - nonamedreturns
     - nosprintfhostport
     # - paralleltest
-    # - perfsprint
-    # - prealloc
+    - perfsprint
+    - prealloc
     - predeclared
     - promlinter
     - protogetter
@@ -89,22 +89,22 @@ linters:
     - sqlclosecheck
     - staticcheck
     - tagalign
-    # - tagliatelle
+    - tagliatelle
     - testableexamples
     - testifylint
-    # - testpackage
-    # - thelper
-    - tparallel
-    # - unconvert
-    # - unparam
+    - testpackage
+    - thelper
+    # - tparallel
+    - unconvert
+    - unparam
     - unused
     - usestdlibvars
-    # - usetesting
-    # - varnamelen
-    # - wastedassign
-    # - whitespace
-    # - wrapcheck
-    # - wsl
+    - usetesting
+    - varnamelen
+    - wastedassign
+    - whitespace
+    - wrapcheck
+    - wsl
     - zerologlint
   exclusions:
     generated: lax
@@ -117,7 +117,23 @@ linters:
       - third_party$
       - builtin$
       - examples$
-
+  settings:
+    depguard:
+      rules:
+        prevent_unmaintained_packages:
+          list-mode: lax # allow unless explicitely denied
+          deny:
+            - pkg: io/ioutil
+              desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+    ireturn:
+      allow:
+        - error
+        - debug.Debug
+        - settingsparser.SettingsParser
+    tagliatelle:
+      case:
+        rules:
+          json: upperSnake
 formatters:
   enable:
     - gci

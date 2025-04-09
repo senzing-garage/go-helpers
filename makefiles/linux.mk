@@ -4,8 +4,8 @@
 # Variables
 # -----------------------------------------------------------------------------
 
-# SENZING_TOOLS_DATABASE_URL ?= sqlite3://na:na@nowhere/tmp/sqlite/G2C.db
-SENZING_TOOLS_DATABASE_URL ?= sqlite3://na:na@nowhere/tmp/sqlite/G2C.db?mode=memory&cache=shared
+SENZING_TOOLS_DATABASE_URL ?= sqlite3://na:na@nowhere/tmp/sqlite/G2C.db
+# SENZING_TOOLS_DATABASE_URL ?= sqlite3://na:na@nowhere/tmp/sqlite/G2C.db?mode=memory&cache=shared
 
 # -----------------------------------------------------------------------------
 # OS specific targets
