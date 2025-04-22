@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/pkg/errors v0.9.1
-	github.com/senzing-garage/go-messaging v1.5.2
+	github.com/senzing-garage/go-messaging v1.5.3
 	github.com/stretchr/testify v1.10.0
 )
 
