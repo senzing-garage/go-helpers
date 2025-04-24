@@ -11,14 +11,14 @@ linters:
     - containedctx
     - contextcheck
     - copyloopvar
-    # - cyclop
+    - cyclop
     - decorder
     - depguard
     - dogsled
     - dupl
-    # - dupword
+    - dupword
     - durationcheck
-    # - err113
+    - err113
     - errcheck
     - errchkjson
     - errname
@@ -29,10 +29,11 @@ linters:
     - fatcontext
     # - forbidigo
     - forcetypeassert
-    # - funlen
+    - funcorder
+    - funlen
     - ginkgolinter
     - gocheckcompilerdirectives
-    # - gochecknoglobals
+    - gochecknoglobals
     - gochecknoinits
     - gochecksumtype
     - gocognit
@@ -106,6 +107,9 @@ linters:
     - wrapcheck
     - wsl
     - zerologlint
+  disable:
+    - dupword
+    - gochecknoglobals
   exclusions:
     generated: lax
     presets:
@@ -118,13 +122,20 @@ linters:
       - builtin$
       - examples$
   settings:
+    cyclop:
+      max-complexity: 15
     depguard:
       rules:
         prevent_unmaintained_packages:
           list-mode: lax # allow unless explicitely denied
+          allow:
+            - github.com/stretchr/testify/*
           deny:
             - pkg: io/ioutil
               desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+    dupword:
+      ignore:
+        - "Vythiri"
     ireturn:
       allow:
         - error
@@ -147,3 +158,6 @@ formatters:
       - third_party$
       - builtin$
       - examples$
+  settings:
+    golines:
+      max-len: 120

@@ -36,79 +36,33 @@ Output
   - A string containing a database URI that can be used in the Senzing engine configuration JSON document.
 */
 func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
-	var result string
+	var (
+		err    error
+		result string
+	)
 
 	parsedURL, err := url.Parse(databaseURL)
 	if err != nil {
-		return "", wraperror.Errorf(err, "settings.BuildSenzingDatabaseURI.url.Parse error: %w", err)
+		return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURI.url.Parse error: %w", err)
 	}
 
 	switch parsedURL.Scheme {
 	case "mssql":
-		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf(
-				"%s://%s@%s:%s?%s",
-				parsedURL.Scheme,
-				parsedURL.User,
-				parsedURL.Host,
-				parsedURL.Path[1:],
-				parsedURL.Query().Encode(),
-			)
-		} else {
-			result = fmt.Sprintf(
-				"%s://%s@%s",
-				parsedURL.Scheme,
-				parsedURL.User,
-				parsedURL.Path[1:],
-			)
-		}
+		return buildURIForMssql(parsedURL)
 	case "mysql":
-		result = fmt.Sprintf(
-			"%s://%s@%s/?schema=%s%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			parsedURL.Host,
-			parsedURL.Path[1:],
-			parsedURL.RawQuery,
-		)
+		return buildURIForMysql(parsedURL)
 	case "oci":
-		result = fmt.Sprintf(
-			"%s://%s@//%s/%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			parsedURL.Host,
-			parsedURL.Path[1:],
-		)
-		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
-		}
+		return buildURIForOci(parsedURL)
 	case "postgresql":
-		result = fmt.Sprintf(
-			"%s://%s@%s:%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			parsedURL.Host,
-			parsedURL.Path[1:],
-		)
-		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
-		} else {
-			result += "/"
-		}
+		return buildURIForPostgresql(parsedURL)
 	case "sqlite3":
-		result = fmt.Sprintf(
-			"%s://%s@%s/%s",
-			parsedURL.Scheme,
-			parsedURL.User,
-			parsedURL.Host,
-			parsedURL.Path[1:],
-		)
-		if len(parsedURL.RawQuery) > 0 {
-			result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
-		}
+		return buildURIForSqlite3(parsedURL)
 	default:
-		result = ""
-		err = fmt.Errorf("unknown database schema: %s in %s", parsedURL.Scheme, databaseURL)
+		err = fmt.Errorf(
+			"unknown database schema: %s in %s",
+			parsedURL.Scheme,
+			databaseURL,
+		)
 	}
 
 	return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURI error: %w", err)
@@ -128,95 +82,15 @@ func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
 
 	switch {
 	case strings.HasPrefix(databaseURI, "mssql://"):
-		regExp := regexp.MustCompile(
-			`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+):(?P<database>.+)/\?(?P<RawQuery>.+)`,
-		)
-		regExpMatches := regExp.FindStringSubmatch(databaseURI)
-		regExpFieldNames := regExp.SubexpNames()
-
-		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
-		if !hasRequiredKeys(aMap) {
-			return "", fmt.Errorf("cannot reconstruct mssql from %s", databaseURI)
-		}
-
-		resultURL := buildURL(aMap)
-
-		database, ok := aMap["database"]
-		if ok {
-			resultURL.Path = fmt.Sprintf(pathPattern, database)
-		}
-
-		return resultURL.String(), wraperror.Errorf(
-			err,
-			"settings.BuildSenzingDatabaseURL HasPrefix mssql:// error: %w",
-			err,
-		)
+		return buildURLForMssql(databaseURI)
 	case strings.HasPrefix(databaseURI, "mysql://"):
-		regExp := regexp.MustCompile(
-			`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+)/\?schema=(?P<database>.+)`,
-		)
-		regExpMatches := regExp.FindStringSubmatch(databaseURI)
-		regExpFieldNames := regExp.SubexpNames()
-
-		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
-		if !hasRequiredKeys(aMap) {
-			return "", fmt.Errorf("cannot reconstruct mysql from %s", databaseURI)
-		}
-
-		resultURL := buildURL(aMap)
-
-		database, ok := aMap["database"]
-		if ok {
-			localPathPattern := "/%s"
-			if strings.HasSuffix(databaseURI, "/") {
-				localPathPattern = "/%s/"
-			}
-
-			resultURL.Path = fmt.Sprintf(localPathPattern, database)
-		}
-
-		return resultURL.String(), wraperror.Errorf(
-			err,
-			"settings.BuildSenzingDatabaseURL HasPrefix mysql:// error: %w",
-			err,
-		)
+		return buildURLForMysql(databaseURI)
 	case strings.HasPrefix(databaseURI, "oci://"):
-		regExp := regexp.MustCompile(
-			`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)/\?((?P<RawQuery>.+))?`,
-		)
-
-		// (?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)(/?(?P<RawQuery>))?`)
-		regExpMatches := regExp.FindStringSubmatch(databaseURI)
-		regExpFieldNames := regExp.SubexpNames()
-
-		aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
-		if !hasRequiredKeys(aMap) {
-			return "", fmt.Errorf("cannot reconstruct oci from %s", databaseURI)
-		}
-
-		resultURL := buildURL(aMap)
-
-		database, ok := aMap["database"]
-		if ok {
-			resultURL.Path = fmt.Sprintf(pathPattern, database)
-		}
-
-		return resultURL.String(), wraperror.Errorf(
-			err,
-			"settings.BuildSenzingDatabaseURL HasPrefix oci:// error: %w",
-			err,
-		)
+		return buildURLForOci(databaseURI)
 	case strings.HasPrefix(databaseURI, "postgresql://"):
-		index := strings.LastIndex(databaseURI, ":")
-		result := strings.TrimSuffix(databaseURI[:index]+"/"+databaseURI[index+1:], "/")
-
-		return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL HasPrefix postgresql:// error: %w", err)
+		return buildURLForPostgresql(databaseURI)
 	case strings.HasPrefix(databaseURI, "sqlite3://"):
-		return databaseURI, wraperror.Errorf(
-			err,
-			"settings.BuildSenzingDatabaseURL HasPrefix sqlite3:// error: %w",
-			err,
-		)
+		return buildURLForSqlite3(databaseURI)
 	default:
 		err = fmt.Errorf("unknown database schema: %s", databaseURI)
 	}
@@ -282,11 +156,8 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	senzingEngineConfigurationJSON, isSet := os.LookupEnv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON")
 	if isSet {
-		return senzingEngineConfigurationJSON, wraperror.Errorf(
-			err,
-			"settings.BuildSimpleSettingsUsingMap.os.LookupEnv.1 error: %w",
-			err,
-		)
+		return senzingEngineConfigurationJSON, wraperror.Errorf(err,
+			"settings.BuildSimpleSettingsUsingMap.os.LookupEnv.1 error: %w", err)
 	}
 
 	// If SENZING_ENGINE_CONFIGURATION_JSON is set, use it.
@@ -294,57 +165,17 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	senzingEngineConfigurationJSON, isSet = os.LookupEnv("SENZING_ENGINE_CONFIGURATION_JSON")
 	if isSet {
-		return senzingEngineConfigurationJSON, wraperror.Errorf(
-			err,
+		return senzingEngineConfigurationJSON, wraperror.Errorf(err,
 			"settings.BuildSimpleSettingsUsingMap.os.LookupEnv.2 error: %w",
-			err,
-		)
+			err)
 	}
 
 	// If SENZING_PATH is set, use it.
 
-	senzingPath, isSet := os.LookupEnv("SENZING_PATH")
-	if isSet {
-		attributeMap["senzingPath"] = senzingPath
-	}
-
-	// Add database URL.
-
-	senzingDatabaseURL, inMap := attributeMap["databaseURL"]
-	if !inMap {
-		senzingDatabaseURL, err = getOsEnv("SENZING_TOOLS_DATABASE_URL")
-		if err != nil {
-			return "", wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap.getOsEnv error: %w", err)
-		}
-	}
-
-	senzingDatabaseURI, err := BuildSenzingDatabaseURI(senzingDatabaseURL)
+	err = buildAttributeMap(attributeMap)
 	if err != nil {
-		return "", wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap.BuildSenzingDatabaseURI error: %w", err)
-	}
-
-	attributeMap["databaseURL"] = senzingDatabaseURI
-
-	// Add Environment Variables to the map, if not already specified in the map.
-
-	keys := map[string]string{
-		"licenseStringBase64": "SENZING_TOOLS_LICENSE_STRING_BASE64",
-		"senzingDirectory":    "SENZING_TOOLS_SENZING_DIRECTORY",
-		"configPath":          "SENZING_TOOLS_CONFIG_PATH",
-		"resourcePath":        "SENZING_TOOLS_RESOURCE_PATH",
-		"supportPath":         "SENZING_TOOLS_SUPPORT_PATH",
-	}
-
-	for mapKey, environmentVariable := range keys {
-		_, inMap := attributeMap[mapKey]
-		if !inMap {
-			environmentValue, isSet := os.LookupEnv(environmentVariable)
-			if isSet {
-				if len(environmentValue) > 0 {
-					attributeMap[mapKey] = environmentValue
-				}
-			}
-		}
+		return senzingEngineConfigurationJSON, wraperror.Errorf(err,
+			"settings.BuildSimpleSettingsUsingMap.buildAttributeMap error: %w", err)
 	}
 
 	// Construct structure.
@@ -460,6 +291,56 @@ func VerifySettings(ctx context.Context, settings string) error {
 // Private functions
 // ----------------------------------------------------------------------------
 
+func buildAttributeMap(attributeMap map[string]string) error {
+	var err error
+
+	senzingPath, isSet := os.LookupEnv("SENZING_PATH")
+	if isSet {
+		attributeMap["senzingPath"] = senzingPath
+	}
+
+	// Add database URL.
+
+	senzingDatabaseURL, inMap := attributeMap["databaseURL"]
+	if !inMap {
+		senzingDatabaseURL, err = getOsEnv("SENZING_TOOLS_DATABASE_URL")
+		if err != nil {
+			return wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap.getOsEnv error: %w", err)
+		}
+	}
+
+	senzingDatabaseURI, err := BuildSenzingDatabaseURI(senzingDatabaseURL)
+	if err != nil {
+		return wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap.BuildSenzingDatabaseURI error: %w", err)
+	}
+
+	attributeMap["databaseURL"] = senzingDatabaseURI
+
+	// Add Environment Variables to the map, if not already specified in the map.
+
+	keys := map[string]string{
+		"licenseStringBase64": "SENZING_TOOLS_LICENSE_STRING_BASE64",
+		"senzingDirectory":    "SENZING_TOOLS_SENZING_DIRECTORY",
+		"configPath":          "SENZING_TOOLS_CONFIG_PATH",
+		"resourcePath":        "SENZING_TOOLS_RESOURCE_PATH",
+		"supportPath":         "SENZING_TOOLS_SUPPORT_PATH",
+	}
+
+	for mapKey, environmentVariable := range keys {
+		_, inMap := attributeMap[mapKey]
+		if !inMap {
+			environmentValue, isSet := os.LookupEnv(environmentVariable)
+			if isSet {
+				if len(environmentValue) > 0 {
+					attributeMap[mapKey] = environmentValue
+				}
+			}
+		}
+	}
+
+	return err
+}
+
 func buildStruct(attributeMap map[string]string) SzConfiguration {
 	var result SzConfiguration
 
@@ -489,6 +370,89 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 	}
 
 	return result
+}
+
+func buildURIForMssql(parsedURL *url.URL) (string, error) {
+	var result string
+	if len(parsedURL.RawQuery) > 0 {
+		result = fmt.Sprintf(
+			"%s://%s@%s:%s?%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Host,
+			parsedURL.Path[1:],
+			parsedURL.Query().Encode(),
+		)
+	} else {
+		result = fmt.Sprintf(
+			"%s://%s@%s",
+			parsedURL.Scheme,
+			parsedURL.User,
+			parsedURL.Path[1:],
+		)
+	}
+
+	return result, nil
+}
+
+func buildURIForMysql(parsedURL *url.URL) (string, error) {
+	result := fmt.Sprintf(
+		"%s://%s@%s/?schema=%s%s",
+		parsedURL.Scheme,
+		parsedURL.User,
+		parsedURL.Host,
+		parsedURL.Path[1:],
+		parsedURL.RawQuery,
+	)
+
+	return result, nil
+}
+
+func buildURIForOci(parsedURL *url.URL) (string, error) {
+	result := fmt.Sprintf(
+		"%s://%s@//%s/%s",
+		parsedURL.Scheme,
+		parsedURL.User,
+		parsedURL.Host,
+		parsedURL.Path[1:],
+	)
+	if len(parsedURL.RawQuery) > 0 {
+		result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
+	}
+
+	return result, nil
+}
+
+func buildURIForPostgresql(parsedURL *url.URL) (string, error) {
+	result := fmt.Sprintf(
+		"%s://%s@%s:%s",
+		parsedURL.Scheme,
+		parsedURL.User,
+		parsedURL.Host,
+		parsedURL.Path[1:],
+	)
+	if len(parsedURL.RawQuery) > 0 {
+		result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
+	} else {
+		result += "/"
+	}
+
+	return result, nil
+}
+
+func buildURIForSqlite3(parsedURL *url.URL) (string, error) {
+	result := fmt.Sprintf(
+		"%s://%s@%s/%s",
+		parsedURL.Scheme,
+		parsedURL.User,
+		parsedURL.Host,
+		parsedURL.Path[1:],
+	)
+	if len(parsedURL.RawQuery) > 0 {
+		result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
+	}
+
+	return result, nil
 }
 
 func buildURL(aMap map[string]string) *url.URL {
@@ -532,6 +496,100 @@ func buildURL(aMap map[string]string) *url.URL {
 	}
 
 	return result
+}
+
+func buildURLForMssql(databaseURI string) (string, error) {
+	var err error
+
+	regExp := regexp.MustCompile(
+		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+):(?P<database>.+)/\?(?P<RawQuery>.+)`,
+	)
+	regExpMatches := regExp.FindStringSubmatch(databaseURI)
+	regExpFieldNames := regExp.SubexpNames()
+
+	aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
+	if !hasRequiredKeys(aMap) {
+		return "", fmt.Errorf("settings.buildURLForMssql cannot reconstruct mssql from %s", databaseURI)
+	}
+
+	resultURL := buildURL(aMap)
+
+	database, ok := aMap["database"]
+	if ok {
+		resultURL.Path = fmt.Sprintf(pathPattern, database)
+	}
+
+	return resultURL.String(), wraperror.Errorf(err, "settings.buildURLForMssql HasPrefix mssql:// error: %w", err)
+}
+
+func buildURLForMysql(databaseURI string) (string, error) {
+	var err error
+
+	regExp := regexp.MustCompile(
+		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+)/\?schema=(?P<database>.+)`,
+	)
+	regExpMatches := regExp.FindStringSubmatch(databaseURI)
+	regExpFieldNames := regExp.SubexpNames()
+
+	aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
+	if !hasRequiredKeys(aMap) {
+		return "", fmt.Errorf("settings.buildURLForMysql cannot reconstruct mysql from %s", databaseURI)
+	}
+
+	resultURL := buildURL(aMap)
+
+	database, ok := aMap["database"]
+	if ok {
+		localPathPattern := "/%s"
+		if strings.HasSuffix(databaseURI, "/") {
+			localPathPattern = "/%s/"
+		}
+
+		resultURL.Path = fmt.Sprintf(localPathPattern, database)
+	}
+
+	return resultURL.String(), wraperror.Errorf(err, "settings.buildURLForMysql HasPrefix mysql:// error: %w", err)
+}
+
+func buildURLForOci(databaseURI string) (string, error) {
+	var err error
+
+	regExp := regexp.MustCompile(
+		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)/\?((?P<RawQuery>.+))?`,
+	)
+
+	// (?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)(/?(?P<RawQuery>))?`)
+	regExpMatches := regExp.FindStringSubmatch(databaseURI)
+	regExpFieldNames := regExp.SubexpNames()
+
+	aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
+	if !hasRequiredKeys(aMap) {
+		return "", fmt.Errorf("settings.buildURLForOci cannot reconstruct oci from %s", databaseURI)
+	}
+
+	resultURL := buildURL(aMap)
+
+	database, ok := aMap["database"]
+	if ok {
+		resultURL.Path = fmt.Sprintf(pathPattern, database)
+	}
+
+	return resultURL.String(), wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL HasPrefix oci:// error: %w", err)
+}
+
+func buildURLForPostgresql(databaseURI string) (string, error) {
+	var err error
+
+	index := strings.LastIndex(databaseURI, ":")
+	result := strings.TrimSuffix(databaseURI[:index]+"/"+databaseURI[index+1:], "/")
+
+	return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL HasPrefix postgresql:// error: %w", err)
+}
+
+func buildURLForSqlite3(databaseURI string) (string, error) {
+	var err error
+
+	return databaseURI, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL HasPrefix sqlite3:// error: %w", err)
 }
 
 func checkConfigPath(configPath string) error {

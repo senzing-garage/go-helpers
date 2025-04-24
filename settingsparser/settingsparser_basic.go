@@ -74,53 +74,13 @@ func (parser *BasicSettingsParser) GetDatabaseURIs(ctx context.Context) ([]strin
 	// Handle multi-database case.
 
 	backend := engineConfiguration.SQL.Backend
-	if (len(backend) > 0) && (backend != "SQL") { //nolint:nestif
-		var dictionary map[string]interface{}
-
-		var databaseJSONKeys []string
-
-		err = json.Unmarshal([]byte(parser.Settings), &dictionary)
+	if (len(backend) > 0) && (backend != "SQL") {
+		multiDatabaseURIs, err := getMultiDatabaseURIs(ctx, parser.Settings, backend)
 		if err != nil {
-			return result, wraperror.Errorf(err, "settingsparser.GetDatabaseURIs.Unmarshal error: %w", err)
+			return result, wraperror.Errorf(err, "settingsparser.getMultiDatabaseURIs error: %w", err)
 		}
 
-		// Determine JSON keys for database definitions.
-
-		backendMap := dictionary[backend]
-
-		backendMapTyped, isOK := backendMap.(map[string]interface{})
-		if !isOK {
-			panic(fmt.Sprintf("failed type assertion for %v.(map[string]interface{})", backendMap))
-		}
-
-		for _, value := range backendMapTyped {
-			valueString, isOK := value.(string)
-			if !isOK {
-				panic(fmt.Sprintf("failed type assertion for %v.(string)", value))
-			}
-
-			if !contains(databaseJSONKeys, valueString) {
-				databaseJSONKeys = append(databaseJSONKeys, valueString)
-			}
-		}
-
-		// Add each database.
-
-		for _, databaseJSONKey := range databaseJSONKeys {
-			databaseJSON, isOK := dictionary[databaseJSONKey].(map[string]interface{})
-			if !isOK {
-				panic(fmt.Sprintf("failed type assertion for dictionary[%s].(map[string]interface{}", databaseJSONKey))
-			}
-
-			databaseName, isOK := databaseJSON["DB_1"].(string)
-			if !isOK {
-				panic(`failed type assertion for databaseJSON["DB_1"].(string)`)
-			}
-
-			if !contains(result, databaseName) {
-				result = append(result, databaseName)
-			}
-		}
+		result = append(result, multiDatabaseURIs...)
 	}
 
 	// TODO:  Implement multi-database list.
@@ -254,7 +214,7 @@ func (parser *BasicSettingsParser) RedactedJSON(ctx context.Context) (string, er
 }
 
 // ----------------------------------------------------------------------------
-// Internal methods
+// Private functions
 // ----------------------------------------------------------------------------
 
 func contains(haystack []string, needle string) bool {
@@ -293,4 +253,63 @@ func redactURL(aURL string) (string, error) {
 	}
 
 	return parsedURL.Redacted(), nil
+}
+
+func getMultiDatabaseURIs(ctx context.Context, settings string, backend string) ([]string, error) {
+	var err error
+
+	_ = ctx
+
+	result := []string{}
+
+	if (len(backend) > 0) && (backend != "SQL") { //nolint:nestif
+		var dictionary map[string]interface{}
+
+		var databaseJSONKeys []string
+
+		err = json.Unmarshal([]byte(settings), &dictionary)
+		if err != nil {
+			return result, wraperror.Errorf(err, "settingsparser.GetDatabaseURIs.Unmarshal error: %w", err)
+		}
+
+		// Determine JSON keys for database definitions.
+
+		backendMap := dictionary[backend]
+
+		backendMapTyped, isOK := backendMap.(map[string]interface{})
+		if !isOK {
+			panic(fmt.Sprintf("failed type assertion for %v.(map[string]interface{})", backendMap))
+		}
+
+		for _, value := range backendMapTyped {
+			valueString, isOK := value.(string)
+			if !isOK {
+				panic(fmt.Sprintf("failed type assertion for %v.(string)", value))
+			}
+
+			if !contains(databaseJSONKeys, valueString) {
+				databaseJSONKeys = append(databaseJSONKeys, valueString)
+			}
+		}
+
+		// Add each database.
+
+		for _, databaseJSONKey := range databaseJSONKeys {
+			databaseJSON, isOK := dictionary[databaseJSONKey].(map[string]interface{})
+			if !isOK {
+				panic(fmt.Sprintf("failed type assertion for dictionary[%s].(map[string]interface{}", databaseJSONKey))
+			}
+
+			databaseName, isOK := databaseJSON["DB_1"].(string)
+			if !isOK {
+				panic(`failed type assertion for databaseJSON["DB_1"].(string)`)
+			}
+
+			if !contains(result, databaseName) {
+				result = append(result, databaseName)
+			}
+		}
+	}
+
+	return result, wraperror.Errorf(err, "settingsparser.getMultiDatabaseURIs error: %w", err)
 }
