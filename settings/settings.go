@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -58,10 +57,12 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 	case "sqlite3":
 		return buildURIForSqlite3(parsedURL)
 	default:
-		err = fmt.Errorf(
-			"unknown database schema: %s in %s",
+		err = wraperror.Errorf(
+			errForPackage,
+			"unknown database schema: %s in %s error: %w",
 			parsedURL.Scheme,
 			databaseURL,
+			errForPackage,
 		)
 	}
 
@@ -78,7 +79,10 @@ Output
   - databaseURL: A parseable URL.
 */
 func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
-	var err error
+	var (
+		err    error
+		result string
+	)
 
 	switch {
 	case strings.HasPrefix(databaseURI, "mssql://"):
@@ -92,10 +96,10 @@ func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
 	case strings.HasPrefix(databaseURI, "sqlite3://"):
 		return buildURLForSqlite3(databaseURI)
 	default:
-		err = fmt.Errorf("unknown database schema: %s", databaseURI)
+		err = wraperror.Errorf(errForPackage, "unknown database schema: %s error: %w", databaseURI, errForPackage)
 	}
 
-	return "", wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL error: %w", err)
+	return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL error: %w", err)
 }
 
 /*
@@ -238,8 +242,10 @@ func VerifySettings(ctx context.Context, settings string) error {
 
 	for _, value := range databaseURIs {
 		if len(value) == 0 {
-			return errors.New(
-				"SQL.CONNECTION empty in Senzing engine configuration JSON.\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+			return wraperror.Errorf(
+				errForPackage,
+				"SQL.CONNECTION empty in Senzing engine configuration JSON. For more information, visit https://garage.senzing.com/go-helpers/errors error: %w",
+				errForPackage,
 			)
 		}
 	}
@@ -373,7 +379,11 @@ func buildStruct(attributeMap map[string]string) SzConfiguration {
 }
 
 func buildURIForMssql(parsedURL *url.URL) (string, error) {
-	var result string
+	var (
+		err    error
+		result string
+	)
+
 	if len(parsedURL.RawQuery) > 0 {
 		result = fmt.Sprintf(
 			"%s://%s@%s:%s?%s",
@@ -392,10 +402,12 @@ func buildURIForMssql(parsedURL *url.URL) (string, error) {
 		)
 	}
 
-	return result, nil
+	return result, err
 }
 
 func buildURIForMysql(parsedURL *url.URL) (string, error) {
+	var err error
+
 	result := fmt.Sprintf(
 		"%s://%s@%s/?schema=%s%s",
 		parsedURL.Scheme,
@@ -405,10 +417,12 @@ func buildURIForMysql(parsedURL *url.URL) (string, error) {
 		parsedURL.RawQuery,
 	)
 
-	return result, nil
+	return result, err
 }
 
 func buildURIForOci(parsedURL *url.URL) (string, error) {
+	var err error
+
 	result := fmt.Sprintf(
 		"%s://%s@//%s/%s",
 		parsedURL.Scheme,
@@ -420,10 +434,12 @@ func buildURIForOci(parsedURL *url.URL) (string, error) {
 		result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
 	}
 
-	return result, nil
+	return result, err
 }
 
 func buildURIForPostgresql(parsedURL *url.URL) (string, error) {
+	var err error
+
 	result := fmt.Sprintf(
 		"%s://%s@%s:%s",
 		parsedURL.Scheme,
@@ -437,10 +453,12 @@ func buildURIForPostgresql(parsedURL *url.URL) (string, error) {
 		result += "/"
 	}
 
-	return result, nil
+	return result, err
 }
 
 func buildURIForSqlite3(parsedURL *url.URL) (string, error) {
+	var err error
+
 	result := fmt.Sprintf(
 		"%s://%s@%s/%s",
 		parsedURL.Scheme,
@@ -452,7 +470,7 @@ func buildURIForSqlite3(parsedURL *url.URL) (string, error) {
 		result = fmt.Sprintf("%s?%s", result, parsedURL.Query().Encode())
 	}
 
-	return result, nil
+	return result, err
 }
 
 func buildURL(aMap map[string]string) *url.URL {
@@ -499,7 +517,10 @@ func buildURL(aMap map[string]string) *url.URL {
 }
 
 func buildURLForMssql(databaseURI string) (string, error) {
-	var err error
+	var (
+		err    error
+		result string
+	)
 
 	regExp := regexp.MustCompile(
 		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+):(?P<database>.+)/\?(?P<RawQuery>.+)`,
@@ -509,7 +530,12 @@ func buildURLForMssql(databaseURI string) (string, error) {
 
 	aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
 	if !hasRequiredKeys(aMap) {
-		return "", fmt.Errorf("settings.buildURLForMssql cannot reconstruct mssql from %s", databaseURI)
+		return result, wraperror.Errorf(
+			errForPackage,
+			"settings.buildURLForMssql cannot reconstruct mssql from %s error: %w",
+			databaseURI,
+			errForPackage,
+		)
 	}
 
 	resultURL := buildURL(aMap)
@@ -519,11 +545,16 @@ func buildURLForMssql(databaseURI string) (string, error) {
 		resultURL.Path = fmt.Sprintf(pathPattern, database)
 	}
 
-	return resultURL.String(), wraperror.Errorf(err, "settings.buildURLForMssql HasPrefix mssql:// error: %w", err)
+	result = resultURL.String()
+
+	return result, wraperror.Errorf(err, "settings.buildURLForMssql HasPrefix mssql:// error: %w", err)
 }
 
 func buildURLForMysql(databaseURI string) (string, error) {
-	var err error
+	var (
+		err    error
+		result string
+	)
 
 	regExp := regexp.MustCompile(
 		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+)/\?schema=(?P<database>.+)`,
@@ -533,7 +564,12 @@ func buildURLForMysql(databaseURI string) (string, error) {
 
 	aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
 	if !hasRequiredKeys(aMap) {
-		return "", fmt.Errorf("settings.buildURLForMysql cannot reconstruct mysql from %s", databaseURI)
+		return result, wraperror.Errorf(
+			errForPackage,
+			"settings.buildURLForMysql cannot reconstruct mysql from %s error: %w",
+			databaseURI,
+			errForPackage,
+		)
 	}
 
 	resultURL := buildURL(aMap)
@@ -548,11 +584,16 @@ func buildURLForMysql(databaseURI string) (string, error) {
 		resultURL.Path = fmt.Sprintf(localPathPattern, database)
 	}
 
-	return resultURL.String(), wraperror.Errorf(err, "settings.buildURLForMysql HasPrefix mysql:// error: %w", err)
+	result = resultURL.String()
+
+	return result, wraperror.Errorf(err, "settings.buildURLForMysql HasPrefix mysql:// error: %w", err)
 }
 
 func buildURLForOci(databaseURI string) (string, error) {
-	var err error
+	var (
+		err    error
+		result string
+	)
 
 	regExp := regexp.MustCompile(
 		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)/\?((?P<RawQuery>.+))?`,
@@ -564,7 +605,12 @@ func buildURLForOci(databaseURI string) (string, error) {
 
 	aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
 	if !hasRequiredKeys(aMap) {
-		return "", fmt.Errorf("settings.buildURLForOci cannot reconstruct oci from %s", databaseURI)
+		return result, wraperror.Errorf(
+			errForPackage,
+			"settings.buildURLForOci cannot reconstruct oci from %s error: %w",
+			databaseURI,
+			errForPackage,
+		)
 	}
 
 	resultURL := buildURL(aMap)
@@ -574,7 +620,9 @@ func buildURLForOci(databaseURI string) (string, error) {
 		resultURL.Path = fmt.Sprintf(pathPattern, database)
 	}
 
-	return resultURL.String(), wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL HasPrefix oci:// error: %w", err)
+	result = resultURL.String()
+
+	return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL HasPrefix oci:// error: %w", err)
 }
 
 func buildURLForPostgresql(databaseURI string) (string, error) {
@@ -602,9 +650,11 @@ func checkConfigPath(configPath string) error {
 	for _, configFile := range configFiles {
 		targetFile := fmt.Sprintf("%s/%s", configPath, configFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf(
-				"CONFIGPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+			return wraperror.Errorf(
+				err,
+				"CONFIGPATH: Could not find %s. For more information, visit https://garage.senzing.com/go-helpers/errors error: %w ",
 				targetFile,
+				err,
 			)
 		}
 	}
@@ -621,9 +671,11 @@ func checkResourcePath(resourcePath string) error {
 	for _, resourceFile := range resourceFiles {
 		targetFile := fmt.Sprintf("%s/%s", resourcePath, resourceFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf(
-				"RESOURCEPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+			return wraperror.Errorf(
+				err,
+				"RESOURCEPATH: Could not find %s. For more information, visit https://garage.senzing.com/go-helpers/errors error: %w",
 				targetFile,
+				err,
 			)
 		}
 	}
@@ -641,9 +693,11 @@ func checkSupportPath(supportPath string) error {
 	for _, supportFile := range supportFiles {
 		targetFile := fmt.Sprintf("%s/%s", supportPath, supportFile)
 		if _, err := os.Stat(targetFile); err != nil {
-			return fmt.Errorf(
-				"SUPPORTPATH: Could not find %s\nFor more information, visit https://garage.senzing.com/go-helpers/errors",
+			return wraperror.Errorf(
+				err,
+				"SUPPORTPATH: Could not find %s. For more information, visit https://garage.senzing.com/go-helpers/errors error: %w ",
 				targetFile,
+				err,
 			)
 		}
 	}
@@ -652,11 +706,14 @@ func checkSupportPath(supportPath string) error {
 }
 
 func getOsEnv(variableName string) (string, error) {
-	var err error
+	var (
+		err    error
+		result string
+	)
 
 	result, isSet := os.LookupEnv(variableName)
 	if !isSet {
-		err = fmt.Errorf("environment variable not set: %s", variableName)
+		return result, wraperror.Errorf(err, "settings.getOSEnv environment variable not set: %s", variableName)
 	}
 
 	return result, err
@@ -688,9 +745,6 @@ func mapNamesToMatches(names []string, matches []string) map[string]string {
 		result[names[i]] = match
 	}
 
-	// for i, name := range names {
-	// 	result[name] = matches[i]
-	// }
 	return result
 }
 

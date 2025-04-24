@@ -65,7 +65,7 @@ var testCasesForMultiPlatform = []testCaseMetadata{
 		name:          "oci-001",
 		databaseURL:   "oci://username:password@hostname:1521/G2",
 		databaseURI:   "oci://username:password@//hostname:1521/G2",
-		notReversible: true, // FIXME: The BuildSenzingDatabaseURL() regex needs to change to make this reversible.
+		notReversible: true, // IMPROVE: The BuildSenzingDatabaseURL() regex needs to change to make this reversible.
 	},
 	{
 		name:        "oci-002",
@@ -107,6 +107,8 @@ var testCases = append(testCasesForMultiPlatform, testCasesForOsArch...)
 // ----------------------------------------------------------------------------
 
 func TestBuildSenzingDatabaseURI(test *testing.T) {
+	test.Parallel()
+
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
 			test.Parallel()
@@ -119,6 +121,8 @@ func TestBuildSenzingDatabaseURI(test *testing.T) {
 }
 
 func TestBuildSenzingDatabaseURL(test *testing.T) {
+	test.Parallel()
+
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
 			test.Parallel()
@@ -142,6 +146,8 @@ func TestBuildSimpleSettingsUsingEnvVars(test *testing.T) {
 }
 
 func TestBuildSimpleSettingsUsingMap(test *testing.T) {
+	test.Parallel()
+
 	for _, testCase := range testCases {
 		test.Run(testCase.name, func(test *testing.T) {
 			test.Parallel()
@@ -186,6 +192,7 @@ func TestBuildSimpleSettingsUsingMap_using_SENZING_TOOLS_LICENSE_STRING_BASE64(t
 }
 
 func TestBuildSimpleSettingsUsingMap_ParseResult(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 
 	for _, testCase := range testCases {
@@ -216,6 +223,7 @@ func TestGetSenzingPath(test *testing.T) {
 }
 
 func TestVerifySettings(test *testing.T) {
+	test.Parallel()
 	ctx := test.Context()
 
 	for _, testCase := range testCases {

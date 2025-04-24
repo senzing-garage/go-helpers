@@ -24,10 +24,10 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    # - exhaustruct
+    - exhaustruct
     - exptostd
     - fatcontext
-    # - forbidigo
+    - forbidigo
     - forcetypeassert
     - funcorder
     - funlen
@@ -41,7 +41,7 @@ linters:
     - gocritic
     - gocyclo
     - godot
-    # - godox
+    - godox
     - goheader
     - gomoddirectives
     - gomodguard
@@ -55,15 +55,15 @@ linters:
     - inamedparam
     - ineffassign
     - interfacebloat
-    # - intrange
+    - intrange
     - ireturn
-    # - lll
+    - lll
     - loggercheck
     - maintidx
     - makezero
     - mirror
     - misspell
-    # - mnd
+    - mnd
     - musttag
     - nakedret
     - nestif
@@ -75,7 +75,7 @@ linters:
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
-    # - paralleltest
+    - paralleltest
     - perfsprint
     - prealloc
     - predeclared
@@ -95,7 +95,7 @@ linters:
     - testifylint
     - testpackage
     - thelper
-    # - tparallel
+    - tparallel
     - unconvert
     - unparam
     - unused
@@ -110,6 +110,8 @@ linters:
   disable:
     - dupword
     - gochecknoglobals
+    - lll
+    - mnd
   exclusions:
     generated: lax
     presets:
@@ -136,6 +138,15 @@ linters:
     dupword:
       ignore:
         - "Vythiri"
+    exhaustruct:
+      exclude:
+        - '.+/jsonutil_test\.<anonymous>$'
+        - '.+/record\.Record$'
+        - '.+/settings_test\.testCaseMetadata$'
+        - '.+/settings\.SzConfigurationPipeline$'
+        - '.+/settingsparser\.EngineConfiguration$'
+        - '.+/url\.URL$'
+
     ireturn:
       allow:
         - error
@@ -151,7 +162,7 @@ formatters:
     - gofmt
     # - gofumpt
     - goimports
-    # - golines
+    - golines
   exclusions:
     generated: lax
     paths:

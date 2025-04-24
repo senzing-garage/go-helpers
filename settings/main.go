@@ -1,6 +1,8 @@
 // The settings package helps configure SENZING_ENGINE_CONFIGURATION_JSON.
 package settings
 
+import "errors"
+
 // ----------------------------------------------------------------------------
 // Types
 // ----------------------------------------------------------------------------
@@ -27,3 +29,9 @@ type SzConfiguration struct {
 
 // Identfier of the  package found messages having the format "SZSDK6402xxxx".
 const ComponentID = 6402
+
+// ----------------------------------------------------------------------------
+// Variables
+// ----------------------------------------------------------------------------
+
+var errForPackage = errors.New("settings")

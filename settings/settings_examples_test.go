@@ -131,6 +131,7 @@ func ExampleBuildSimpleSettingsUsingMap_postgresqlWithSchema() {
 	fmt.Println(result)
 	// Output: {"PIPELINE":{"CONFIGPATH":"/etc/opt/senzing","RESOURCEPATH":"/opt/senzing/er/resources","SUPPORTPATH":"/opt/senzing/data"},"SQL":{"CONNECTION":"postgresql://username:password@hostname:5432:G2/?schema=schemaname"}}
 }
+
 func ExampleBuildSimpleSettingsUsingMap_sqlite() {
 	aMap := map[string]string{
 		"databaseURL": "sqlite3://na:na@/var/opt/senzing/sqlite/G2C.db",

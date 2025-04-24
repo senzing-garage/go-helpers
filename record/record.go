@@ -56,7 +56,7 @@ func Validate(line string) (bool, error) {
 	if valid {
 		return ValidateRecord(record)
 	}
-	//TODO: should we return the actual parse error???
+	// IMPROVE: should we return the actual parse error???
 
 	err := szerrors.NewError(3000)
 

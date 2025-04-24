@@ -83,7 +83,7 @@ func (parser *BasicSettingsParser) GetDatabaseURIs(ctx context.Context) ([]strin
 		result = append(result, multiDatabaseURIs...)
 	}
 
-	// TODO:  Implement multi-database list.
+	// IMPROVE:  Implement multi-database list.
 
 	return result, wraperror.Errorf(err, "settingsparser.GetDatabaseURIs error: %w", err)
 }

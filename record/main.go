@@ -22,5 +22,7 @@ var IDMessages = map[int]string{
 	3002: "a RECORD_ID field is required",
 }
 
-var messengerOptions = []interface{}{}
-var szerrors, _ = messenger.New(messengerOptions...)
+var (
+	messengerOptions = []interface{}{}
+	szerrors, _      = messenger.New(messengerOptions...)
+)

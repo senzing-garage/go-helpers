@@ -20,6 +20,8 @@ func TestHelpers_GetEnv(test *testing.T) {
 }
 
 func TestHelpers_GetEnv_default(test *testing.T) {
+	test.Parallel()
+
 	expected := "DEFAULT_VALUE"
 	actual := env.GetEnv("NO_ENV_VAR", expected)
 	require.Equal(test, expected, actual)

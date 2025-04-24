@@ -21,11 +21,11 @@ func main() {
 
 			normSorted, _ := jsonutil.NormalizeAndSort(jsonText)
 
-			fmt.Println("- - - - - - - - - - - - - - - - - - - - ")
-			fmt.Println(normalized)
-			fmt.Println()
-			fmt.Println(normSorted)
-			fmt.Println()
+			outputln("- - - - - - - - - - - - - - - - - - - - ")
+			outputln(normalized)
+			outputln()
+			outputln(normSorted)
+			outputln()
 		}
 
 		return
@@ -39,7 +39,7 @@ func main() {
 
 	iniParams, err := settings.BuildSimpleSettingsUsingEnvVars()
 	failOnError(err)
-	fmt.Println(iniParams)
+	outputln(iniParams)
 
 	// ------------------------------------------------------------------------
 	// --- Verify parameters
@@ -62,15 +62,19 @@ func main() {
 
 	iniParams2, err := settings.BuildSimpleSettingsUsingMap(attributeMap)
 	failOnError(err)
-	fmt.Println(iniParams2)
+	outputln(iniParams2)
 }
 
 // ----------------------------------------------------------------------------
-// Internal methods
+// Private functions
 // ----------------------------------------------------------------------------
 
 func failOnError(err error) {
 	if err != nil {
 		panic(err.Error())
 	}
+}
+
+func outputln(message ...any) {
+	fmt.Println(message...) //nolint
 }

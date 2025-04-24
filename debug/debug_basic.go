@@ -28,7 +28,7 @@ Input
 func (debug *BasicDebug) Print(level int, a ...any) {
 	if debug.MinimumDebugLevel > 0 {
 		if level >= debug.MinimumDebugLevel {
-			fmt.Print(a...)
+			fmt.Print(a...) //nolint
 		}
 	}
 }
@@ -44,7 +44,7 @@ Input
 func (debug *BasicDebug) Printf(level int, format string, a ...any) {
 	if debug.MinimumDebugLevel > 0 {
 		if level >= debug.MinimumDebugLevel {
-			fmt.Printf(format, a...)
+			fmt.Printf(format, a...) //nolint
 		}
 	}
 }
@@ -59,7 +59,7 @@ Input
 func (debug *BasicDebug) Println(level int, a ...any) {
 	if debug.MinimumDebugLevel > 0 {
 		if level >= debug.MinimumDebugLevel {
-			fmt.Println(a...)
+			fmt.Println(a...) //nolint
 		}
 	}
 }

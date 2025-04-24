@@ -14,6 +14,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var errForPackage = errors.New("fileutil_test")
+
 // ----------------------------------------------------------------------------
 // Test CopyFile() function
 // ----------------------------------------------------------------------------
@@ -167,6 +169,8 @@ func TestCopyFile_NoOverwrite(test *testing.T) {
 }
 
 func TestCopyFile_ToDirectoryWithOverwrite(test *testing.T) {
+	test.Parallel()
+
 	destinationDir := destinationDirectoryPath()
 	sourceFile, fileSize := sourceFilePath1()
 
@@ -305,7 +309,7 @@ func TestCopyFile_DestinationNotFound(test *testing.T) {
 }
 
 // ----------------------------------------------------------------------------
-// Internal functions
+// Private functions
 // ----------------------------------------------------------------------------
 
 func baseDirectoryPath() string {
@@ -331,25 +335,21 @@ func sourceFilePath2() (string, int64) {
 func createTextFile(path string, text string) (int64, error) {
 	source, err := os.Create(filepath.Clean(path))
 	if err != nil {
-		return 0, fmt.Errorf("failed to create file (%v): %v", path, err.Error())
+		return 0, wraperror.Errorf(err, "failed to create file (%v): %w", path, err)
 	}
 
 	defer source.Close()
 
 	byteCount, err := source.WriteString(text)
 	if err != nil {
-		return 0, fmt.Errorf("failed to write content (%v) to file (%v): %v",
-			text, path, err.Error())
+		return 0, wraperror.Errorf(err, "failed to write content (%v) to file (%v): %w", text, path, err)
 	}
 
 	return int64(byteCount), err
 }
 
 func createTextFileN(path string, byteCount int64) (int64, error) {
-	var (
-		index      int64
-		writeCount int64
-	)
+	var writeCount int64
 
 	source, err := os.Create(filepath.Clean(path))
 	if err != nil {
@@ -358,10 +358,7 @@ func createTextFileN(path string, byteCount int64) (int64, error) {
 
 	defer source.Close()
 
-	for index = 0; index < byteCount; index++ {
-		// for index := range byteCount {
-		_ = index
-
+	for index := range byteCount {
 		count, err := source.WriteString("A")
 		if err != nil {
 			return writeCount, wraperror.Errorf(err, "failed to write letter (%v) to file (%v): %w",
@@ -372,11 +369,15 @@ func createTextFileN(path string, byteCount int64) (int64, error) {
 	}
 
 	if writeCount != byteCount {
-		return writeCount, fmt.Errorf("wrote wrong number of bytes (%v) to file (%v)",
-			writeCount, path)
+		return writeCount, wraperror.Errorf(errForPackage, "wrote wrong number of bytes (%v) to file (%v) error: %w",
+			writeCount, path, errForPackage)
 	}
 
 	return writeCount, wraperror.Errorf(err, "fileutil.createTextFileN error: %w", err)
+}
+
+func outputln(message ...any) {
+	fmt.Println(message...) //nolint
 }
 
 func useBase64(thing int64) {
@@ -390,7 +391,7 @@ func useBase64(thing int64) {
 func TestMain(m *testing.M) {
 	err := setup()
 	if err != nil {
-		fmt.Println(err)
+		outputln(err)
 		os.Exit(1)
 	}
 
@@ -398,7 +399,7 @@ func TestMain(m *testing.M) {
 
 	err = teardown()
 	if err != nil {
-		fmt.Println(err)
+		outputln(err)
 	}
 
 	os.Exit(code)
@@ -410,8 +411,7 @@ func setup() error {
 	// remove any previously existing test directory
 	err := os.RemoveAll(baseDir)
 	if err != nil {
-		return fmt.Errorf("failed to delete old test targets in %v: %v",
-			baseDir, err.Error())
+		return wraperror.Errorf(err, "failed to delete old test targets in %v: %w", baseDir, err)
 	}
 
 	// define the source and destination directories
@@ -419,17 +419,15 @@ func setup() error {
 	destinationDir := destinationDirectoryPath()
 
 	// make the source directory and any required parents
-	err = os.MkdirAll(sourceDir, 0770)
+	err = os.MkdirAll(sourceDir, 0o770)
 	if err != nil {
-		return fmt.Errorf("failed to create source directory (%v): %v",
-			sourceDir, err.Error())
+		return wraperror.Errorf(err, "failed to create source directory (%v): %w", sourceDir, err)
 	}
 
 	// make the destination directory and any required parents
-	err = os.MkdirAll(destinationDir, 0770)
+	err = os.MkdirAll(destinationDir, 0o770)
 	if err != nil {
-		return fmt.Errorf("failed to create destination directory (%v): %v",
-			destinationDir, err.Error())
+		return wraperror.Errorf(err, "failed to create destination directory (%v): %w", destinationDir, err)
 	}
 
 	// define paths to
@@ -459,8 +457,7 @@ func teardown() error {
 	// remove any previously existing test directory
 	err := os.RemoveAll(baseDir)
 	if err != nil {
-		return fmt.Errorf("failed to delete old test targets in %v: %v",
-			baseDir, err.Error())
+		return wraperror.Errorf(err, "failed to delete old test targets in %v: %w", baseDir, err)
 	}
 
 	return wraperror.Errorf(err, "fileutil.teardown error: %w", err)

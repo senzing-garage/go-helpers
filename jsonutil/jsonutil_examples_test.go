@@ -12,7 +12,7 @@ import (
 
 func ExampleFlatten_noError() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `{ "name": "Joe Schmoe", "ssn": "111-22-3333" }`
+	jsonText := `{ "name": "Joe Schmoe", "ssn": "111-22-3333" }`
 	redactedJSON := jsonutil.Flatten(jsonutil.RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
 	fmt.Println(redactedJSON)
 	// Output: {"name":"Joe Schmoe","ssn":"***-**-****"}
@@ -20,7 +20,7 @@ func ExampleFlatten_noError() {
 
 func ExampleFlatten_withError() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `{ "name": "Joe Schmoe" "ssn": "111-22-3333" }` // missing a comma
+	jsonText := `{ "name": "Joe Schmoe" "ssn": "111-22-3333" }` // missing a comma
 	redactedJSON := jsonutil.Flatten(jsonutil.RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
 	fmt.Println(redactedJSON)
 	// Output: {"error":"jsonutil.RedactWithMap.Unmarshal error: invalid character '\"' after object key:value pair","text":"{ \"name\": \"Joe Schmoe\" \"ssn\": \"111-22-3333\" }"}
@@ -28,7 +28,7 @@ func ExampleFlatten_withError() {
 
 func ExampleIsJSON() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true}`
+	jsonText := `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true}`
 
 	validJSON := jsonutil.IsJSON(jsonText)
 	if validJSON {
@@ -41,11 +41,11 @@ func ExampleIsJSON() {
 
 func ExampleNormalize() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
+	jsonText := `
 	{
-		"givenName": "Joe",
-		"surname": "Schmoe",
-		"age": 35,
+		"givenName": "Jack",
+		"surname": "Smith",
+		"age": 43,
 		"member": true
 	}`
 
@@ -55,16 +55,16 @@ func ExampleNormalize() {
 	}
 
 	fmt.Println(normalizedJSON)
-	// Output: {"age":35,"givenName":"Joe","member":true,"surname":"Schmoe"}
+	// Output: {"age":43,"givenName":"Jack","member":true,"surname":"Smith"}
 }
 
 func ExampleNormalizeAndSort() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
+	jsonText := `
 	{
-		"givenName": "Joe",
-		"surname": "Schmoe",
-		"age": 35,
+		"givenName": "Jane",
+		"surname": "Doe",
+		"age": 29,
 		"member": true,
 		"nicknames": ["Joseph", "Joey"]
 	}`
@@ -75,19 +75,19 @@ func ExampleNormalizeAndSort() {
 	}
 
 	fmt.Println(normalizedJSON)
-	// Output: {"age":35,"givenName":"Joe","member":true,"nicknames":["Joey","Joseph"],"surname":"Schmoe"}
+	// Output: {"age":29,"givenName":"Jane","member":true,"nicknames":["Joey","Joseph"],"surname":"Doe"}
 }
 
 func ExamplePrettyPrint() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `{"givenName": "Joe","surname": "Schmoe","age": 35,"member": true,"ssn": "111-22-3333"}`
+	jsonText := `{"givenName": "Don","surname": "Juan","age": 52,"member": true,"ssn": "111-22-3333"}`
 
 	fmt.Println(jsonutil.PrettyPrint(jsonText, "    "))
 	// Output:
 	// {
-	//     "givenName": "Joe",
-	//     "surname": "Schmoe",
-	//     "age": 35,
+	//     "givenName": "Don",
+	//     "surname": "Juan",
+	//     "age": 52,
 	//     "member": true,
 	//     "ssn": "111-22-3333"
 	// }
@@ -95,11 +95,11 @@ func ExamplePrettyPrint() {
 
 func ExampleRedact() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
+	jsonText := `
 	{
-		"givenName": "Joe",
-		"surname": "Schmoe",
-		"age": 35,
+		"givenName": "Bill",
+		"surname": "Jackson",
+		"age": 46,
 		"member": true,
 		"ssn": "111-22-3333"
 	}`
@@ -110,16 +110,16 @@ func ExampleRedact() {
 	}
 
 	fmt.Println(redactedJSON)
-	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":null,"surname":"Schmoe"}
+	// Output: {"age":46,"givenName":"Bill","member":true,"ssn":null,"surname":"Jackson"}
 }
 
 func ExampleRedactWithMap() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
+	jsonText := `
 	{
-		"givenName": "Joe",
-		"surname": "Schmoe",
-		"age": 35,
+		"givenName": "Roger",
+		"surname": "That",
+		"age": 65,
 		"member": true,
 		"ssn": "111-22-3333"
 	}`
@@ -130,12 +130,12 @@ func ExampleRedactWithMap() {
 	}
 
 	fmt.Println(redactedJSON)
-	// Output: {"age":35,"givenName":"Joe","member":true,"ssn":"***-**-****","surname":"Schmoe"}
+	// Output: {"age":65,"givenName":"Roger","member":true,"ssn":"***-**-****","surname":"That"}
 }
 
 func ExampleReverseString() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `{"alpha": "beta"}`
+	jsonText := `{"alpha": "beta"}`
 	reversedJSON := jsonutil.ReverseString(jsonText)
 	fmt.Println(reversedJSON)
 	// Output: }"ateb" :"ahpla"{
@@ -143,7 +143,7 @@ func ExampleReverseString() {
 
 func ExampleStrip() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
+	jsonText := `
 	{
 		"givenName": "Joe",
 		"surname": "Schmoe",
@@ -163,7 +163,7 @@ func ExampleStrip() {
 
 func ExampleTruncate() {
 	// For more information, visit https://github.com/senzing-garage/go-helpers/blob/main/jsonutil/jsonutil_test.go
-	var jsonText = `
+	jsonText := `
 	{
 		"givenName": "Joe",
 		"surname": "Schmoe",
