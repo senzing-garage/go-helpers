@@ -73,20 +73,22 @@ Output
 func Normalize(jsonText string) (string, error) {
 	var parsedJSON *any
 
-	// unmarshall the text and let it allocate whatever object it wants to hold the result
-	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
+	// Unmarshall the text and let it allocate whatever object it wants to hold the result.
 
-	// check for an unmarshalling error
+	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
+	// Check for an unmarshalling error.
 	if err != nil {
 		return jsonText, wraperror.Errorf(err, "jsonutil.Normalize.Unmarshal error: %w", err)
 	}
 
-	// check for a null literal which is unmarshalled as a nil pointer
+	// Check for a null literal which is unmarshalled as a nil pointer.
+
 	if parsedJSON == nil {
 		return Null, nil
 	}
 
-	// marshall the parsed object back to text (bytes) and return the text and potential error
+	// Marshall the parsed object back to text (bytes) and return the text and potential error.
+
 	normalizedJSON, err := json.Marshal(*parsedJSON)
 
 	return string(normalizedJSON), wraperror.Errorf(err, "jsonutil.Normalize error: %w", err)
@@ -109,7 +111,6 @@ func NormalizeAndSort(jsonText string) (string, error) {
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
 	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
-
 	// check for an unmarshalling error
 	if err != nil {
 		return jsonText, wraperror.Errorf(err, "jsonutil.NormalizeAndSort.Unmarshal error: %w", err)
@@ -197,7 +198,6 @@ func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
 	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
-
 	// check for an unmarshalling error
 	if err != nil {
 		return jsonText, wraperror.Errorf(err, "jsonutil.RedactWithMap.Unmarshal error: %w", err)
@@ -264,7 +264,6 @@ func Strip(jsonText string, removeKeys ...string) (string, error) {
 
 	// unmarshall the text and let it allocate whatever object it wants to hold the result
 	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
-
 	// check for an unmarshalling error
 	if err != nil {
 		return jsonText, wraperror.Errorf(err, "jsonutil.Strip.Unmarshal error: %w", err)

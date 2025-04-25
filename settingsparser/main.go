@@ -3,7 +3,9 @@ package settingsparser
 
 import (
 	"context"
-	"fmt"
+	"errors"
+
+	"github.com/senzing-garage/go-helpers/wraperror"
 )
 
 // ----------------------------------------------------------------------------
@@ -49,6 +51,12 @@ type EngineConfiguration struct {
 const ComponentID = 6401
 
 // ----------------------------------------------------------------------------
+// Variables
+// ----------------------------------------------------------------------------
+
+var errForPackage = errors.New("settingsparser")
+
+// ----------------------------------------------------------------------------
 // Constructor  methods
 // ----------------------------------------------------------------------------
 
@@ -56,7 +64,7 @@ func New(settings string) (SettingsParser, error) {
 	var err error
 
 	if !isJSON(settings) {
-		return nil, fmt.Errorf("incorrect JSON syntax in %s", settings)
+		return nil, wraperror.Errorf(errForPackage, "incorrect JSON syntax in %s", settings)
 	}
 
 	result := &BasicSettingsParser{

@@ -6,6 +6,8 @@ import (
 	"github.com/senzing-garage/go-helpers/record"
 )
 
+const Max16Bit = 65536
+
 // ----------------------------------------------------------------------------
 // Variables
 // ----------------------------------------------------------------------------
@@ -19,7 +21,7 @@ var FixtureRecords = map[string]record.Record{
 		ID:         "65536-periods",
 		JSON: `{"DATA_SOURCE":"TEST","RECORD_ID":"65536-periods","NAME_FULL":"Nobody Really","PERIODS":"` + strings.Repeat(
 			".",
-			65536,
+			Max16Bit,
 		) + `"}`,
 	},
 }

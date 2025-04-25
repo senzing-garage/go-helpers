@@ -8,9 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var (
-	settingsParserSingleton settingsparser.SettingsParser
-)
+var settingsParserSingleton settingsparser.SettingsParser
 
 // ----------------------------------------------------------------------------
 // Test interface methods

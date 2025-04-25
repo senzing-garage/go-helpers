@@ -11,28 +11,29 @@ linters:
     - containedctx
     - contextcheck
     - copyloopvar
-    # - cyclop
+    - cyclop
     - decorder
     - depguard
     - dogsled
     - dupl
-    # - dupword
+    - dupword
     - durationcheck
-    # - err113
+    - err113
     - errcheck
     - errchkjson
     - errname
     - errorlint
     - exhaustive
-    # - exhaustruct
+    - exhaustruct
     - exptostd
     - fatcontext
-    # - forbidigo
+    - forbidigo
     - forcetypeassert
-    # - funlen
+    - funcorder
+    - funlen
     - ginkgolinter
     - gocheckcompilerdirectives
-    # - gochecknoglobals
+    - gochecknoglobals
     - gochecknoinits
     - gochecksumtype
     - gocognit
@@ -40,7 +41,7 @@ linters:
     - gocritic
     - gocyclo
     - godot
-    # - godox
+    - godox
     - goheader
     - gomoddirectives
     - gomodguard
@@ -54,15 +55,15 @@ linters:
     - inamedparam
     - ineffassign
     - interfacebloat
-    # - intrange
+    - intrange
     - ireturn
-    # - lll
+    - lll
     - loggercheck
     - maintidx
     - makezero
     - mirror
     - misspell
-    # - mnd
+    - mnd
     - musttag
     - nakedret
     - nestif
@@ -74,7 +75,7 @@ linters:
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
-    # - paralleltest
+    - paralleltest
     - perfsprint
     - prealloc
     - predeclared
@@ -94,7 +95,7 @@ linters:
     - testifylint
     - testpackage
     - thelper
-    # - tparallel
+    - tparallel
     - unconvert
     - unparam
     - unused
@@ -106,6 +107,11 @@ linters:
     - wrapcheck
     - wsl
     - zerologlint
+  disable:
+    - dupword
+    - gochecknoglobals
+    - lll
+    - mnd
   exclusions:
     generated: lax
     presets:
@@ -118,13 +124,29 @@ linters:
       - builtin$
       - examples$
   settings:
+    cyclop:
+      max-complexity: 15
     depguard:
       rules:
         prevent_unmaintained_packages:
           list-mode: lax # allow unless explicitely denied
+          allow:
+            - github.com/stretchr/testify/*
           deny:
             - pkg: io/ioutil
               desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
+    dupword:
+      ignore:
+        - "Vythiri"
+    exhaustruct:
+      exclude:
+        - '.+/jsonutil_test\.<anonymous>$'
+        - '.+/record\.Record$'
+        - '.+/settings_test\.testCaseMetadata$'
+        - '.+/settings\.SzConfigurationPipeline$'
+        - '.+/settingsparser\.EngineConfiguration$'
+        - '.+/url\.URL$'
+
     ireturn:
       allow:
         - error
@@ -140,10 +162,13 @@ formatters:
     - gofmt
     # - gofumpt
     - goimports
-    # - golines
+    - golines
   exclusions:
     generated: lax
     paths:
       - third_party$
       - builtin$
       - examples$
+  settings:
+    golines:
+      max-len: 120

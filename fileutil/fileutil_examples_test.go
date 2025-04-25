@@ -12,7 +12,7 @@ func ExampleCopyFile() {
 	// create a file that we will copy (usually this already exists)
 	sourceFilePath := filepath.Join(os.TempDir(), "source-file.txt")
 
-	err := os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0600)
+	err := os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0o600)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -35,7 +35,7 @@ func ExampleCopyFile_toDirectory() {
 	// create a file that we will copy (usually this already exists)
 	sourceFilePath := filepath.Join(os.TempDir(), "source-file.txt")
 
-	err := os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0600)
+	err := os.WriteFile(sourceFilePath, []byte("Hello, World!"), 0o600)
 	if err != nil {
 		fmt.Println(err)
 	}
