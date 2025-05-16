@@ -1,6 +1,11 @@
 package wraperror
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"regexp"
+	"runtime"
+)
 
 /*
 The Errorf function returns a wrapped error, if err != nil.
@@ -14,9 +19,88 @@ Output
   - Either nil, or a wrapped error.
 */
 func Errorf(err error, format string, messages ...any) error {
+	var (
+		errFormat    string
+		functionName string
+	)
+
 	if err != nil {
-		return fmt.Errorf(format, messages...) //nolint:err113
+		text := fmt.Sprintf(format, messages...)
+
+		// Result if function name is available.
+
+		pc, _, _, ok := runtime.Caller(1)
+		if ok {
+			callingFunction := runtime.FuncForPC(pc)
+			runtimeFunc := regexp.MustCompile(`([^/]+$)`)
+			functionName = runtimeFunc.FindString(callingFunction.Name())
+			errFormat = `{"function": "%s", "text": "%s", "error": "%w"}`
+			if isJSON(err.Error()) {
+				errFormat = `{"function": "%s", "text": "%s", "error": %w}`
+			}
+
+			return fmt.Errorf(errFormat, functionName, text, err)
+		}
+
+		// Default JSON.
+
+		errFormat = `{"text": "%s", "error": "%w"}`
+		if isJSON(err.Error()) {
+			errFormat = `{"text": "%s", "error": %w}`
+		}
+
+		return fmt.Errorf(errFormat, text, err)
 	}
 
 	return nil
+}
+
+func Errorf1(err error, format string, messages ...any) error {
+	if err != nil {
+
+		pc, _, _, ok := runtime.Caller(1)
+		if ok {
+			callingFunction := runtime.FuncForPC(pc)
+			runtimeFunc := regexp.MustCompile(`([^/]+$)`)
+			functionName := runtimeFunc.FindString(callingFunction.Name())
+			format = functionName + "(): " + format
+		}
+
+		errFormat := format + " >>> %w"
+		messages = append(messages, err)
+
+		return fmt.Errorf(errFormat, messages...) //nolint:err113
+	}
+
+	return nil
+}
+
+func Errorf2(err error, format string, messages ...any) error {
+	var functionName string
+
+	if err != nil {
+
+		text := fmt.Sprintf(format, messages...)
+
+		pc, file, line, ok := runtime.Caller(1)
+		if ok {
+			callingFunction := runtime.FuncForPC(pc)
+			runtimeFunc := regexp.MustCompile(`([^/]+$)`)
+			functionName = runtimeFunc.FindString(callingFunction.Name())
+			format := `{"function": "%s", "text": "%s", "file": "%s", "line": %d, "error": "%w"}`
+			if isJSON(err.Error()) {
+				format = `{"function": "%s", "text": "%s", "file": "%s", "line": %d, "error": %w}`
+			}
+
+			return fmt.Errorf(format, functionName, text, file, line, err)
+
+		}
+
+	}
+
+	return nil
+}
+
+func isJSON(unknownText string) bool {
+	return json.Valid([]byte(unknownText))
 }
