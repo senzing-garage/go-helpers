@@ -21,10 +21,10 @@ func LoadX509KeyPair(certFile string, keyFile string, password string) (tls.Cert
 	if len(password) == 0 {
 		result, err := tls.LoadX509KeyPair(certFile, keyFile)
 
-		return result, wraperror.Errorf(err, "tls.LoadX509KeyPair length=0 error: %w", err)
+		return result, wraperror.Errorf(err, "length=0")
 	}
 
 	result, err := loadX509KeyPairWithPassword(certFile, keyFile, password) // OS-specific implementation.
 
-	return result, wraperror.Errorf(err, "tls.LoadX509KeyPair error: %w", err)
+	return result, wraperror.Error(err)
 }

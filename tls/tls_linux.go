@@ -21,13 +21,13 @@ func loadX509KeyPairWithPassword(certFile string, keyFile string, password strin
 
 	tmpFile, err := os.CreateTemp("", "tmp_tls_decrypted_key_")
 	if err != nil {
-		return tlsCertificate, wraperror.Errorf(err, "tls.loadX509KeyPairWithPassword.os.CreateTemp error: %w", err)
+		return tlsCertificate, wraperror.Errorf(err, "os.CreateTemp")
 	}
 	defer os.Remove(tmpFile.Name())
 
 	path, err := exec.LookPath("openssl")
 	if err != nil {
-		return tlsCertificate, wraperror.Errorf(err, "tls.loadX509KeyPairWithPassword.exec.LookPath error: %w", err)
+		return tlsCertificate, wraperror.Errorf(err, "LookPath")
 	}
 
 	passin := "pass:" + password
@@ -35,10 +35,10 @@ func loadX509KeyPairWithPassword(certFile string, keyFile string, password strin
 
 	_, err = cmd.Output()
 	if err != nil {
-		return tlsCertificate, wraperror.Errorf(err, "tls.loadX509KeyPairWithPassword.cmd.Output error: %w", err)
+		return tlsCertificate, wraperror.Errorf(err, "cmd.Output")
 	}
 
 	result, err := tls.LoadX509KeyPair(certFile, tmpFile.Name())
 
-	return result, wraperror.Errorf(err, "tls.loadX509KeyPairWithPassword error: %w", err)
+	return result, wraperror.Error(err)
 }

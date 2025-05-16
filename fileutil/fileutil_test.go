@@ -335,14 +335,14 @@ func sourceFilePath2() (string, int64) {
 func createTextFile(path string, text string) (int64, error) {
 	source, err := os.Create(filepath.Clean(path))
 	if err != nil {
-		return 0, wraperror.Errorf(err, "failed to create file (%v): %w", path, err)
+		return 0, wraperror.Errorf(err, "failed to create file (%v)", path)
 	}
 
 	defer source.Close()
 
 	byteCount, err := source.WriteString(text)
 	if err != nil {
-		return 0, wraperror.Errorf(err, "failed to write content (%v) to file (%v): %w", text, path, err)
+		return 0, wraperror.Errorf(err, "failed to write content (%v) to file (%v)", text, path)
 	}
 
 	return int64(byteCount), err
@@ -353,7 +353,7 @@ func createTextFileN(path string, byteCount int64) (int64, error) {
 
 	source, err := os.Create(filepath.Clean(path))
 	if err != nil {
-		return writeCount, wraperror.Errorf(err, "failed to create file (%v): %w", path, err)
+		return writeCount, wraperror.Errorf(err, "failed to create file (%v)", path)
 	}
 
 	defer source.Close()
@@ -361,19 +361,19 @@ func createTextFileN(path string, byteCount int64) (int64, error) {
 	for index := range byteCount {
 		count, err := source.WriteString("A")
 		if err != nil {
-			return writeCount, wraperror.Errorf(err, "failed to write letter (%v) to file (%v): %w",
-				index, path, err)
+			return writeCount, wraperror.Errorf(err, "failed to write letter (%v) to file (%v)",
+				index, path)
 		}
 
 		writeCount += int64(count)
 	}
 
 	if writeCount != byteCount {
-		return writeCount, wraperror.Errorf(errForPackage, "wrote wrong number of bytes (%v) to file (%v) error: %w",
-			writeCount, path, errForPackage)
+		return writeCount, wraperror.Errorf(errForPackage, "wrote wrong number of bytes (%v) to file (%v) error",
+			writeCount, path)
 	}
 
-	return writeCount, wraperror.Errorf(err, "fileutil.createTextFileN error: %w", err)
+	return writeCount, wraperror.Errorf(err, "fileutil.createTextFileN error")
 }
 
 func outputln(message ...any) {
@@ -411,7 +411,7 @@ func setup() error {
 	// remove any previously existing test directory
 	err := os.RemoveAll(baseDir)
 	if err != nil {
-		return wraperror.Errorf(err, "failed to delete old test targets in %v: %w", baseDir, err)
+		return wraperror.Errorf(err, "failed to delete old test targets in %v", baseDir)
 	}
 
 	// define the source and destination directories
@@ -421,13 +421,13 @@ func setup() error {
 	// make the source directory and any required parents
 	err = os.MkdirAll(sourceDir, 0o770)
 	if err != nil {
-		return wraperror.Errorf(err, "failed to create source directory (%v): %w", sourceDir, err)
+		return wraperror.Errorf(err, "failed to create source directory (%v)", sourceDir)
 	}
 
 	// make the destination directory and any required parents
 	err = os.MkdirAll(destinationDir, 0o770)
 	if err != nil {
-		return wraperror.Errorf(err, "failed to create destination directory (%v): %w", destinationDir, err)
+		return wraperror.Errorf(err, "failed to create destination directory (%v)", destinationDir)
 	}
 
 	// define paths to
@@ -457,8 +457,8 @@ func teardown() error {
 	// remove any previously existing test directory
 	err := os.RemoveAll(baseDir)
 	if err != nil {
-		return wraperror.Errorf(err, "failed to delete old test targets in %v: %w", baseDir, err)
+		return wraperror.Errorf(err, "failed to delete old test targets in %v", baseDir)
 	}
 
-	return wraperror.Errorf(err, "fileutil.teardown error: %w", err)
+	return wraperror.Errorf(err, "fileutil.teardown error")
 }

@@ -78,7 +78,7 @@ func Normalize(jsonText string) (string, error) {
 	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
 	// Check for an unmarshalling error.
 	if err != nil {
-		return jsonText, wraperror.Errorf(err, "jsonutil.Normalize.Unmarshal error: %w", err)
+		return jsonText, wraperror.Errorf(err, "Unmarshal")
 	}
 
 	// Check for a null literal which is unmarshalled as a nil pointer.
@@ -91,7 +91,7 @@ func Normalize(jsonText string) (string, error) {
 
 	normalizedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(normalizedJSON), wraperror.Errorf(err, "jsonutil.Normalize error: %w", err)
+	return string(normalizedJSON), wraperror.Error(err)
 }
 
 /*
@@ -113,7 +113,7 @@ func NormalizeAndSort(jsonText string) (string, error) {
 	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
 	// check for an unmarshalling error
 	if err != nil {
-		return jsonText, wraperror.Errorf(err, "jsonutil.NormalizeAndSort.Unmarshal error: %w", err)
+		return jsonText, wraperror.Errorf(err, "Unmarshal")
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
@@ -127,7 +127,7 @@ func NormalizeAndSort(jsonText string) (string, error) {
 	// marshall the parsed object back to text (bytes) and return the text and potential error
 	normalizedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(normalizedJSON), wraperror.Errorf(err, "jsonutil.NormalizeAndSort error: %w", err)
+	return string(normalizedJSON), wraperror.Error(err)
 }
 
 /*
@@ -200,7 +200,7 @@ func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
 	// check for an unmarshalling error
 	if err != nil {
-		return jsonText, wraperror.Errorf(err, "jsonutil.RedactWithMap.Unmarshal error: %w", err)
+		return jsonText, wraperror.Errorf(err, "Unmarshal")
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
@@ -214,7 +214,7 @@ func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 	// marshall the parsed object back to text (bytes) and return the text and potential error
 	redactedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(redactedJSON), wraperror.Errorf(err, "jsonutil.RedactWithMap error: %w", err)
+	return string(redactedJSON), wraperror.Error(err)
 }
 
 /*
@@ -266,7 +266,7 @@ func Strip(jsonText string, removeKeys ...string) (string, error) {
 	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
 	// check for an unmarshalling error
 	if err != nil {
-		return jsonText, wraperror.Errorf(err, "jsonutil.Strip.Unmarshal error: %w", err)
+		return jsonText, wraperror.Errorf(err, "Unmarshal")
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
@@ -280,7 +280,7 @@ func Strip(jsonText string, removeKeys ...string) (string, error) {
 	// marshall the parsed object back to text (bytes) and return the text and potential error
 	modifiedJSON, err := json.Marshal(*parsedJSON)
 
-	return string(modifiedJSON), wraperror.Errorf(err, "jsonutil.Strip error: %w", err)
+	return string(modifiedJSON), wraperror.Error(err)
 }
 
 /*

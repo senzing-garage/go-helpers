@@ -42,10 +42,10 @@ func (parser *BasicSettingsParser) GetConfigPath(ctx context.Context) (string, e
 
 	err := json.Unmarshal([]byte(parser.Settings), &engineConfiguration)
 	if err != nil {
-		return "", wraperror.Errorf(err, "settingsparser.GetConfigPath error: %w", err)
+		return "", wraperror.Errorf(err, "GetConfigPath")
 	}
 
-	return engineConfiguration.Pipeline.ConfigPath, wraperror.Errorf(err, "settingsparser.GetConfigPath error: %w", err)
+	return engineConfiguration.Pipeline.ConfigPath, wraperror.Error(err)
 }
 
 /*
@@ -66,7 +66,7 @@ func (parser *BasicSettingsParser) GetDatabaseURIs(ctx context.Context) ([]strin
 
 	err := json.Unmarshal([]byte(parser.Settings), &engineConfiguration)
 	if err != nil {
-		return result, wraperror.Errorf(err, "settingsparser.GetDatabaseURIs error: %w", err)
+		return result, wraperror.Errorf(err, "GetDatabaseURIs")
 	}
 
 	result = append(result, engineConfiguration.SQL.Connection)
@@ -77,7 +77,7 @@ func (parser *BasicSettingsParser) GetDatabaseURIs(ctx context.Context) ([]strin
 	if (len(backend) > 0) && (backend != "SQL") {
 		multiDatabaseURIs, err := getMultiDatabaseURIs(ctx, parser.Settings, backend)
 		if err != nil {
-			return result, wraperror.Errorf(err, "settingsparser.getMultiDatabaseURIs error: %w", err)
+			return result, wraperror.Errorf(err, "getMultiDatabaseURIs")
 		}
 
 		result = append(result, multiDatabaseURIs...)
@@ -85,7 +85,7 @@ func (parser *BasicSettingsParser) GetDatabaseURIs(ctx context.Context) ([]strin
 
 	// IMPROVE:  Implement multi-database list.
 
-	return result, wraperror.Errorf(err, "settingsparser.GetDatabaseURIs error: %w", err)
+	return result, wraperror.Error(err)
 }
 
 /*
@@ -103,14 +103,10 @@ func (parser *BasicSettingsParser) GetLicenseStringBase64(ctx context.Context) (
 
 	err := json.Unmarshal([]byte(parser.Settings), &engineConfiguration)
 	if err != nil {
-		return "", wraperror.Errorf(err, "settingsparser.GetLicenseStringBase64.Unmarshal error: %w", err)
+		return "", wraperror.Errorf(err, "Unmarshal")
 	}
 
-	return engineConfiguration.Pipeline.LicenseStringBase64, wraperror.Errorf(
-		err,
-		"settingsparser.GetLicenseStringBase64 error: %w",
-		err,
-	)
+	return engineConfiguration.Pipeline.LicenseStringBase64, wraperror.Error(err)
 }
 
 /*
@@ -128,14 +124,10 @@ func (parser *BasicSettingsParser) GetResourcePath(ctx context.Context) (string,
 
 	err := json.Unmarshal([]byte(parser.Settings), &engineConfiguration)
 	if err != nil {
-		return "", wraperror.Errorf(err, "settingsparser.GetResourcePath.Unmarshal error: %w", err)
+		return "", wraperror.Errorf(err, "Unmarshal")
 	}
 
-	return engineConfiguration.Pipeline.ResourcePath, wraperror.Errorf(
-		err,
-		"settingsparser.GetResourcePath error: %w",
-		err,
-	)
+	return engineConfiguration.Pipeline.ResourcePath, wraperror.Error(err)
 }
 
 /*
@@ -168,14 +160,10 @@ func (parser *BasicSettingsParser) GetSupportPath(ctx context.Context) (string, 
 
 	err := json.Unmarshal([]byte(parser.Settings), &engineConfiguration)
 	if err != nil {
-		return "", wraperror.Errorf(err, "settingsparser.GetSupportPath.Unmarshal error: %w", err)
+		return "", wraperror.Errorf(err, "Unmarshal")
 	}
 
-	return engineConfiguration.Pipeline.SupportPath, wraperror.Errorf(
-		err,
-		"settingsparser.GetSupportPath error: %w",
-		err,
-	)
+	return engineConfiguration.Pipeline.SupportPath, wraperror.Error(err)
 }
 
 /*
@@ -194,7 +182,7 @@ func (parser *BasicSettingsParser) RedactedJSON(ctx context.Context) (string, er
 
 	databaseURIs, err := parser.GetDatabaseURIs(ctx)
 	if err != nil {
-		return "", wraperror.Errorf(err, "settingsparser.RedactedJSON.GetDatabaseURIs error: %w", err)
+		return "", wraperror.Errorf(err, "GetDatabaseURIs")
 	}
 
 	// For each database URL in the string, replace it with a redacted database URL.
@@ -210,7 +198,7 @@ func (parser *BasicSettingsParser) RedactedJSON(ctx context.Context) (string, er
 
 	result = strings.Join(strings.Fields(result), "")
 
-	return result, wraperror.Errorf(err, "settingsparser.RedactedJSON error: %w", err)
+	return result, wraperror.Error(err)
 }
 
 // ----------------------------------------------------------------------------
@@ -248,7 +236,7 @@ func redactURL(aURL string) (string, error) {
 		}
 
 		if err != nil {
-			return "", wraperror.Errorf(err, "settingsparser.redactURL error: %w", err)
+			return "", wraperror.Error(err)
 		}
 	}
 
@@ -269,7 +257,7 @@ func getMultiDatabaseURIs(ctx context.Context, settings string, backend string) 
 
 		err = json.Unmarshal([]byte(settings), &dictionary)
 		if err != nil {
-			return result, wraperror.Errorf(err, "settingsparser.GetDatabaseURIs.Unmarshal error: %w", err)
+			return result, wraperror.Errorf(err, "Unmarshal")
 		}
 
 		// Determine JSON keys for database definitions.
@@ -311,5 +299,5 @@ func getMultiDatabaseURIs(ctx context.Context, settings string, backend string) 
 		}
 	}
 
-	return result, wraperror.Errorf(err, "settingsparser.getMultiDatabaseURIs error: %w", err)
+	return result, wraperror.Error(err)
 }
