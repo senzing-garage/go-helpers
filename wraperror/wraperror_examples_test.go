@@ -21,15 +21,16 @@ func ExampleErrorf() {
 	// Output: {"function": "wraperror_test.ExampleErrorf", "text": "wrap an error", "error": "test error"}
 }
 
-func ExampleErrorf_nested() {
-	err := function1()
-	fmt.Println(err.Error())
-	// Output: {"function": "wraperror_test.function1", "text": "result from function2 with dog and cat", "error": {"function": "wraperror_test.function2", "text": "result from function3", "error": "testError"}}
-}
-
 func ExampleErrorf_noMessage() {
 	err := errors.New("test error")
 	newErr := wraperror.Errorf(err, wraperror.NoMessage)
 	fmt.Println(newErr.Error())
 	// Output: {"function": "wraperror_test.ExampleErrorf_noMessage", "error": "test error"}
+}
+
+func ExampleErrorf_withVariables() {
+	err := errors.New("test error")
+	newErr := wraperror.Errorf(err, "wrap an error with %d %s", 1, "message")
+	fmt.Println(newErr.Error())
+	// Output: {"function": "wraperror_test.ExampleErrorf_withVariables", "text": "wrap an error with 1 message", "error": "test error"}
 }
