@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], [markdownlint],
 and this project adheres to [Semantic Versioning].
 
+## [0.6.12] - 2025-05-19
+
+### Added in 0.6.12
+
+- Change `wraperror.Error` and `Errorf` method signatures.
+
 ## [0.6.11] - 2025-04-25
 
 ### Added in 0.6.11

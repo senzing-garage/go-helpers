@@ -42,7 +42,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 
 	parsedURL, err := url.Parse(databaseURL)
 	if err != nil {
-		return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURI.url.Parse error: %w", err)
+		return result, wraperror.Errorf(err, "url.Parse")
 	}
 
 	switch parsedURL.Scheme {
@@ -59,14 +59,13 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 	default:
 		err = wraperror.Errorf(
 			errForPackage,
-			"unknown database schema: %s in %s error: %w",
+			"unknown database schema: %s in %s",
 			parsedURL.Scheme,
 			databaseURL,
-			errForPackage,
 		)
 	}
 
-	return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURI error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -96,10 +95,10 @@ func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
 	case strings.HasPrefix(databaseURI, "sqlite3://"):
 		return buildURLForSqlite3(databaseURI)
 	default:
-		err = wraperror.Errorf(errForPackage, "unknown database schema: %s error: %w", databaseURI, errForPackage)
+		err = wraperror.Errorf(errForPackage, "unknown database schema: %s", databaseURI)
 	}
 
-	return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL error: %w", err)
+	return result, err
 }
 
 /*
@@ -160,8 +159,7 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	senzingEngineConfigurationJSON, isSet := os.LookupEnv("SENZING_TOOLS_ENGINE_CONFIGURATION_JSON")
 	if isSet {
-		return senzingEngineConfigurationJSON, wraperror.Errorf(err,
-			"settings.BuildSimpleSettingsUsingMap.os.LookupEnv.1 error: %w", err)
+		return senzingEngineConfigurationJSON, wraperror.Errorf(err, "os.LookupEnv.1")
 	}
 
 	// If SENZING_ENGINE_CONFIGURATION_JSON is set, use it.
@@ -169,17 +167,14 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	senzingEngineConfigurationJSON, isSet = os.LookupEnv("SENZING_ENGINE_CONFIGURATION_JSON")
 	if isSet {
-		return senzingEngineConfigurationJSON, wraperror.Errorf(err,
-			"settings.BuildSimpleSettingsUsingMap.os.LookupEnv.2 error: %w",
-			err)
+		return senzingEngineConfigurationJSON, wraperror.Errorf(err, "os.LookupEnv.2")
 	}
 
 	// If SENZING_PATH is set, use it.
 
 	err = buildAttributeMap(attributeMap)
 	if err != nil {
-		return senzingEngineConfigurationJSON, wraperror.Errorf(err,
-			"settings.BuildSimpleSettingsUsingMap.buildAttributeMap error: %w", err)
+		return senzingEngineConfigurationJSON, wraperror.Errorf(err, "buildAttributeMap")
 	}
 
 	// Construct structure.
@@ -194,10 +189,10 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 
 	err = jsonEncoder.Encode(resultStruct)
 	if err != nil {
-		return "", wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap.jsonEncoder.Encode error: %w", err)
+		return "", wraperror.Errorf(err, "jsonEncoder.Encode")
 	}
 
-	return resultBuffer.String(), wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap error: %w", err)
+	return resultBuffer.String(), wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -237,15 +232,14 @@ func VerifySettings(ctx context.Context, settings string) error {
 
 	databaseURIs, err := parser.GetDatabaseURIs(ctx)
 	if err != nil {
-		return wraperror.Errorf(err, "settings.VerifySettings.GetDatabaseURIs error: %w", err)
+		return wraperror.Errorf(err, "GetDatabaseURIs")
 	}
 
 	for _, value := range databaseURIs {
 		if len(value) == 0 {
 			return wraperror.Errorf(
 				errForPackage,
-				"SQL.CONNECTION empty in Senzing engine configuration JSON. For more information, visit https://garage.senzing.com/go-helpers/errors error: %w",
-				errForPackage,
+				"SQL.CONNECTION empty in Senzing engine configuration JSON. For more information, visit https://garage.senzing.com/go-helpers/errors",
 			)
 		}
 	}
@@ -254,36 +248,36 @@ func VerifySettings(ctx context.Context, settings string) error {
 
 	configPath, err := parser.GetConfigPath(ctx)
 	if err != nil {
-		return wraperror.Errorf(err, "settings.VerifySettings.GetConfigPath error: %w", err)
+		return wraperror.Errorf(err, "GetConfigPath")
 	}
 
 	err = checkConfigPath(configPath)
 	if err != nil {
-		return wraperror.Errorf(err, "settings.VerifySettings.checkConfigPath error: %w", err)
+		return wraperror.Errorf(err, "checkConfigPath")
 	}
 
 	// Check Resource path.
 
 	resourcePath, err := parser.GetResourcePath(ctx)
 	if err != nil {
-		return wraperror.Errorf(err, "settings.VerifySettings.GetResourcePath error: %w", err)
+		return wraperror.Errorf(err, "GetResourcePath")
 	}
 
 	err = checkResourcePath(resourcePath)
 	if err != nil {
-		return wraperror.Errorf(err, "settings.VerifySettings.checkResourcePath error: %w", err)
+		return wraperror.Errorf(err, "checkResourcePath")
 	}
 
 	// Check Support path.
 
 	supportPath, err := parser.GetSupportPath(ctx)
 	if err != nil {
-		return wraperror.Errorf(err, "settings.VerifySettings.GetSupportPath error: %w", err)
+		return wraperror.Errorf(err, "GetSupportPath")
 	}
 
 	err = checkSupportPath(supportPath)
 	if err != nil {
-		return wraperror.Errorf(err, "settings.VerifySettings.checkResourcePath error: %w", err)
+		return wraperror.Errorf(err, "checkResourcePath")
 	}
 
 	// Os / Arch specific calls
@@ -311,13 +305,13 @@ func buildAttributeMap(attributeMap map[string]string) error {
 	if !inMap {
 		senzingDatabaseURL, err = getOsEnv("SENZING_TOOLS_DATABASE_URL")
 		if err != nil {
-			return wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap.getOsEnv error: %w", err)
+			return wraperror.Errorf(err, "getOsEnv")
 		}
 	}
 
 	senzingDatabaseURI, err := BuildSenzingDatabaseURI(senzingDatabaseURL)
 	if err != nil {
-		return wraperror.Errorf(err, "settings.BuildSimpleSettingsUsingMap.BuildSenzingDatabaseURI error: %w", err)
+		return wraperror.Errorf(err, "BuildSenzingDatabaseURI")
 	}
 
 	attributeMap["databaseURL"] = senzingDatabaseURI
@@ -530,12 +524,7 @@ func buildURLForMssql(databaseURI string) (string, error) {
 
 	aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
 	if !hasRequiredKeys(aMap) {
-		return result, wraperror.Errorf(
-			errForPackage,
-			"settings.buildURLForMssql cannot reconstruct mssql from %s error: %w",
-			databaseURI,
-			errForPackage,
-		)
+		return result, wraperror.Errorf(errForPackage, "cannot reconstruct mssql from %s", databaseURI)
 	}
 
 	resultURL := buildURL(aMap)
@@ -547,7 +536,7 @@ func buildURLForMssql(databaseURI string) (string, error) {
 
 	result = resultURL.String()
 
-	return result, wraperror.Errorf(err, "settings.buildURLForMssql HasPrefix mssql:// error: %w", err)
+	return result, err
 }
 
 func buildURLForMysql(databaseURI string) (string, error) {
@@ -564,12 +553,7 @@ func buildURLForMysql(databaseURI string) (string, error) {
 
 	aMap := mapNamesToMatches(regExpFieldNames, regExpMatches)
 	if !hasRequiredKeys(aMap) {
-		return result, wraperror.Errorf(
-			errForPackage,
-			"settings.buildURLForMysql cannot reconstruct mysql from %s error: %w",
-			databaseURI,
-			errForPackage,
-		)
+		return result, wraperror.Errorf(errForPackage, "cannot reconstruct mysql from %s", databaseURI)
 	}
 
 	resultURL := buildURL(aMap)
@@ -586,7 +570,7 @@ func buildURLForMysql(databaseURI string) (string, error) {
 
 	result = resultURL.String()
 
-	return result, wraperror.Errorf(err, "settings.buildURLForMysql HasPrefix mysql:// error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func buildURLForOci(databaseURI string) (string, error) {
@@ -607,9 +591,8 @@ func buildURLForOci(databaseURI string) (string, error) {
 	if !hasRequiredKeys(aMap) {
 		return result, wraperror.Errorf(
 			errForPackage,
-			"settings.buildURLForOci cannot reconstruct oci from %s error: %w",
+			"settings.buildURLForOci cannot reconstruct oci from %s",
 			databaseURI,
-			errForPackage,
 		)
 	}
 
@@ -622,7 +605,7 @@ func buildURLForOci(databaseURI string) (string, error) {
 
 	result = resultURL.String()
 
-	return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL HasPrefix oci:// error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func buildURLForPostgresql(databaseURI string) (string, error) {
@@ -631,13 +614,13 @@ func buildURLForPostgresql(databaseURI string) (string, error) {
 	index := strings.LastIndex(databaseURI, ":")
 	result := strings.TrimSuffix(databaseURI[:index]+"/"+databaseURI[index+1:], "/")
 
-	return result, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL HasPrefix postgresql:// error: %w", err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func buildURLForSqlite3(databaseURI string) (string, error) {
 	var err error
 
-	return databaseURI, wraperror.Errorf(err, "settings.BuildSenzingDatabaseURL HasPrefix sqlite3:// error: %w", err)
+	return databaseURI, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func checkConfigPath(configPath string) error {
@@ -652,9 +635,8 @@ func checkConfigPath(configPath string) error {
 		if _, err := os.Stat(targetFile); err != nil {
 			return wraperror.Errorf(
 				err,
-				"CONFIGPATH: Could not find %s. For more information, visit https://garage.senzing.com/go-helpers/errors error: %w ",
+				"CONFIGPATH: Could not find %s. For more information, visit https://garage.senzing.com/go-helpers/errors ",
 				targetFile,
-				err,
 			)
 		}
 	}
@@ -673,9 +655,8 @@ func checkResourcePath(resourcePath string) error {
 		if _, err := os.Stat(targetFile); err != nil {
 			return wraperror.Errorf(
 				err,
-				"RESOURCEPATH: Could not find %s. For more information, visit https://garage.senzing.com/go-helpers/errors error: %w",
+				"RESOURCEPATH: Could not find %s. For more information, visit https://garage.senzing.com/go-helpers/errors",
 				targetFile,
-				err,
 			)
 		}
 	}
@@ -695,9 +676,8 @@ func checkSupportPath(supportPath string) error {
 		if _, err := os.Stat(targetFile); err != nil {
 			return wraperror.Errorf(
 				err,
-				"SUPPORTPATH: Could not find %s. For more information, visit https://garage.senzing.com/go-helpers/errors error: %w ",
+				"SUPPORTPATH: Could not find %s. For more information, visit https://garage.senzing.com/go-helpers/errors ",
 				targetFile,
-				err,
 			)
 		}
 	}
@@ -713,7 +693,7 @@ func getOsEnv(variableName string) (string, error) {
 
 	result, isSet := os.LookupEnv(variableName)
 	if !isSet {
-		return result, wraperror.Errorf(err, "settings.getOSEnv environment variable not set: %s", variableName)
+		return result, wraperror.Errorf(err, "environment variable not set: %s", variableName)
 	}
 
 	return result, err

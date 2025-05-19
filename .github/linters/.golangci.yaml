@@ -111,7 +111,6 @@ linters:
     - dupword
     - gochecknoglobals
     - lll
-    - mnd
   exclusions:
     generated: lax
     presets:
@@ -137,7 +136,7 @@ linters:
               desc: "replaced by io and os packages since Go 1.16: https://tip.golang.org/doc/go1.16#ioutil"
     dupword:
       ignore:
-        - "Vythiri"
+        - 'Vythiri\,'
     exhaustruct:
       exclude:
         - '.+/jsonutil_test\.<anonymous>$'
@@ -146,12 +145,14 @@ linters:
         - '.+/settings\.SzConfigurationPipeline$'
         - '.+/settingsparser\.EngineConfiguration$'
         - '.+/url\.URL$'
-
     ireturn:
       allow:
         - error
         - debug.Debug
         - settingsparser.SettingsParser
+    mnd:
+      ignored-functions:
+        - '^szerrors\.NewError$'
     tagliatelle:
       case:
         rules:
@@ -160,7 +161,7 @@ formatters:
   enable:
     - gci
     - gofmt
-    # - gofumpt
+    - gofumpt
     - goimports
     - golines
   exclusions:

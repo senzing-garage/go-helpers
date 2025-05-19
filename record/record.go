@@ -25,9 +25,12 @@ type Record struct {
 
 // Returns a valid Record or an error if validation fails.
 func NewRecord(line string) (*Record, error) {
-	var record Record
+	var (
+		err    error
+		record Record
+	)
 
-	err := json.Unmarshal([]byte(line), &record)
+	err = json.Unmarshal([]byte(line), &record)
 	if err == nil {
 		record.JSON = line
 		_, validationErr := ValidateRecord(record)
@@ -41,7 +44,7 @@ func NewRecord(line string) (*Record, error) {
 
 	err = szerrors.NewError(3000)
 
-	return &record, wraperror.Errorf(err, "record.NewRecord error: %w", err)
+	return &record, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
@@ -60,7 +63,7 @@ func Validate(line string) (bool, error) {
 
 	err := szerrors.NewError(3000)
 
-	return valid, wraperror.Errorf(err, "record.Validate error: %w", err)
+	return valid, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
@@ -72,14 +75,14 @@ func ValidateRecord(record Record) (bool, error) {
 	if record.DataSource == "" {
 		err = szerrors.NewError(3001)
 
-		return false, wraperror.Errorf(err, "record.ValidateRecord.DataSource error: %w", err)
+		return false, wraperror.Errorf(err, "DataSource")
 	}
 
 	if record.ID == "" {
 		err = szerrors.NewError(3002)
 
-		return false, wraperror.Errorf(err, "record.ValidateRecord.Record.ID error: %w", err)
+		return false, wraperror.Errorf(err, "Record.ID")
 	}
 
-	return true, wraperror.Errorf(err, "record.ValidateRecord error: %w", err)
+	return true, wraperror.Errorf(err, wraperror.NoMessage)
 }

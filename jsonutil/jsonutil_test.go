@@ -491,9 +491,7 @@ func TestFlatten_NoError(test *testing.T) {
 	test.Parallel()
 
 	actual := jsonutil.Flatten(`{"foo": 5, "bar": 6}`, nil)
-
 	expected := `{"foo": 5, "bar": 6}`
-
 	assert.Equal(test, expected, actual, "Flattening without an error did not work as expected: "+actual)
 }
 
@@ -501,9 +499,7 @@ func TestFlatten_WithError(test *testing.T) {
 	test.Parallel()
 
 	actual := jsonutil.Flatten(`{"foo": 5, "bar": 6}`, errFailed)
-
-	expected := `{"error":"failed","text":"{\"foo\": 5, \"bar\": 6}"}`
-
+	expected := `{"function": "jsonutil.Flatten", "text": "failed", "error": "failed"}`
 	assert.Equal(test, expected, actual, "Flattening with an error did not work as expected: "+actual)
 }
 
@@ -527,10 +523,7 @@ func TestIsJson(test *testing.T) {
 func TestIsJson_BadJson(test *testing.T) {
 	test.Parallel()
 
-	var (
-		expected = false
-	)
-
+	expected := false
 	actual := jsonutil.IsJSON(badJSON)
 	assert.Equal(test, expected, actual, "Invalid JSON text incorrectly recognized as JSON")
 }

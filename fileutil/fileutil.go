@@ -31,13 +31,13 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 	// Stat the source file.
 	stat, err := os.Stat(sourceFile)
 	if err != nil {
-		return "", 0, wraperror.Errorf(err, "failed to stat source file (%v): %w", sourceFile, err)
+		return "", 0, wraperror.Errorf(err, "failed to stat source file (%v)", sourceFile)
 	}
 
 	// Check if it is a regular file and not a directory.
 
 	if !stat.Mode().IsRegular() {
-		return "", 0, wraperror.Errorf(errForPackage, "%v is not a regular file error: %w", sourceFile, errForPackage)
+		return "", 0, wraperror.Errorf(errForPackage, "%v is not a regular file", sourceFile)
 	}
 
 	destinationPath := destinationFileOrDirectory
@@ -48,21 +48,24 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 	switch {
 	case err != nil && !errors.Is(err, fs.ErrNotExist):
 		// we got an error and the error was not due to the path not existing
-		return "", 0, wraperror.Errorf(err, "failed to stat destination path (%v): %w", destinationPath, err)
+		return "", 0, wraperror.Errorf(err, "failed to stat destination path (%v)", destinationPath)
 	case err != nil:
 		// We have a non-existent file path -- check that its parent directory exists.
 		dir := filepath.Dir(destinationPath)
-		dirStat, err := os.Stat(dir)
 
+		dirStat, err := os.Stat(dir)
 		if err != nil {
-			return "", 0, wraperror.Errorf(err, "failed to stat directory (%s) for destination path (%s): %w",
-				dir, destinationPath, err)
+			return "", 0, wraperror.Errorf(err, "failed to stat directory (%s) for destination path (%s)",
+				dir, destinationPath)
 		}
 
 		if !dirStat.Mode().IsDir() {
-			return "", 0, wraperror.Errorf(errForPackage,
-				"directory (%v) for destination path (%v) is not a directory error: %w", dir, destinationPath,
-				errForPackage)
+			return "", 0, wraperror.Errorf(
+				errForPackage,
+				"directory (%v) for destination path (%v) is not a directory",
+				dir,
+				destinationPath,
+			)
 		}
 	case stat.Mode().IsDir():
 		// The destination is a directory so append the file name.
@@ -76,22 +79,22 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 			if err == nil {
 				return "", 0, wraperror.Errorf(errForPackage,
 					"the target file already exists in the destination directory"+
-						" and overwrite is not allowed: %v error: %w",
-					destinationPath, errForPackage)
+						" and overwrite is not allowed: %v",
+					destinationPath)
 			} else if !errors.Is(err, fs.ErrNotExist) {
 				return "", 0, wraperror.Errorf(err, "the target file already exists in the destination directory"+
-					" and overwrite is not allowed: %v error: %w", destinationPath, err)
+					" and overwrite is not allowed: %v", destinationPath)
 			}
 		}
 	case !overwrite:
 		return "", 0, wraperror.Errorf(errForPackage,
-			"destination file already exists and overwrite is not allowed: %v error: %w",
-			destinationPath, errForPackage)
+			"destination file already exists and overwrite is not allowed: %v",
+			destinationPath)
 	}
 
 	byteCount, err := copyFile(sourceFile, destinationPath)
 
-	return destinationPath, byteCount, wraperror.Errorf(err, "fileutil.CopyFile error: %w", err)
+	return destinationPath, byteCount, wraperror.Errorf(err, "fileutil.CopyFile")
 }
 
 // ----------------------------------------------------------------------------
@@ -102,19 +105,19 @@ func copyFile(sourceFile string, destinationPath string) (int64, error) {
 	// open the source file
 	source, err := os.Open(filepath.Clean(sourceFile))
 	if err != nil {
-		return 0, wraperror.Errorf(err, "failed to open source file (%s): %w", sourceFile, err)
+		return 0, wraperror.Errorf(err, "failed to open source file (%s)", sourceFile)
 	}
 	defer source.Close() // defer closing the source file
 
 	// create the destination file
 	destination, err := os.Create(filepath.Clean(destinationPath))
 	if err != nil {
-		return 0, wraperror.Errorf(err, "failed to create destination file (%v): %w", destinationPath, err)
+		return 0, wraperror.Errorf(err, "failed to create destination file (%v)", destinationPath)
 	}
 	defer destination.Close()
 
 	// copy the data from source to destination
 	byteCount, err := io.Copy(destination, source)
 
-	return byteCount, wraperror.Errorf(err, "io.Copy error: %w", err)
+	return byteCount, wraperror.Errorf(err, "io.Copy")
 }
