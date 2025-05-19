@@ -39,7 +39,7 @@ func TestHelpers_Error_isError_withJSON(test *testing.T) {
 	err := errors.New(`{"function": "wraperror_test.TestHelpers_Error_isError", "error": "new error"}`)
 	actual := wraperror.Error(err)
 	require.Error(test, actual)
-	require.Equal(test, expected, actual.Error())
+	require.JSONEq(test, expected, actual.Error())
 }
 
 func TestHelpers_Error_isError_withNesting(test *testing.T) {
@@ -49,7 +49,7 @@ func TestHelpers_Error_isError_withNesting(test *testing.T) {
 	err := function1()
 	actual := wraperror.Error(err)
 	require.Error(test, actual)
-	require.Equal(test, expected, actual.Error())
+	require.JSONEq(test, expected, actual.Error())
 }
 
 func TestHelpers_Errorf(test *testing.T) {
@@ -77,17 +77,17 @@ func TestHelpers_Errorf_isError_withJSON(test *testing.T) {
 	err := errors.New(`{"function": "wraperror_test.TestHelpers_Errorf_isError", "error": "new error"}`)
 	actual := wraperror.Errorf(err, "with JSON")
 	require.Error(test, actual)
-	require.Equal(test, expected, actual.Error())
+	require.JSONEq(test, expected, actual.Error())
 }
 
 func TestHelpers_Errorf_isError_withNesting(test *testing.T) {
 	test.Parallel()
 
-	expected := `{"function": "wraperror_test.TestHelpers_Errorf_isError_withNesting", "text": "xxx", "error": {"function": "wraperror_test.function1", "text": "result from function2 with dog and cat", "error": {"function": "wraperror_test.function2", "text": "result from function3", "error": "testError"}}}`
+	expected := `{"function": "wraperror_test.TestHelpers_Errorf_isError_withNesting", "text": "with nesting", "error": {"function": "wraperror_test.function1", "text": "result from function2 with dog and cat", "error": {"function": "wraperror_test.function2", "text": "result from function3", "error": "testError"}}}`
 	err := function1()
-	actual := wraperror.Errorf(err, "xxx")
+	actual := wraperror.Errorf(err, "with nesting")
 	require.Error(test, actual)
-	require.Equal(test, expected, actual.Error())
+	require.JSONEq(test, expected, actual.Error())
 }
 
 func TestHelpers_Errorf_isError_withVariables(test *testing.T) {
