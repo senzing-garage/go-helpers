@@ -74,9 +74,8 @@ func TestCopyFile_Basic2(test *testing.T) {
 	assert.Equal(test, expectedContent, actualContent, "File contents of basic file 2 not as expected post CopyFile()")
 }
 
-func TestCopyFile_ToDirectory(test *testing.T) {
-	test.Parallel()
-
+func TestCopyFile_ToDirectory(test *testing.T) { //nolint
+	// test.Parallel()
 	destinationDir := destinationDirectoryPath()
 	sourceFile, fileSize := sourceFilePath1()
 

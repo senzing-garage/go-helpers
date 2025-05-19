@@ -31,16 +31,9 @@ Output
 */
 func Flatten(jsonText string, err error) string {
 	if err != nil {
-		errorMap := map[string]any{}
-		errorMap["text"] = jsonText
-		errorMap["error"] = err.Error()
+		newErr := wraperror.Errorf(err, "%s", err.Error())
 
-		errorJSON, err := json.Marshal(errorMap)
-		if err != nil {
-			panic(err)
-		}
-
-		return string(errorJSON)
+		return newErr.Error()
 	}
 
 	return jsonText

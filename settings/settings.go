@@ -65,7 +65,7 @@ func BuildSenzingDatabaseURI(databaseURL string) (string, error) {
 		)
 	}
 
-	return result, wraperror.Error(err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -98,7 +98,7 @@ func BuildSenzingDatabaseURL(databaseURI string) (string, error) {
 		err = wraperror.Errorf(errForPackage, "unknown database schema: %s", databaseURI)
 	}
 
-	return result, wraperror.Error(err)
+	return result, err
 }
 
 /*
@@ -192,7 +192,7 @@ func BuildSimpleSettingsUsingMap(attributeMap map[string]string) (string, error)
 		return "", wraperror.Errorf(err, "jsonEncoder.Encode")
 	}
 
-	return resultBuffer.String(), wraperror.Error(err)
+	return resultBuffer.String(), wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -536,7 +536,7 @@ func buildURLForMssql(databaseURI string) (string, error) {
 
 	result = resultURL.String()
 
-	return result, wraperror.Error(err)
+	return result, err
 }
 
 func buildURLForMysql(databaseURI string) (string, error) {
@@ -570,7 +570,7 @@ func buildURLForMysql(databaseURI string) (string, error) {
 
 	result = resultURL.String()
 
-	return result, wraperror.Error(err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func buildURLForOci(databaseURI string) (string, error) {
@@ -605,7 +605,7 @@ func buildURLForOci(databaseURI string) (string, error) {
 
 	result = resultURL.String()
 
-	return result, wraperror.Error(err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func buildURLForPostgresql(databaseURI string) (string, error) {
@@ -614,13 +614,13 @@ func buildURLForPostgresql(databaseURI string) (string, error) {
 	index := strings.LastIndex(databaseURI, ":")
 	result := strings.TrimSuffix(databaseURI[:index]+"/"+databaseURI[index+1:], "/")
 
-	return result, wraperror.Error(err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func buildURLForSqlite3(databaseURI string) (string, error) {
 	var err error
 
-	return databaseURI, wraperror.Error(err)
+	return databaseURI, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 func checkConfigPath(configPath string) error {

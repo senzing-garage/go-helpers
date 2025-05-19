@@ -40,5 +40,5 @@ func loadX509KeyPairWithPassword(certFile string, keyFile string, password strin
 
 	result, err := tls.LoadX509KeyPair(certFile, tmpFile.Name())
 
-	return result, wraperror.Error(err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }

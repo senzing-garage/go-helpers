@@ -52,8 +52,8 @@ func CopyFile(sourceFile string, destinationFileOrDirectory string, overwrite bo
 	case err != nil:
 		// We have a non-existent file path -- check that its parent directory exists.
 		dir := filepath.Dir(destinationPath)
-		dirStat, err := os.Stat(dir)
 
+		dirStat, err := os.Stat(dir)
 		if err != nil {
 			return "", 0, wraperror.Errorf(err, "failed to stat directory (%s) for destination path (%s)",
 				dir, destinationPath)

@@ -25,9 +25,12 @@ type Record struct {
 
 // Returns a valid Record or an error if validation fails.
 func NewRecord(line string) (*Record, error) {
-	var record Record
+	var (
+		err    error
+		record Record
+	)
 
-	err := json.Unmarshal([]byte(line), &record)
+	err = json.Unmarshal([]byte(line), &record)
 	if err == nil {
 		record.JSON = line
 		_, validationErr := ValidateRecord(record)
@@ -41,7 +44,7 @@ func NewRecord(line string) (*Record, error) {
 
 	err = szerrors.NewError(3000)
 
-	return &record, wraperror.Error(err)
+	return &record, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
@@ -60,7 +63,7 @@ func Validate(line string) (bool, error) {
 
 	err := szerrors.NewError(3000)
 
-	return valid, wraperror.Error(err)
+	return valid, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
@@ -81,5 +84,5 @@ func ValidateRecord(record Record) (bool, error) {
 		return false, wraperror.Errorf(err, "Record.ID")
 	}
 
-	return true, wraperror.Error(err)
+	return true, wraperror.Errorf(err, wraperror.NoMessage)
 }

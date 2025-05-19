@@ -45,7 +45,9 @@ func (parser *BasicSettingsParser) GetConfigPath(ctx context.Context) (string, e
 		return "", wraperror.Errorf(err, "GetConfigPath")
 	}
 
-	return engineConfiguration.Pipeline.ConfigPath, wraperror.Error(err)
+	// return engineConfiguration.Pipeline.ConfigPath, nil
+
+	return engineConfiguration.Pipeline.ConfigPath, wraperror.Errorf(err, "")
 }
 
 /*
@@ -85,7 +87,9 @@ func (parser *BasicSettingsParser) GetDatabaseURIs(ctx context.Context) ([]strin
 
 	// IMPROVE:  Implement multi-database list.
 
-	return result, wraperror.Error(err)
+	// return result, nil
+
+	return result, wraperror.Errorf(err, "")
 }
 
 /*
@@ -106,7 +110,9 @@ func (parser *BasicSettingsParser) GetLicenseStringBase64(ctx context.Context) (
 		return "", wraperror.Errorf(err, "Unmarshal")
 	}
 
-	return engineConfiguration.Pipeline.LicenseStringBase64, wraperror.Error(err)
+	// return engineConfiguration.Pipeline.LicenseStringBase64, nil
+
+	return engineConfiguration.Pipeline.LicenseStringBase64, wraperror.Errorf(err, "")
 }
 
 /*
@@ -127,7 +133,7 @@ func (parser *BasicSettingsParser) GetResourcePath(ctx context.Context) (string,
 		return "", wraperror.Errorf(err, "Unmarshal")
 	}
 
-	return engineConfiguration.Pipeline.ResourcePath, wraperror.Error(err)
+	return engineConfiguration.Pipeline.ResourcePath, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -163,7 +169,7 @@ func (parser *BasicSettingsParser) GetSupportPath(ctx context.Context) (string, 
 		return "", wraperror.Errorf(err, "Unmarshal")
 	}
 
-	return engineConfiguration.Pipeline.SupportPath, wraperror.Error(err)
+	return engineConfiguration.Pipeline.SupportPath, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 /*
@@ -198,7 +204,7 @@ func (parser *BasicSettingsParser) RedactedJSON(ctx context.Context) (string, er
 
 	result = strings.Join(strings.Fields(result), "")
 
-	return result, wraperror.Error(err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
 // ----------------------------------------------------------------------------
@@ -229,18 +235,18 @@ func isJSON(unknownString string) bool {
 func redactURL(aURL string) (string, error) {
 	parsedURL, err := url.Parse(aURL)
 	if err != nil {
-		if strings.HasPrefix(aURL, "postgresql") {
+		if strings.HasPrefix(aURL, "postgresql://") {
 			index := strings.LastIndex(aURL, ":")
 			aURL := aURL[:index] + "/" + aURL[index+1:]
-			parsedURL, err = url.Parse(aURL)
-		}
 
-		if err != nil {
-			return "", wraperror.Error(err)
+			parsedURL, err = url.Parse(aURL)
+			if err != nil {
+				return "", wraperror.Errorf(err, "could not parse for postgresql:// %s", aURL)
+			}
 		}
 	}
 
-	return parsedURL.Redacted(), nil
+	return parsedURL.Redacted(), wraperror.Error(err)
 }
 
 func getMultiDatabaseURIs(ctx context.Context, settings string, backend string) ([]string, error) {
@@ -299,5 +305,5 @@ func getMultiDatabaseURIs(ctx context.Context, settings string, backend string) 
 		}
 	}
 
-	return result, wraperror.Error(err)
+	return result, wraperror.Errorf(err, wraperror.NoMessage)
 }

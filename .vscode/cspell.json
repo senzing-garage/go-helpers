@@ -48,6 +48,7 @@
     "Senzings",
     "SENZINGSDK",
     "settingsparser",
+    "shellcheck",
     "stackoverflow",
     "stretchr",
     "SUPPORTPATH",
@@ -68,14 +69,21 @@
     "testrecords",
     "truthset",
     "unmarshalling",
+    "USERPROFILE",
     "wraperror"
   ],
   "ignorePaths": [
+    ".dockerignore",
+    ".git/*",
     ".github/linters/.golangci.yaml",
     ".gitignore",
+    ".history/*",
+    ".pytest_cache/*",
+    ".vscode/*",
     "**/*.go",
     "**/*.mod",
     "**/*.sum",
+    "bearer.ignore",
     "Makefile"
   ]
 }

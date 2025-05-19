@@ -23,7 +23,7 @@ func ExampleFlatten_withError() {
 	jsonText := `{ "name": "Joe Schmoe" "ssn": "111-22-3333" }` // missing a comma
 	redactedJSON := jsonutil.Flatten(jsonutil.RedactWithMap(jsonText, map[string]any{"ssn": "***-**-****"}))
 	fmt.Println(redactedJSON)
-	// Output: {"error":"jsonutil.RedactWithMap.Unmarshal error: invalid character '\"' after object key:value pair","text":"{ \"name\": \"Joe Schmoe\" \"ssn\": \"111-22-3333\" }"}
+	// Output: {"function": "jsonutil.Flatten", "text": "{"function": "jsonutil.RedactWithMap", "text": "Unmarshal", "error": "invalid character '"' after object key:value pair"}", "error": "{"function": "jsonutil.RedactWithMap", "text": "Unmarshal", "error": "invalid character '"' after object key:value pair"}"}
 }
 
 func ExampleIsJSON() {

@@ -7,13 +7,20 @@ import (
 	"runtime"
 )
 
+const (
+	NoMessage  = ""
+	callerSkip = 2
+)
+
+// ----------------------------------------------------------------------------
+// Public functions
+// ----------------------------------------------------------------------------
+
 /*
-The Errorf function returns a wrapped error, if err != nil.
+The Error function returns a wrapped error, if err != nil.
 
 Input
   - err: The unwrapped/raw error.
-  - format: The format string (think fmt.Sprintf())
-  - messages: values to be put into the format string.
 
 Output
   - Either nil, or a wrapped error.
@@ -25,30 +32,25 @@ func Error(err error) error {
 	)
 
 	if err != nil {
+		functionName = findFunctionName(callerSkip)
 
-		// Result if function name is available.
+		switch {
+		case len(functionName) > 0:
+			errFormat = fmt.Sprintf(
+				`{"function": %s, "error": %s}`,
+				formatFunction(),
+				formatError(err),
+			)
 
-		pc, _, _, ok := runtime.Caller(1)
-		if ok {
-			callingFunction := runtime.FuncForPC(pc)
-			runtimeFunc := regexp.MustCompile(`([^/]+$)`)
-			functionName = runtimeFunc.FindString(callingFunction.Name())
-			errFormat = `{"function": "%s", "error": "%w"}`
-			if isJSON(err.Error()) {
-				errFormat = `{"function": "%s", "error": %w}`
-			}
+			return fmt.Errorf(errFormat, functionName, err) //nolint
+		default:
+			errFormat = fmt.Sprintf(
+				`{"error": %s}`,
+				formatError(err),
+			)
 
-			return fmt.Errorf(errFormat, functionName, err)
+			return fmt.Errorf(errFormat, err) //nolint
 		}
-
-		// Default JSON.
-
-		errFormat = `{"error": "%w"}`
-		if isJSON(err.Error()) {
-			errFormat = `{"error": %w}`
-		}
-
-		return fmt.Errorf(errFormat, err)
 	}
 
 	return nil
@@ -69,91 +71,89 @@ func Errorf(err error, format string, messages ...any) error {
 	var (
 		errFormat    string
 		functionName string
+		text         string
 	)
 
 	if err != nil {
-		text := fmt.Sprintf(format, messages...)
+		text = fmt.Sprintf(format, messages...)
+		functionName = findFunctionName(callerSkip)
 
-		textFormat := `"%s"`
-		if isJSON(text) {
-			textFormat = `%s`
+		switch {
+		case len(functionName) > 0 && len(text) > 0:
+			errFormat = fmt.Sprintf(
+				`{"function": %s, "text": %s, "error": %s}`,
+				formatFunction(),
+				formatText(text),
+				formatError(err),
+			)
+
+			return fmt.Errorf(errFormat, functionName, text, err) //nolint
+		case len(functionName) > 0:
+			errFormat = fmt.Sprintf(
+				`{"function": %s, "error": %s}`,
+				formatFunction(),
+				formatError(err),
+			)
+
+			return fmt.Errorf(errFormat, functionName, err) //nolint
+		case len(text) > 0:
+			errFormat = fmt.Sprintf(
+				`{"text": %s, "error": %s}`,
+				formatText(text),
+				formatError(err),
+			)
+
+			return fmt.Errorf(errFormat, text, err) //nolint
+		default:
+			errFormat = fmt.Sprintf(
+				`{"error": %s}`,
+				formatError(err),
+			)
+
+			return fmt.Errorf(errFormat, err) //nolint
 		}
-
-		errorFormat := `"%w"`
-		if isJSON(err.Error()) {
-			errorFormat = `%w`
-		}
-
-		functionFormat := `%s`
-
-		// Result if function name is available.
-
-		pc, _, _, ok := runtime.Caller(1)
-		if ok {
-			callingFunction := runtime.FuncForPC(pc)
-			runtimeFunc := regexp.MustCompile(`([^/]+$)`)
-			functionName = runtimeFunc.FindString(callingFunction.Name())
-			errFormat = fmt.Sprintf(`{"function": %s, "text": %s, "error": %s}`, functionFormat, textFormat, errorFormat)
-			return fmt.Errorf(errFormat, functionName, text, err)
-		}
-
-		// Default JSON.
-
-		errFormat = fmt.Sprintf(`{"text": %s, "error": %s}`, textFormat, errorFormat)
-
-
-FIXME:  Start here.
-
-		return fmt.Errorf(errFormat, text, err)
 	}
 
 	return nil
 }
 
-func Errorf1(err error, format string, messages ...any) error {
-	if err != nil {
+// ----------------------------------------------------------------------------
+// Private functions
+// ----------------------------------------------------------------------------
 
-		pc, _, _, ok := runtime.Caller(1)
-		if ok {
-			callingFunction := runtime.FuncForPC(pc)
-			runtimeFunc := regexp.MustCompile(`([^/]+$)`)
-			functionName := runtimeFunc.FindString(callingFunction.Name())
-			format = functionName + "(): " + format
-		}
+func findFunctionName(callerSkip int) string {
+	var result string
 
-		errFormat := format + " >>> %w"
-		messages = append(messages, err)
-
-		return fmt.Errorf(errFormat, messages...) //nolint:err113
+	pc, _, _, ok := runtime.Caller(callerSkip)
+	if ok {
+		callingFunction := runtime.FuncForPC(pc)
+		runtimeFunc := regexp.MustCompile(`([^/]+$)`)
+		result = runtimeFunc.FindString(callingFunction.Name())
 	}
 
-	return nil
+	return result
 }
 
-func Errorf2(err error, format string, messages ...any) error {
-	var functionName string
-
-	if err != nil {
-
-		text := fmt.Sprintf(format, messages...)
-
-		pc, file, line, ok := runtime.Caller(1)
-		if ok {
-			callingFunction := runtime.FuncForPC(pc)
-			runtimeFunc := regexp.MustCompile(`([^/]+$)`)
-			functionName = runtimeFunc.FindString(callingFunction.Name())
-			format := `{"function": "%s", "text": "%s", "file": "%s", "line": %d, "error": "%w"}`
-			if isJSON(err.Error()) {
-				format = `{"function": "%s", "text": "%s", "file": "%s", "line": %d, "error": %w}`
-			}
-
-			return fmt.Errorf(format, functionName, text, file, line, err)
-
-		}
-
+func formatError(err error) string {
+	result := `"%w"`
+	if isJSON(err.Error()) {
+		result = `%w`
 	}
 
-	return nil
+	return result
+}
+
+func formatFunction() string {
+	return `"%s"`
+}
+
+func formatText(text string) string {
+	result := `"%s"`
+	if isJSON(text) {
+		result = `%s`
+	}
+
+	return result
 }
 
 func isJSON(unknownText string) bool {
