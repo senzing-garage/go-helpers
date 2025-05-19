@@ -18,6 +18,7 @@
     "DYLD",
     "engineconfigurationjson",
     "engineconfigurationjsonparser",
+    "Errorf",
     "examplepackage",
     "extfile",
     "godoc",
