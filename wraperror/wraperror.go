@@ -123,6 +123,7 @@ func Errorf(err error, format string, messages ...any) error {
  */
 func Quote(unquotedString string) string {
 	var result string
+
 	quotedString := strconv.Quote(unquotedString) // Produces double-quoted string
 
 	// Make single-quoted string.
@@ -182,13 +183,15 @@ func sanitizeErr(err error) error {
 	if isJSON(errMessage) {
 		return err
 	}
-	singleQuotedMessage := Quote(errMessage)
-	return errors.New(singleQuotedMessage)
 
+	singleQuotedMessage := Quote(errMessage)
+
+	return errors.New(singleQuotedMessage) //nolint
 }
 
 func sanitizeText(format string, messages ...any) string {
 	var cleanMessages []any
+
 	for _, message := range messages {
 		cleanMessage, isOK := message.(string)
 		if isOK {
@@ -204,5 +207,4 @@ func sanitizeText(format string, messages ...any) string {
 	}
 
 	return fmt.Sprintf(format, cleanMessages...)
-
 }

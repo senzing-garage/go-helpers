@@ -192,9 +192,7 @@ func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
 	// check for an unmarshalling error
 	if err != nil {
-		// FIXME: return jsonText, wraperror.Errorf(fmt.Errorf("%s", wraperror.Quote(err.Error())), "Unmarshal")
 		return jsonText, wraperror.Errorf(err, "Unmarshal")
-
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
