@@ -2,9 +2,11 @@ package wraperror
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"regexp"
 	"runtime"
+	"strconv"
 )
 
 const (
@@ -42,14 +44,14 @@ func Error(err error) error {
 				formatError(err),
 			)
 
-			return fmt.Errorf(errFormat, functionName, err) //nolint
+			return fmt.Errorf(errFormat, functionName, sanitizeErr(err)) //nolint
 		default:
 			errFormat = fmt.Sprintf(
 				`{"error": %s}`,
 				formatError(err),
 			)
 
-			return fmt.Errorf(errFormat, err) //nolint
+			return fmt.Errorf(errFormat, sanitizeErr(err)) //nolint
 		}
 	}
 
@@ -75,7 +77,7 @@ func Errorf(err error, format string, messages ...any) error {
 	)
 
 	if err != nil {
-		text = fmt.Sprintf(format, messages...)
+		text = sanitizeText(format, messages...)
 		functionName = findFunctionName(callerSkip)
 
 		switch {
@@ -87,7 +89,7 @@ func Errorf(err error, format string, messages ...any) error {
 				formatError(err),
 			)
 
-			return fmt.Errorf(errFormat, functionName, text, err) //nolint
+			return fmt.Errorf(errFormat, functionName, text, sanitizeErr(err)) //nolint
 		case len(functionName) > 0:
 			errFormat = fmt.Sprintf(
 				`{"function": %s, "error": %s}`,
@@ -95,7 +97,7 @@ func Errorf(err error, format string, messages ...any) error {
 				formatError(err),
 			)
 
-			return fmt.Errorf(errFormat, functionName, err) //nolint
+			return fmt.Errorf(errFormat, functionName, sanitizeErr(err)) //nolint
 		case len(text) > 0:
 			errFormat = fmt.Sprintf(
 				`{"text": %s, "error": %s}`,
@@ -103,18 +105,33 @@ func Errorf(err error, format string, messages ...any) error {
 				formatError(err),
 			)
 
-			return fmt.Errorf(errFormat, text, err) //nolint
+			return fmt.Errorf(errFormat, text, sanitizeErr(err)) //nolint
 		default:
 			errFormat = fmt.Sprintf(
 				`{"error": %s}`,
 				formatError(err),
 			)
 
-			return fmt.Errorf(errFormat, err) //nolint
+			return fmt.Errorf(errFormat, sanitizeErr(err)) //nolint
 		}
 	}
 
 	return nil
+}
+
+/*
+ */
+func Quote(unquotedString string) string {
+	var result string
+	quotedString := strconv.Quote(unquotedString) // Produces double-quoted string
+
+	// Make single-quoted string.
+
+	begin := 1
+	end := len(quotedString) - 1
+	result = quotedString[begin:end]
+
+	return result
 }
 
 // ----------------------------------------------------------------------------
@@ -158,4 +175,34 @@ func formatText(text string) string {
 
 func isJSON(unknownText string) bool {
 	return json.Valid([]byte(unknownText))
+}
+
+func sanitizeErr(err error) error {
+	errMessage := err.Error()
+	if isJSON(errMessage) {
+		return err
+	}
+	singleQuotedMessage := Quote(errMessage)
+	return errors.New(singleQuotedMessage)
+
+}
+
+func sanitizeText(format string, messages ...any) string {
+	var cleanMessages []any
+	for _, message := range messages {
+		cleanMessage, isOK := message.(string)
+		if isOK {
+			if isJSON(cleanMessage) {
+				cleanMessages = append(cleanMessages, cleanMessage)
+			} else {
+				singleQuotedMessage := Quote(cleanMessage)
+				cleanMessages = append(cleanMessages, singleQuotedMessage)
+			}
+		} else {
+			cleanMessages = append(cleanMessages, message)
+		}
+	}
+
+	return fmt.Sprintf(format, cleanMessages...)
+
 }

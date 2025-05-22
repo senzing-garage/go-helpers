@@ -3,6 +3,7 @@ package jsonutil
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"sort"
 	"strings"
 
@@ -31,9 +32,7 @@ Output
 */
 func Flatten(jsonText string, err error) string {
 	if err != nil {
-		newErr := wraperror.Errorf(err, "%s", err.Error())
-
-		return newErr.Error()
+		return fmt.Sprintf("%s", wraperror.Errorf(err, wraperror.NoMessage))
 	}
 
 	return jsonText
@@ -193,7 +192,9 @@ func RedactWithMap(jsonText string, redactMap map[string]any) (string, error) {
 	err := json.Unmarshal([]byte(jsonText), &parsedJSON)
 	// check for an unmarshalling error
 	if err != nil {
+		// FIXME: return jsonText, wraperror.Errorf(fmt.Errorf("%s", wraperror.Quote(err.Error())), "Unmarshal")
 		return jsonText, wraperror.Errorf(err, "Unmarshal")
+
 	}
 
 	// check for a null literal which is unmarshalled as a nil pointer
