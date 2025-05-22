@@ -90,6 +90,39 @@ func TestHelpers_Errorf_isError_withNesting(test *testing.T) {
 	require.JSONEq(test, expected, actual.Error())
 }
 
+func TestHelpers_Errorf_isError_withMessage(test *testing.T) {
+	test.Parallel()
+
+	expected := `{"function":"wraperror_test.TestHelpers_Errorf_isError_withMessage", "text":"error", "error":{"id":"SZSDK60014001","reason":"SENZ3121|JSON Parsing Failure [code=12,offset=15]"}}`
+	err := errors.New(`{"id":"SZSDK60014001","reason":"SENZ3121|JSON Parsing Failure [code=12,offset=15]"}`)
+	actual := wraperror.Errorf(err, "error")
+	require.Error(test, actual)
+	require.JSONEq(test, expected, actual.Error())
+}
+
+func TestHelpers_Errorf_isError_withMessage_Double(test *testing.T) {
+	test.Parallel()
+
+	expected := `{"function":"wraperror_test.TestHelpers_Errorf_isError_withMessage_Double","text":"error 2","error":{"function":"wraperror_test.TestHelpers_Errorf_isError_withMessage_Double","text":"error 1","error":{"id":"SZSDK60014001","reason":"SENZ3121|JSON Parsing Failure [code=12,offset=15]"}}}`
+	err := errors.New(`{"id":"SZSDK60014001","reason":"SENZ3121|JSON Parsing Failure [code=12,offset=15]"}`)
+	err1 := wraperror.Errorf(err, "error 1")
+	actual := wraperror.Errorf(err1, "error 2")
+	require.Error(test, actual)
+	require.JSONEq(test, expected, actual.Error())
+}
+
+func TestHelpers_Errorf_isError_withMessage_Triple(test *testing.T) {
+	test.Parallel()
+
+	expected := `{"function":"wraperror_test.TestHelpers_Errorf_isError_withMessage_Triple","text":"error 3","error":{"function":"wraperror_test.TestHelpers_Errorf_isError_withMessage_Triple","text":"error 2","error":{"function":"wraperror_test.TestHelpers_Errorf_isError_withMessage_Triple","text":"error 1","error":{"id":"SZSDK60014001","reason":"SENZ3121|JSON Parsing Failure [code=12,offset=15]"}}}}`
+	err := errors.New(`{"id":"SZSDK60014001","reason":"SENZ3121|JSON Parsing Failure [code=12,offset=15]"}`)
+	err1 := wraperror.Errorf(err, "error 1")
+	err2 := wraperror.Errorf(err1, "error 2")
+	actual := wraperror.Errorf(err2, "error 3")
+	require.Error(test, actual)
+	require.JSONEq(test, expected, actual.Error())
+}
+
 func TestHelpers_Errorf_isError_withVariables(test *testing.T) {
 	test.Parallel()
 
