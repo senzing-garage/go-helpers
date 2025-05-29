@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog], [markdownlint],
 and this project adheres to [Semantic Versioning].
 
+## [0.6.13] - 2025-05-30
+
+### Added in 0.6.13
+
+- Improve error wrapping
+
 ## [0.6.12] - 2025-05-19
 
 ### Added in 0.6.12
