@@ -492,15 +492,15 @@ func TestFlatten_NoError(test *testing.T) {
 
 	actual := jsonutil.Flatten(`{"foo": 5, "bar": 6}`, nil)
 	expected := `{"foo": 5, "bar": 6}`
-	assert.Equal(test, expected, actual, "Flattening without an error did not work as expected: "+actual)
+	assert.JSONEq(test, expected, actual)
 }
 
 func TestFlatten_WithError(test *testing.T) {
 	test.Parallel()
 
 	actual := jsonutil.Flatten(`{"foo": 5, "bar": 6}`, errFailed)
-	expected := `{"function": "jsonutil.Flatten", "text": "failed", "error": "failed"}`
-	assert.Equal(test, expected, actual, "Flattening with an error did not work as expected: "+actual)
+	expected := `{"function": "jsonutil.Flatten", "error": "failed"}`
+	assert.JSONEq(test, expected, actual)
 }
 
 // ----------------------------------------------------------------------------

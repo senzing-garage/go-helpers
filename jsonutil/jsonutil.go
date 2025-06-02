@@ -3,6 +3,7 @@ package jsonutil
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"sort"
 	"strings"
 
@@ -31,9 +32,7 @@ Output
 */
 func Flatten(jsonText string, err error) string {
 	if err != nil {
-		newErr := wraperror.Errorf(err, "%s", err.Error())
-
-		return newErr.Error()
+		return fmt.Sprintf("%s", wraperror.Errorf(err, wraperror.NoMessage))
 	}
 
 	return jsonText
