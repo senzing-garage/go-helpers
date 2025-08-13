@@ -18,6 +18,7 @@ func TestHelpers_Error(test *testing.T) {
 	test.Parallel()
 
 	var err error
+
 	newError := wraperror.Error(err)
 	require.NoError(test, newError)
 }
@@ -56,6 +57,7 @@ func TestHelpers_Errorf(test *testing.T) {
 	test.Parallel()
 
 	var err error
+
 	newError := wraperror.Errorf(err, "not an error")
 	require.NoError(test, newError)
 }

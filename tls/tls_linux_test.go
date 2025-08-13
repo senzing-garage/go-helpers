@@ -16,9 +16,11 @@ import (
 func TestLoadX509KeyPair_encrypted(test *testing.T) {
 	test.Parallel()
 
+	ctx := test.Context()
+
 	certFile := "../testdata/certificates/client/certificate.pem"
 	keyFile := "../testdata/certificates/client/private_key_encrypted.pem"
 	password := "Passw0rd"
-	_, err := localtls.LoadX509KeyPair(certFile, keyFile, password)
+	_, err := localtls.LoadX509KeyPair(ctx, certFile, keyFile, password)
 	require.NoError(test, err)
 }

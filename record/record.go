@@ -33,8 +33,8 @@ func NewRecord(line string) (*Record, error) {
 	err = json.Unmarshal([]byte(line), &record)
 	if err == nil {
 		record.JSON = line
-		_, validationErr := ValidateRecord(record)
 
+		_, validationErr := ValidateRecord(record)
 		if validationErr == nil {
 			return &record, nil
 		}

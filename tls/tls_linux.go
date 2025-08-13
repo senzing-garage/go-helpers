@@ -3,6 +3,7 @@
 package tls
 
 import (
+	"context"
 	"crypto/tls"
 	"os"
 	"os/exec"
@@ -14,7 +15,12 @@ import (
 // OS specific functions.
 // ----------------------------------------------------------------------------
 
-func loadX509KeyPairWithPassword(certFile string, keyFile string, password string) (tls.Certificate, error) {
+func loadX509KeyPairWithPassword(
+	ctx context.Context,
+	certFile string,
+	keyFile string,
+	password string,
+) (tls.Certificate, error) {
 	var err error
 
 	var tlsCertificate tls.Certificate
@@ -31,7 +37,7 @@ func loadX509KeyPairWithPassword(certFile string, keyFile string, password strin
 	}
 
 	passin := "pass:" + password
-	cmd := exec.Command(path, "rsa", "-in", keyFile, "-out", tmpFile.Name(), "-passin", passin)
+	cmd := exec.CommandContext(ctx, path, "rsa", "-in", keyFile, "-out", tmpFile.Name(), "-passin", passin)
 
 	_, err = cmd.Output()
 	if err != nil {
