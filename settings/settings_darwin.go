@@ -13,11 +13,11 @@ import (
 // ----------------------------------------------------------------------------
 
 func getConfigPath(senzingDirectory string) string {
-	return fmt.Sprintf("%s/er/etc", senzingDirectory)
+	return senzingDirectory + "/er/etc"
 }
 
 func getResourcePath(senzingDirectory string) string {
-	return fmt.Sprintf("%s/er/resources", senzingDirectory)
+	return senzingDirectory + "/er/resources"
 }
 
 func getSenzingDirectory(attributeMap map[string]string) string {
@@ -25,7 +25,7 @@ func getSenzingDirectory(attributeMap map[string]string) string {
 
 	home, isSet := os.LookupEnv("HOME")
 	if isSet {
-		result = fmt.Sprintf("%s/senzing", home)
+		result = home + "/senzing"
 	}
 
 	senzingPath, ok := attributeMap["senzingPath"]
