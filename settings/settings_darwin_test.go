@@ -24,9 +24,11 @@ var testCasesForOsArch = []testCaseMetadata{
 
 func getSenzingPath() string {
 	var result string
+
 	home, isSet := os.LookupEnv("HOME")
 	if isSet {
 		result = fmt.Sprintf("%s/senzing", home)
 	}
+
 	return result
 }

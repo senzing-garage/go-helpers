@@ -20,6 +20,7 @@ func loadX509KeyPairWithPassword(
 	_ = certFile
 	_ = keyFile
 	_ = password
+
 	var tlsCertificate tls.Certificate
 
 	return tlsCertificate, wraperror.Errorf(errForPackage, fmt.Sprintf("cannot decript %s on macOS platform", keyFile))
