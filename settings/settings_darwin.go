@@ -4,7 +4,6 @@ package settings
 
 import (
 	"context"
-	"fmt"
 	"os"
 )
 
@@ -37,7 +36,7 @@ func getSenzingDirectory(attributeMap map[string]string) string {
 }
 
 func getSupportPath(senzingDirectory string) string {
-	return fmt.Sprintf("%s/data", senzingDirectory)
+	return senzingDirectory + "/data"
 }
 
 func verifySettings(ctx context.Context, settings string) error {

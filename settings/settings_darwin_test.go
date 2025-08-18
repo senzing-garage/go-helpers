@@ -3,7 +3,6 @@
 package settings_test
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -27,7 +26,7 @@ func getSenzingPath() string {
 
 	home, isSet := os.LookupEnv("HOME")
 	if isSet {
-		result = fmt.Sprintf("%s/senzing", home)
+		result = home + "/senzing"
 	}
 
 	return result
