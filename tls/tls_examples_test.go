@@ -3,6 +3,7 @@
 package tls_test
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/senzing-garage/go-helpers/tls"
@@ -20,7 +21,9 @@ func ExampleLoadX509KeyPair() {
 
 	var password string
 
-	tlsCertificate, err := tls.LoadX509KeyPair(certFile, keyFile, password)
+	ctx := context.Background()
+
+	tlsCertificate, err := tls.LoadX509KeyPair(ctx, certFile, keyFile, password)
 	if err != nil {
 		fmt.Println(err)
 	}
