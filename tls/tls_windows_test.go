@@ -14,6 +14,7 @@ import (
 // ----------------------------------------------------------------------------
 
 func TestLoadX509KeyPair_encrypted(test *testing.T) {
+	test.Parallel()
 
 	ctx := test.Context()
 

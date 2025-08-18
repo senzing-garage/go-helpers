@@ -6,6 +6,8 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+
+	"github.com/senzing-garage/go-helpers/wraperror"
 )
 
 func loadX509KeyPairWithPassword(
@@ -19,5 +21,8 @@ func loadX509KeyPairWithPassword(
 	_ = keyFile
 	_ = password
 	var tlsCertificate tls.Certificate
-	return tlsCertificate, fmt.Errorf("cannot decript %s on Windows platform", keyFile)
+	return tlsCertificate, wraperror.Errorf(
+		errForPackage,
+		fmt.Sprintf("cannot decript %s on Windows platform", keyFile),
+	)
 }

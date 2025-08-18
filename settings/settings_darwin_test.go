@@ -3,7 +3,6 @@
 package settings_test
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -24,9 +23,11 @@ var testCasesForOsArch = []testCaseMetadata{
 
 func getSenzingPath() string {
 	var result string
+
 	home, isSet := os.LookupEnv("HOME")
 	if isSet {
-		result = fmt.Sprintf("%s/senzing", home)
+		result = home + "/senzing"
 	}
+
 	return result
 }
