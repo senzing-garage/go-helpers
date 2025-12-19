@@ -48,6 +48,7 @@ make clean
 ## Testing Requirements
 
 Tests require a Senzing SDK installation and test database:
+
 - Set `LD_LIBRARY_PATH=/opt/senzing/er/lib` (Linux)
 - Test database: `sqlite3://na:na@nowhere/tmp/sqlite/G2C.db`
 - License file needed at `/etc/opt/senzing/g2.lic` or `testdata/senzing-license/g2.lic`
