@@ -294,4 +294,4 @@ This project adheres to [Semantic Versioning].
 [CommonMark]: https://commonmark.org/
 [Go template]: https://github.com/senzing-garage/template-go
 [Keep a Changelog]: https://keepachangelog.com/
-[Semantic Versioning]: https://semver.org/spec/v2.0.0.html
+[Semantic Versioning]: https://semver.org/
