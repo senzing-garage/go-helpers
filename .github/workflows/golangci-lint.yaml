@@ -1,8 +1,7 @@
-name: Golangci lint
+name: Golangci-lint
 
 on:
   push:
-    branches-ignore: [main]
   pull_request:
     branches: [main]
 

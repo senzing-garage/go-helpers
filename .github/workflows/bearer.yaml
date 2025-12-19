@@ -1,8 +1,7 @@
-name: bearer
+name: Bearer
 
 on:
   push:
-    branches-ignore: [main]
   pull_request:
     branches: [main]
 

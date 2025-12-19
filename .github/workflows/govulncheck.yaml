@@ -1,8 +1,7 @@
-name: govulncheck
+name: Govulncheck
 
 on:
   push:
-    branches-ignore: [main]
   pull_request:
     branches: [main]
 
