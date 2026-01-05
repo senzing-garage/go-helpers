@@ -6,6 +6,8 @@ on:
   schedule:
     - cron: "15 7 * * *"
   workflow_dispatch:
+# If not running on cron schedule
+# on: [pull_request, workflow_dispatch]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
@@ -24,6 +26,7 @@ jobs:
       status: ${{ job.status }}
     permissions:
       contents: read
+    # If not running on a cron schedule the above output can be removed
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -101,6 +104,7 @@ jobs:
       coverage-config: ./.github/coverage/testcoverage.yaml
       profile: "cover-production-v4.out,cover-staging-v4.out"
 
+  # If not running on a cron schedule remove the entire job below this comment
   slack-notification:
     needs: [go-test-darwin]
     if: ${{ always() && contains(fromJSON('["failure", "cancelled"]'), needs.go-test-darwin.outputs.status ) && github.event_name == 'schedule' }}

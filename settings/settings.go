@@ -668,8 +668,8 @@ func checkSupportPath(supportPath string) error {
 	var err error
 
 	supportFiles := []string{
-		"anyTransRule.ibm",
 		"g2SifterRules.ibm",
+		"szBuildVersion.json",
 	}
 	for _, supportFile := range supportFiles {
 		targetFile := fmt.Sprintf("%s/%s", supportPath, supportFile)
