@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The changelog format is based on [Keep a Changelog] and [CommonMark].
 This project adheres to [Semantic Versioning].
 
+## [0.6.14] - 2026-01-05
+
+### Changed in 0.6.14
+
+- In `settings`, updated support path validation files
+
 ## [0.6.13] - 2025-06-02
 
 ### Added in 0.6.13
