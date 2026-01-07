@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning].
 
 ### Changed in 0.6.15
 
-- Regenerated test certificates in `testdata/certificates`
+- Regenerated test certificates in `testdata/certificates` for 2026
 
 ## [0.6.14] - 2026-01-05
 
