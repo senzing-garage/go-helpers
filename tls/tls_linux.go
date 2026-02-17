@@ -1,6 +1,6 @@
 //go:build linux
 
-package tls
+package tls //revive:disable-line var-naming
 
 import (
 	"context"

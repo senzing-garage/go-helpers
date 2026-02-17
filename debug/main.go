@@ -1,5 +1,5 @@
 // The debug package helps with debugging.
-package debug
+package debug //revive:disable-line var-naming
 
 // ----------------------------------------------------------------------------
 // Types - interface
