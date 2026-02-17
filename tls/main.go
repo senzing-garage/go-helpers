@@ -1,5 +1,5 @@
 // Package tls helps with Transport Layer Security.
-package tls
+package tls //revive:disable-line var-naming
 
 import "errors"
 

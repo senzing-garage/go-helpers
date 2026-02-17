@@ -8,7 +8,7 @@ Although this GitHub repository may help you understand an approach to using Sen
 it's not considered to be "production ready" and is not considered to be part of the Senzing product.
 Heck, it may not even be appropriate for your application of Senzing!
 
-## :warning: WARNING: go-helpers is still in development :warning: _
+## :warning: WARNING: go-helpers is still in development :warning: \_
 
 At the moment, this is "work-in-progress" with Semantic Versions of `0.n.x`.
 Although it can be reviewed and commented on,
@@ -39,7 +39,7 @@ The following helpers have been created:
 
 ### Use
 
-- `settings`:  A package for creating the `SENZING_ENGINE_CONFIGURATION_JSON` Document.
+- `settings`: A package for creating the `SENZING_ENGINE_CONFIGURATION_JSON` Document.
 
 ### Test data
 
