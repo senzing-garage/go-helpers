@@ -118,6 +118,15 @@ linters:
       - common-false-positives
       - legacy
       - std-error-handling
+    rules:
+      - linters:
+          - gosec
+        path: _test\.go
+        text: "G101"
+      - linters:
+          - gosec
+        path: tls/tls_linux\.go
+        text: "G702"
     paths:
       - third_party$
       - builtin$
