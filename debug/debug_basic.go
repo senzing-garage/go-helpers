@@ -1,7 +1,7 @@
 /*
 Package debug is used to assist in debugging code.
 */
-package debug
+package debug //revive:disable-line var-naming
 
 import "fmt"
 
