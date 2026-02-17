@@ -14,6 +14,7 @@
     "covermode",
     "coverpkg",
     "coverprofile",
+    "decorder",
     "dockerhub",
     "dockter",
     "DYLD",
