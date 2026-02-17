@@ -37,7 +37,9 @@ func loadX509KeyPairWithPassword(
 	}
 
 	passin := "pass:" + password
-	cmd := exec.CommandContext(ctx, path, "rsa", "-in", keyFile, "-out", tmpFile.Name(), "-passin", passin)
+	cmd := exec.CommandContext(
+		ctx, path, "rsa", "-in", keyFile, "-out", tmpFile.Name(), "-passin", passin,
+	)
 
 	_, err = cmd.Output()
 	if err != nil {
