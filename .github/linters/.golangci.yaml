@@ -127,6 +127,12 @@ linters:
           - gosec
         path: tls/tls_linux\.go
         text: "G702"
+      - linters:
+          - goconst
+        path: _test\.go
+      - linters:
+          - goconst
+        path: truthset/
     paths:
       - third_party$
       - builtin$
