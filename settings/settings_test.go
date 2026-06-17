@@ -166,6 +166,36 @@ func TestBuildSenzingDatabaseURL_standardForm(test *testing.T) {
 	}
 }
 
+// Legacy forms (empty or "@//" path) must still be converted, not passed through, so the standard-form guard does not fire for them.
+func TestBuildSenzingDatabaseURL_legacyForm(test *testing.T) {
+	test.Parallel()
+
+	legacyFormCases := []struct {
+		name        string
+		databaseURI string
+		databaseURL string
+	}{
+		// OCI legacy "@//host" form: the "@//" gate must keep this on the conversion path.
+		{
+			"oci-legacy",
+			"oci://username:password@//hostname:1521/G2/?noTimezoneCheck=true&sysdba=true",
+			"oci://username:password@hostname:1521/G2/?noTimezoneCheck=true&sysdba=true",
+		},
+		// Root-only path ("...:G2/"): hasDatabaseInPath returns false, so conversion still fires.
+		{"postgresql-legacy", "postgresql://username:password@hostname:5432:G2/", "postgresql://username:password@hostname:5432/G2"},
+	}
+
+	for _, testCase := range legacyFormCases {
+		test.Run(testCase.name, func(test *testing.T) {
+			test.Parallel()
+
+			result, err := settings.BuildSenzingDatabaseURL(testCase.databaseURI)
+			require.NoError(test, err)
+			assert.Equal(test, testCase.databaseURL, result)
+		})
+	}
+}
+
 func TestBuildSimpleSettingsUsingEnvVars(test *testing.T) {
 	test.Parallel()
 

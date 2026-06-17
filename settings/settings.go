@@ -516,8 +516,6 @@ func buildURLForMssql(databaseURI string) (string, error) {
 		result string
 	)
 
-	// Standard URL form (host[:port]/database): pass through unchanged.
-
 	if hasDatabaseInPath(databaseURI) {
 		return databaseURI, nil
 	}
@@ -550,8 +548,6 @@ func buildURLForMysql(databaseURI string) (string, error) {
 		err    error
 		result string
 	)
-
-	// Standard URL form (host[:port]/database): pass through unchanged.
 
 	if hasDatabaseInPath(databaseURI) {
 		return databaseURI, nil
@@ -591,9 +587,8 @@ func buildURLForOci(databaseURI string) (string, error) {
 		result string
 	)
 
-	// Standard URL form (host[:port]/database): pass through unchanged.
-	// The legacy form uses "@//host" and must still be converted, so gate on
-	// the absence of the "@//" marker.
+	// The legacy OCI form uses "@//host" and must still be converted, so gate the
+	// standard-form pass-through on the absence of the "@//" marker.
 
 	if !strings.Contains(databaseURI, "@//") && hasDatabaseInPath(databaseURI) {
 		return databaseURI, nil
@@ -629,8 +624,6 @@ func buildURLForOci(databaseURI string) (string, error) {
 
 func buildURLForPostgresql(databaseURI string) (string, error) {
 	var err error
-
-	// Standard URL form (host[:port]/database): pass through unchanged.
 
 	if hasDatabaseInPath(databaseURI) {
 		return databaseURI, nil
