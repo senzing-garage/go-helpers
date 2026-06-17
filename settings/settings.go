@@ -603,7 +603,6 @@ func buildURLForOci(databaseURI string) (string, error) {
 		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)/\?((?P<RawQuery>.+))?`,
 	)
 
-	// (?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)(/?(?P<RawQuery>))?`)
 	regExpMatches := regExp.FindStringSubmatch(databaseURI)
 	regExpFieldNames := regExp.SubexpNames()
 
@@ -649,11 +648,8 @@ func buildURLForSqlite3(databaseURI string) (string, error) {
 	return databaseURI, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
-// hasDatabaseInPath reports whether databaseURI already carries the database as
-// a path segment (host[:port]/database[/]) — i.e. the standard URL form the
-// Senzing documentation publishes. The legacy Senzing URI forms carry the
-// database elsewhere (a trailing ":database" or a "?schema=" query) and leave
-// the path empty, so they return false and fall through to legacy conversion.
+// The legacy Senzing URI forms carry the database in a trailing ":database" or
+// "?schema=" query and leave the path empty; standard forms carry it in the path.
 func hasDatabaseInPath(databaseURI string) bool {
 	parsed, err := url.Parse(databaseURI)
 	if err != nil {
