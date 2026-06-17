@@ -138,6 +138,80 @@ func TestBuildSenzingDatabaseURL(test *testing.T) {
 	}
 }
 
+// The standard "host[:port]/database" URL form must pass through unchanged for every networked database type.
+func TestBuildSenzingDatabaseURL_standardForm(test *testing.T) {
+	test.Parallel()
+
+	standardFormCases := []struct {
+		name        string
+		databaseURI string
+	}{
+		{"postgresql", "postgresql://username:password@hostname:5432/G2?sslmode=disable"},
+		{"postgresql-no-port", "postgresql://username:password@hostname/G2"},
+		{"mysql", "mysql://username:password@hostname:3306/G2?schema=G2"},
+		{"mysql-no-schema", "mysql://username:password@hostname:3306/G2"},
+		{"mssql", "mssql://username:password@hostname:1433/G2"},
+		{"azure-sql", "mssql://username:password@server:1433/G2?encrypt=yes"},
+		{"oci", "oci://username:password@hostname:1521/G2"},
+	}
+
+	for _, testCase := range standardFormCases {
+		test.Run(testCase.name, func(test *testing.T) {
+			test.Parallel()
+
+			result, err := settings.BuildSenzingDatabaseURL(testCase.databaseURI)
+			require.NoError(test, err)
+			assert.Equal(test, testCase.databaseURI, result)
+		})
+	}
+}
+
+// Legacy forms (empty path or "@//" authority marker) must still be converted, not passed through, so the standard-form guard does not fire for them.
+func TestBuildSenzingDatabaseURL_legacyForm(test *testing.T) {
+	test.Parallel()
+
+	legacyFormCases := []struct {
+		name        string
+		databaseURI string
+		databaseURL string
+	}{
+		// MSSQL legacy "host:port:database" form: hasDatabaseInPath returns false, so conversion fires.
+		{
+			"mssql-legacy",
+			"mssql://username:password@hostname:1433:G2/?driver=mssqldriver",
+			"mssql://username:password@hostname:1433/G2/?driver=mssqldriver",
+		},
+		// MySQL legacy "?schema=" form: the database lives in the query, not the path.
+		{
+			"mysql-legacy",
+			"mysql://username:password@hostname:3306/?schema=G2",
+			"mysql://username:password@hostname:3306/G2",
+		},
+		// OCI legacy "@//host" form: the "@//" gate must keep this on the conversion path.
+		{
+			"oci-legacy",
+			"oci://username:password@//hostname:1521/G2/?noTimezoneCheck=true&sysdba=true",
+			"oci://username:password@hostname:1521/G2/?noTimezoneCheck=true&sysdba=true",
+		},
+		// PostgreSQL legacy "host:port:database/" form: the root-only path makes hasDatabaseInPath return false.
+		{
+			"postgresql-legacy",
+			"postgresql://username:password@hostname:5432:G2/",
+			"postgresql://username:password@hostname:5432/G2",
+		},
+	}
+
+	for _, testCase := range legacyFormCases {
+		test.Run(testCase.name, func(test *testing.T) {
+			test.Parallel()
+
+			result, err := settings.BuildSenzingDatabaseURL(testCase.databaseURI)
+			require.NoError(test, err)
+			assert.Equal(test, testCase.databaseURL, result)
+		})
+	}
+}
+
 func TestBuildSimpleSettingsUsingEnvVars(test *testing.T) {
 	test.Parallel()
 

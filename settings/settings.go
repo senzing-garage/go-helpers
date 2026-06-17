@@ -516,6 +516,10 @@ func buildURLForMssql(databaseURI string) (string, error) {
 		result string
 	)
 
+	if hasDatabaseInPath(databaseURI) {
+		return databaseURI, nil
+	}
+
 	regExp := regexp.MustCompile(
 		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+):(?P<database>.+)/\?(?P<RawQuery>.+)`,
 	)
@@ -544,6 +548,10 @@ func buildURLForMysql(databaseURI string) (string, error) {
 		err    error
 		result string
 	)
+
+	if hasDatabaseInPath(databaseURI) {
+		return databaseURI, nil
+	}
 
 	regExp := regexp.MustCompile(
 		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+)/\?schema=(?P<database>.+)`,
@@ -579,11 +587,17 @@ func buildURLForOci(databaseURI string) (string, error) {
 		result string
 	)
 
+	// The legacy OCI form uses "@//host" and must still be converted, so gate the
+	// standard-form pass-through on the absence of the "@//" marker.
+
+	if !strings.Contains(databaseURI, "@//") && hasDatabaseInPath(databaseURI) {
+		return databaseURI, nil
+	}
+
 	regExp := regexp.MustCompile(
 		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)/\?((?P<RawQuery>.+))?`,
 	)
 
-	// (?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)(/?(?P<RawQuery>))?`)
 	regExpMatches := regExp.FindStringSubmatch(databaseURI)
 	regExpFieldNames := regExp.SubexpNames()
 
@@ -611,6 +625,10 @@ func buildURLForOci(databaseURI string) (string, error) {
 func buildURLForPostgresql(databaseURI string) (string, error) {
 	var err error
 
+	if hasDatabaseInPath(databaseURI) {
+		return databaseURI, nil
+	}
+
 	index := strings.LastIndex(databaseURI, ":")
 	result := strings.TrimSuffix(databaseURI[:index]+"/"+databaseURI[index+1:], "/")
 
@@ -621,6 +639,16 @@ func buildURLForSqlite3(databaseURI string) (string, error) {
 	var err error
 
 	return databaseURI, wraperror.Errorf(err, wraperror.NoMessage)
+}
+
+// Legacy URIs carry the database in a trailing ":database" or "?schema=" query, not the path.
+func hasDatabaseInPath(databaseURI string) bool {
+	parsed, err := url.Parse(databaseURI)
+	if err != nil {
+		return false
+	}
+
+	return len(strings.Trim(parsed.Path, "/")) > 0
 }
 
 func checkConfigPath(configPath string) error {
