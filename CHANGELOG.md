@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The changelog format is based on [Keep a Changelog] and [CommonMark].
 This project adheres to [Semantic Versioning].
 
+## [0.6.16] - 2026-06-17
+
+### Changed in 0.6.16
+
+- In `settings`, accept standard host/database URL form in database URL builders
+
 ## [0.6.15] - 2026-01-07
 
 ### Changed in 0.6.15
