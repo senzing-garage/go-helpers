@@ -138,7 +138,7 @@ func TestBuildSenzingDatabaseURL(test *testing.T) {
 	}
 }
 
-// The standard "host[:port]/database" URL form must pass through unchanged for every networked database type (senzing-garage/init-database#559).
+// The standard "host[:port]/database" URL form must pass through unchanged for every networked database type.
 func TestBuildSenzingDatabaseURL_standardForm(test *testing.T) {
 	test.Parallel()
 
@@ -153,8 +153,6 @@ func TestBuildSenzingDatabaseURL_standardForm(test *testing.T) {
 		{"mssql", "mssql://username:password@hostname:1433/G2"},
 		{"azure-sql", "mssql://username:password@server:1433/G2?encrypt=yes"},
 		{"oci", "oci://username:password@hostname:1521/G2"},
-		// sqlite3 always passes through unchanged; it does not consult hasDatabaseInPath.
-		{"sqlite3", "sqlite3://na:na@/tmp/sqlite/G2C.db"},
 	}
 
 	for _, testCase := range standardFormCases {

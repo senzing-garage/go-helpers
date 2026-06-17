@@ -648,8 +648,7 @@ func buildURLForSqlite3(databaseURI string) (string, error) {
 	return databaseURI, wraperror.Errorf(err, wraperror.NoMessage)
 }
 
-// The legacy Senzing URI forms carry the database in a trailing ":database" or
-// "?schema=" query and leave the path empty; standard forms carry it in the path.
+// Legacy URIs carry the database in a trailing ":database" or "?schema=" query, not the path.
 func hasDatabaseInPath(databaseURI string) bool {
 	parsed, err := url.Parse(databaseURI)
 	if err != nil {
