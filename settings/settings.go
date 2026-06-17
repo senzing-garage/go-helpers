@@ -516,6 +516,12 @@ func buildURLForMssql(databaseURI string) (string, error) {
 		result string
 	)
 
+	// Standard URL form (host[:port]/database): pass through unchanged.
+
+	if hasDatabaseInPath(databaseURI) {
+		return databaseURI, nil
+	}
+
 	regExp := regexp.MustCompile(
 		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+):(?P<database>.+)/\?(?P<RawQuery>.+)`,
 	)
@@ -544,6 +550,12 @@ func buildURLForMysql(databaseURI string) (string, error) {
 		err    error
 		result string
 	)
+
+	// Standard URL form (host[:port]/database): pass through unchanged.
+
+	if hasDatabaseInPath(databaseURI) {
+		return databaseURI, nil
+	}
 
 	regExp := regexp.MustCompile(
 		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@(?P<Host>.+)/\?schema=(?P<database>.+)`,
@@ -579,6 +591,14 @@ func buildURLForOci(databaseURI string) (string, error) {
 		result string
 	)
 
+	// Standard URL form (host[:port]/database): pass through unchanged.
+	// The legacy form uses "@//host" and must still be converted, so gate on
+	// the absence of the "@//" marker.
+
+	if !strings.Contains(databaseURI, "@//") && hasDatabaseInPath(databaseURI) {
+		return databaseURI, nil
+	}
+
 	regExp := regexp.MustCompile(
 		`(?P<Scheme>.+)://(?P<username>.+):(?P<password>.+)@//(?P<Host>.+)/(?P<database>.+)/\?((?P<RawQuery>.+))?`,
 	)
@@ -611,6 +631,12 @@ func buildURLForOci(databaseURI string) (string, error) {
 func buildURLForPostgresql(databaseURI string) (string, error) {
 	var err error
 
+	// Standard URL form (host[:port]/database): pass through unchanged.
+
+	if hasDatabaseInPath(databaseURI) {
+		return databaseURI, nil
+	}
+
 	index := strings.LastIndex(databaseURI, ":")
 	result := strings.TrimSuffix(databaseURI[:index]+"/"+databaseURI[index+1:], "/")
 
@@ -621,6 +647,20 @@ func buildURLForSqlite3(databaseURI string) (string, error) {
 	var err error
 
 	return databaseURI, wraperror.Errorf(err, wraperror.NoMessage)
+}
+
+// hasDatabaseInPath reports whether databaseURI already carries the database as
+// a path segment (host[:port]/database[/]) — i.e. the standard URL form the
+// Senzing documentation publishes. The legacy Senzing URI forms carry the
+// database elsewhere (a trailing ":database" or a "?schema=" query) and leave
+// the path empty, so they return false and fall through to legacy conversion.
+func hasDatabaseInPath(databaseURI string) bool {
+	parsed, err := url.Parse(databaseURI)
+	if err != nil {
+		return false
+	}
+
+	return len(strings.Trim(parsed.Path, "/")) > 0
 }
 
 func checkConfigPath(configPath string) error {

@@ -138,6 +138,37 @@ func TestBuildSenzingDatabaseURL(test *testing.T) {
 	}
 }
 
+// The standard "host[:port]/database" URL form that the Senzing documentation
+// publishes must pass through BuildSenzingDatabaseURL unchanged for every
+// networked database type (see issue senzing-garage/init-database#559).
+func TestBuildSenzingDatabaseURL_standardForm(test *testing.T) {
+	test.Parallel()
+
+	standardFormCases := []struct {
+		name        string
+		databaseURI string
+	}{
+		{"postgresql", "postgresql://username:password@hostname:5432/G2?sslmode=disable"},
+		{"postgresql-no-port", "postgresql://username:password@hostname/G2"},
+		{"mysql", "mysql://username:password@hostname:3306/G2?schema=G2"},
+		{"mysql-no-schema", "mysql://username:password@hostname:3306/G2"},
+		{"mssql", "mssql://username:password@hostname:1433/G2"},
+		{"azure-sql", "mssql://username:password@server:1433/G2?encrypt=yes"},
+		{"oci", "oci://username:password@hostname:1521/G2"},
+		{"sqlite3", "sqlite3://na:na@/tmp/sqlite/G2C.db"},
+	}
+
+	for _, testCase := range standardFormCases {
+		test.Run(testCase.name, func(test *testing.T) {
+			test.Parallel()
+
+			result, err := settings.BuildSenzingDatabaseURL(testCase.databaseURI)
+			require.NoError(test, err)
+			assert.Equal(test, testCase.databaseURI, result)
+		})
+	}
+}
+
 func TestBuildSimpleSettingsUsingEnvVars(test *testing.T) {
 	test.Parallel()
 
