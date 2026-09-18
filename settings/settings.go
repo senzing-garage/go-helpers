@@ -696,7 +696,6 @@ func checkSupportPath(supportPath string) error {
 	var err error
 
 	supportFiles := []string{
-		"g2SifterRules.ibm",
 		"szBuildVersion.json",
 	}
 	for _, supportFile := range supportFiles {

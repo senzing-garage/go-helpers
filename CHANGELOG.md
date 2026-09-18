@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The changelog format is based on [Keep a Changelog] and [CommonMark].
 This project adheres to [Semantic Versioning].
 
+## [0.6.17] - 2026-09-18
+
+### Changed in 0.6.17
+
+- In `settings`, removed `g2SifterRules.ibm` from support path validation
+
 ## [0.6.16] - 2026-06-17
 
 ### Changed in 0.6.16
