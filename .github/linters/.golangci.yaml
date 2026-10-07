@@ -24,7 +24,7 @@ linters:
     - errname
     - errorlint
     - exhaustive
-    - exhaustruct
+    - exhaustruct_v5
     - exptostd
     - fatcontext
     - forbidigo
@@ -44,7 +44,7 @@ linters:
     - godox
     - goheader
     - gomoddirectives
-    - gomodguard
+    - gomodguard_v2
     - goprintffuncname
     - gosec
     - gosmopolitan
@@ -110,6 +110,7 @@ linters:
   disable:
     - dupword
     - gochecknoglobals
+    - gochecknoinits
     - lll
   exclusions:
     generated: lax
@@ -143,7 +144,7 @@ linters:
     depguard:
       rules:
         prevent_unmaintained_packages:
-          list-mode: lax # allow unless explicitely denied
+          list-mode: lax # allow unless explicitly denied
           allow:
             - github.com/stretchr/testify/*
           deny:
@@ -152,8 +153,8 @@ linters:
     dupword:
       ignore:
         - 'Vythiri\,'
-    exhaustruct:
-      exclude:
+    exhaustruct_v5:
+      ignore-patterns:
         - '.+/jsonutil_test\.<anonymous>$'
         - '.+/record\.Record$'
         - '.+/settings_test\.testCaseMetadata$'
@@ -162,11 +163,15 @@ linters:
         - '.+/url\.URL$'
     ireturn:
       allow:
-        - error
+        - anon
+        - empty
         - debug.Debug
+        - error
         - settingsparser.SettingsParser
+        - stdlib
     mnd:
       ignored-functions:
+        - '^logger\.Log$'
         - '^szerrors\.NewError$'
     tagliatelle:
       case:
