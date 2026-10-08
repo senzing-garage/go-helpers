@@ -1,10 +1,10 @@
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
-github.com/senzing-garage/go-messaging v1.5.3 h1:bH+LtEgNJj/PRbg1VMK9/Gk457CdfdcjMiubxffbTog=
-github.com/senzing-garage/go-messaging v1.5.3/go.mod h1:7qvSNAVyWcSIcsnDAm8obCxHItljN295O3fX4bOgfp0=
+github.com/senzing-garage/go-messaging v1.6.0 h1:0aT15296s2vOAwMmzQ5NhAcX2j+0xff0Y+pG3obSTBs=
+github.com/senzing-garage/go-messaging v1.6.0/go.mod h1:OMpOvk4NvYBIpd7xtxIqkH+N5g6Frofrmy7YKSD/hN4=
 github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
 github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
 go.yaml.in/yaml/v3 v3.0.5 h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=
 go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
-golang.org/x/exp v0.0.0-20260709172345-9ea1abe57597 h1:qLvzZeaANDgyVOA8pyHCOStGlXn0rseXma+GQjeuv2g=
-golang.org/x/exp v0.0.0-20260709172345-9ea1abe57597/go.mod h1:EdfpwwqSu+0Li0mzskwHU6FWDV3t9Q+RZDo3QMUtL3Q=
+golang.org/x/exp v0.0.0-20261007192929-f45ad48fbe92 h1:kc+Gi2MFkd0KWtdDlVxVwjw4KB98/77usJDFj+6YFQ8=
+golang.org/x/exp v0.0.0-20261007192929-f45ad48fbe92/go.mod h1:SRjTzy5WcYqRRqquLUvHeeovSwLO0CZ3xcltZNO4Fck=

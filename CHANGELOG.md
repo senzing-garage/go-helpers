@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The changelog format is based on [Keep a Changelog] and [CommonMark].
 This project adheres to [Semantic Versioning].
 
+## [0.7.0] - 2026-10-07
+
+### Changed in 0.7.0
+
+- Update to Go 1.27.1
+- Sync repository setup files with template-go `v0.5.0`
+- Update dependencies:
+  - github.com/senzing-garage/go-messaging v1.6.0
+
 ## [0.6.17] - 2026-09-18
 
 ### Changed in 0.6.17
