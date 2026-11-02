@@ -41,5 +41,10 @@ jobs:
         with:
           args: --config=${{ github.workspace }}/.github/linters/.golangci.yaml
           only-new-issues: false
+          # Build golangci-lint with the runner's Go instead of downloading a
+          # release binary. Release binaries up to v2.15.0 are built with
+          # go1.27.0 and cannot read the export data written by go1.27.3
+          # ("export data version 5 is greater than maximum supported version 4").
+          install-mode: goinstall
           # renovate: datasource=github-releases depName=golangci/golangci-lint
           version: v2.13.2
