@@ -313,6 +313,19 @@ func TestVerifySettings(test *testing.T) {
 	}
 }
 
+func TestVerifySettings_emptyConfigPath(test *testing.T) {
+	test.Parallel()
+	ctx := test.Context()
+	aMap := map[string]string{
+		"configPath":  test.TempDir(),
+		"databaseURL": "sqlite3://na:na@nowhere/tmp/sqlite/G2C.db",
+	}
+	testJSON, err := settings.BuildSimpleSettingsUsingMap(aMap)
+	require.NoError(test, err)
+	err = settings.VerifySettings(ctx, testJSON)
+	require.NoError(test, err)
+}
+
 // ----------------------------------------------------------------------------
 // Internal functions
 // ----------------------------------------------------------------------------

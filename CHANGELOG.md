@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The changelog format is based on [Keep a Changelog] and [CommonMark].
 This project adheres to [Semantic Versioning].
 
+## [0.8.0] - 2026-11-10
+
+### Changed in 0.8.0
+
+- In `settings`, `VerifySettings` no longer requires `cfgVariant.json` or `defaultGNRCP.config` in `PIPELINE.CONFIGPATH`
+
 ## [0.7.0] - 2026-10-07
 
 ### Changed in 0.7.0

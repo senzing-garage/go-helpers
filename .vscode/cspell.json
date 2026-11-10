@@ -29,6 +29,7 @@
     "examplepackage",
     "exhaustruct",
     "extfile",
+    "GNRCP",
     "godoc",
     "golangci",
     "gomod",

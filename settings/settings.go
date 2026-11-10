@@ -244,17 +244,8 @@ func VerifySettings(ctx context.Context, settings string) error {
 		}
 	}
 
-	// Check Config path.
-
-	configPath, err := parser.GetConfigPath(ctx)
-	if err != nil {
-		return wraperror.Errorf(err, "GetConfigPath")
-	}
-
-	err = checkConfigPath(configPath)
-	if err != nil {
-		return wraperror.Errorf(err, "checkConfigPath")
-	}
+	// PIPELINE.CONFIGPATH is not checked: Senzing builds no longer install
+	// cfgVariant.json or defaultGNRCP.config there, and the engine does not need them.
 
 	// Check Resource path.
 
@@ -649,27 +640,6 @@ func hasDatabaseInPath(databaseURI string) bool {
 	}
 
 	return len(strings.Trim(parsed.Path, "/")) > 0
-}
-
-func checkConfigPath(configPath string) error {
-	var err error
-
-	configFiles := []string{
-		"cfgVariant.json",
-		"defaultGNRCP.config",
-	}
-	for _, configFile := range configFiles {
-		targetFile := fmt.Sprintf("%s/%s", configPath, configFile)
-		if _, err := os.Stat(targetFile); err != nil {
-			return wraperror.Errorf(
-				err,
-				"CONFIGPATH: Could not find %s. For more information, visit https://garage.senzing.com/go-helpers/errors ",
-				targetFile,
-			)
-		}
-	}
-
-	return err
 }
 
 func checkResourcePath(resourcePath string) error {
