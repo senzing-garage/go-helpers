@@ -2,12 +2,6 @@
 
 ## Error strings
 
-### CONFIGPATH: Could not find /path/to/file
-
-The `PIPELINE.CONFIGPATH` is incorrectly specified in the Senzing engine configuration JSON.
-
-If it is correctly specified, then a file that is expected is not in the directory.
-
 ### RESOURCEPATH: Could not find /path/to/file
 
 The `PIPELINE.RESOURCEPATH` is incorrectly specified in the Senzing engine configuration JSON.
